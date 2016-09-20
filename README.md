@@ -1,6 +1,6 @@
 # zabbicooks
 
-[![Build Status](https://travis-ci.org/rerorero/zabbicooks.svg?branch=master)](https://travis-ci.org/rerorero/zabbicooks)
+[![Build Status](https://travis-ci.org/rerorero/zabbicook.svg?branch=master)](https://travis-ci.org/rerorero/zabbicook)
 
 ## Tests
 ### Requirements
