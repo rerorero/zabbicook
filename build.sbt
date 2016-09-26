@@ -40,7 +40,10 @@ val cli = project.in(file("./cli"))
       "com.github.scopt" %% "scopt" % "3.5.0"
     )
   )
-  .dependsOn(core)
+  .dependsOn(
+    core,
+    core % "test->test"
+  )
 
 val root = Project("zabbicook", file("./"))
   .aggregate(core, cli)
