@@ -20,7 +20,10 @@ private[cli] sealed trait RunResult {
 private[cli] object RunResult {
 
   case class RunSuccess(report: Report) extends RunResult {
-    override def asString: String = report.toStringSeq().mkString(System.lineSeparator())
+    override def asString: String = {
+      report.toStringSeq().mkString(System.lineSeparator()) +
+      s"ok: total=${report.count}"
+    }
   }
 
   sealed trait RunError extends RunResult

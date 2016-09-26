@@ -6,6 +6,7 @@ import com.typesafe.config.ConfigFactory
 trait TestConfig {
   lazy val apiConf = TestConfig.apiConf
   lazy val cachedApi = new ZabbixApi(apiConf)
+  sys.addShutdownHook{ cachedApi.close() }
 }
 
 object TestConfig {

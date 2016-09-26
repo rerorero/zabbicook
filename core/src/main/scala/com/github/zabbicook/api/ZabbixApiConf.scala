@@ -14,7 +14,6 @@ import scala.concurrent.ExecutionContext
 case class ZabbixApiConf(
   apiPath: String,
   jsonrpc: String = "2.0",
-  httpClientConfig: AsyncHttpClientConfig = ZabbixApiConf.defaultHttpClientConfig,
   authUser: String,
   authPass: String,
   executionContext: ExecutionContext = ExecutionContext.global
@@ -29,15 +28,15 @@ case class ZabbixApiConf(
       apiPath + "/" + php
     }
   }
-}
-
-object ZabbixApiConf {
-  val defaultHttpClientConfig =
+  def httpClientConfig: AsyncHttpClientConfig = {
     new AsyncHttpClientConfig.Builder()
       .setAcceptAnyCertificate(true)
       .setRequestTimeout(30000)
       .build()
+  }
+}
 
+object ZabbixApiConf {
   def load(config: Config): ZabbixApiConf = {
     ZabbixApiConf(
       apiPath = config.getString("endpoint.url"),

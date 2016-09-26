@@ -80,7 +80,8 @@ object User {
     for {
       alias <- required[String]("alias")
       autologin <- optional[EnabledEnum]("autoLogin")
-      autologout <- optional[Int]("autoLogout")
+      // TODO Can autologout be set ?
+      // autologout <- optional[Int]("autoLogout")
       lang <- optional[String]("lang")
       name <- optional[String]("name")
       surName <- optional[String]("surName")
@@ -93,7 +94,7 @@ object User {
       User(
         alias = alias,
         autologin = autologin,
-        autologout = autologout,
+        // autologout = autologout,
         lang = lang,
         name = name,
         refresh = refresh,
