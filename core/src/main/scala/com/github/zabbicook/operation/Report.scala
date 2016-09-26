@@ -1,6 +1,7 @@
 package com.github.zabbicook.operation
 
 import com.github.zabbicook.entity.Entity
+import play.api.libs.json.{Json, Writes}
 
 /**
   *
@@ -26,6 +27,16 @@ case class Report(
   def isEmpty(): Boolean = count == 0
 
   def count: Int = created.length + deleted.length + updated.length
+
+  def toStringSeq(): Seq[String] = {
+    def toS(count: Int, prefix: String) = if (count > 0) Some(s"$prefix=$count") else None
+    (created ++ updated ++ deleted).map(_.entityName).distinct.map { name =>
+      val c = toS(created.count(_.entityName == name), "created")
+      val u = toS(updated.count(_.entityName == name), "updated")
+      val d = toS(deleted.count(_.entityName == name), "deleted")
+      s"${name} entities modified(${Seq(c,u,d).flatten.mkString(",")})"
+    }
+  }
 }
 
 object Report {
@@ -39,4 +50,14 @@ object Report {
   def updated(e: Seq[Entity]): Report = Report(updated = e.toList)
 
   def empty(): Report = Report()
+
+  implicit val writesJson: Writes[Report] = Writes[Report] { report =>
+    Json.obj(
+      "created" -> report.created.length,
+      "updated" -> report.updated.length,
+      "deleted" -> report.deleted.length,
+      "total" -> report.count,
+      "messages" -> report.toStringSeq()
+    )
+  }
 }

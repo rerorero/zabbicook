@@ -1,7 +1,8 @@
 package com.github.zabbicook.test
 
-import com.github.zabbicook.hostgroup.HostGroup.HostGroupId
-import com.github.zabbicook.hostgroup.{HostGroup, HostGroupOp}
+import com.github.zabbicook.entity.HostGroup
+import com.github.zabbicook.entity.HostGroup.HostGroupId
+import com.github.zabbicook.operation.HostGroupOp
 
 import scala.concurrent.Future
 

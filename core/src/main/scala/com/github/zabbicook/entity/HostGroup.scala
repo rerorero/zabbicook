@@ -1,12 +1,15 @@
-package com.github.zabbicook.hostgroup
+package com.github.zabbicook.entity
 
-import com.github.zabbicook.entity._
-import com.github.zabbicook.hostgroup.HostGroup.HostGroupId
+import com.github.zabbicook.entity.HostGroup.HostGroupId
+import com.github.zabbicook.hocon.HoconReads
+import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json._
 
-sealed abstract class HostGroupFlag(val value: NumProp) extends NumberEnumProp
+sealed abstract class HostGroupFlag(val value: NumProp) extends NumberEnumDescribedWithString {
+  override def validate(): ValidationResult = HostGroupFlag.validate(this)
+}
 
-object HostGroupFlag extends NumberEnumPropCompanion[HostGroupFlag] {
+object HostGroupFlag extends NumberEnumDescribedWithStringCompanion[HostGroupFlag] {
   val all: Set[HostGroupFlag] = Set(plain, discovered, unknown)
   case object plain extends HostGroupFlag(0)
   case object discovered extends HostGroupFlag(4)
@@ -29,6 +32,13 @@ case class HostGroup (
 
 object HostGroup {
   type HostGroupId = String
+
   implicit val apiFormat: Format[HostGroup] = Json.format[HostGroup]
+
+  implicit val hoconReads: HoconReads[HostGroup] = {
+    required[String]("name").map(from)
+  }
+
+  def from(name: String): HostGroup = HostGroup(name = name)
 }
 

@@ -1,7 +1,7 @@
 package com.github.zabbicook.entity
 
 abstract class Entity {
-  def entityName: String = getClass.getName
+  def entityName: String = getClass.getSimpleName
 
   protected[this] def shouldBeUpdated[T](src: Option[T], dest: Option[T]): Boolean = {
     (src, dest) match {

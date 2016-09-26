@@ -11,7 +11,7 @@ class ZabbixApiSpec extends UnitSpec with OperationHelper with TestConfig {
 
   "ZabbixApi.request" should "returns version info" in {
     whenReady(sut.request("apiinfo.version", JsObject(Seq()), auth = false)) { r =>
-      assert(r.as[String].startsWith("3")) // TODO how about comptible with 2.x?
+      assert(r.as[String].startsWith("3")) // TODO how about are comptible with 2.x?
     }
   }
 

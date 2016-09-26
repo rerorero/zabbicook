@@ -11,24 +11,37 @@ val commonSettings = Seq(
     "-Ywarn-unused-import",
     "-Ywarn-unused"
   ),
+  libraryDependencies ++= Seq(
+    "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
+    "ch.qos.logback" % "logback-classic" % "1.1.7",
+    "org.scalatest" % "scalatest_2.11" % "2.2.6" % "test",
+    "org.mockito" % "mockito-all" % "1.10.19" % "test"
+  ),
   parallelExecution in Test := false // due to use a single Zabbix stub server
 )
 
 val core = project.in(file("./core"))
   .settings(commonSettings)
   .settings(
-    name := "zabbicook-api",
+    name := "zabbicook-core",
     libraryDependencies ++= Seq(
       "com.ning" % "async-http-client" % "1.9.33",
       "com.typesafe.play" % "play-json_2.11" % playVersion,
-      "com.typesafe" % "config" % "1.3.0",
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
-      "ch.qos.logback" % "logback-classic" % "1.1.7",
-      "org.scalatest" % "scalatest_2.11" % "2.2.6" % "test",
-      "org.mockito" % "mockito-all" % "1.10.19" % "test"
+      "com.typesafe" % "config" % "1.3.0"
     )
   )
 
+val cli = project.in(file("./cli"))
+  .settings(commonSettings)
+  .settings(
+    name := "zabbicook-cli",
+    resolvers += Resolver.sonatypeRepo("public"),
+    libraryDependencies ++= Seq(
+      "com.github.scopt" %% "scopt" % "3.5.0"
+    )
+  )
+  .dependsOn(core)
+
 val root = Project("zabbicook", file("./"))
-  .aggregate(core)
+  .aggregate(core, cli)
 

@@ -2,7 +2,7 @@ package com.github.zabbicook.api
 
 import java.util.concurrent.atomic.AtomicReference
 
-import com.github.zabbicook.{LoggerName, Logging}
+import com.github.zabbicook.Logging
 import com.ning.http.client.{AsyncCompletionHandler, AsyncHttpClient, Response}
 import play.api.libs.json._
 
@@ -12,7 +12,7 @@ import scala.util.Random
 class ZabbixApi(conf: ZabbixApiConf) extends Logging {
   implicit val executionContext = conf.executionContext
 
-  private[this] val logger = loggerOf(LoggerName.Api)
+  private[this] val logger = defaultLogger
 
   private[this] val client = new AsyncHttpClient(conf.httpClientConfig)
 
@@ -129,7 +129,7 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
       override def onThrowable(t: Throwable): Unit = promise.failure(t)
     }
 
-    client.preparePost(conf.url)
+    client.preparePost(conf.jsonRpcUrl)
       .setHeader("Content-Type", s"application/json-rpc")
       .setBody(paramJson.toString)
       .execute(handler)
@@ -145,11 +145,17 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
       r.getStatusCode match {
         case code if (code / 100) == 2 =>
           Json.parse(r.getResponseBody()) match {
-            case JsObject(m) =>
-              m.get("result").getOrElse {
-                logger.error(s"Request parameter: ${Json.prettyPrint(paramJson)}")
-                logger.error(s"${method} respond ${r.getResponseBody()}")
-                sys.error(s"${method} responds has no result")
+            case JsObject(m) if m.contains("result") =>
+              m.get("result").get
+            case JsObject(m) if m.contains("error") =>
+              Json.fromJson[ZabbixErrorResponse](m.get("error").get) match {
+                case JsSuccess(err, _) =>
+                  throw ErrorResponseException(method, err)
+                case JsError(errors) =>
+                  logger.error(s"Request parameter: ${Json.prettyPrint(paramJson)}")
+                  logger.error(s"${method} respond ${r.getResponseBody()}")
+                  logger.error(s"json errors: ${errors}")
+                  sys.error(s"${method} responds unknown error")
               }
             case els =>
               logger.error(s"Request parameter: ${Json.prettyPrint(paramJson)}")
@@ -157,15 +163,9 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
               sys.error(s"${method} responds unknown format")
           }
         case code =>
-          Json.fromJson[ZabbixErrorResponse](Json.parse(r.getResponseBody())) match {
-            case JsSuccess(err, _) =>
-              throw ErrorResponseException(method, err)
-            case JsError(errors) =>
-              logger.error(s"Request parameter: ${Json.prettyPrint(paramJson)}")
-              logger.error(s"${method} respond ${r.getResponseBody()}")
-              logger.error(s"json errors: ${errors}")
-              sys.error(s"${method} responds unknown error")
-          }
+          logger.error(s"Request parameter: ${Json.prettyPrint(paramJson)}")
+          logger.error(s"${method} respond ${r.getResponseBody()}")
+          throw new ApiException(s"Unkown status($code) respond")
       }
     }
   }

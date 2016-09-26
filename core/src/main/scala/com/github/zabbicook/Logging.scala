@@ -1,24 +1,24 @@
 package com.github.zabbicook
 
-import com.github.zabbicook.LoggerName.Api
 import com.typesafe.scalalogging
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
-
-import scala.collection.concurrent.TrieMap
-
-sealed trait LoggerName
-
-object LoggerName {
-  case object Api extends LoggerName
-}
+import org.slf4j.{Logger => SlfLogger}
+import ch.qos.logback.classic.{Level, Logger => LogbackLogger}
 
 trait Logging {
-  def loggerOf(name: LoggerName): Logger = Logging.all(name)
+  def defaultLogger: Logger = Logging.default
 }
 
 object Logging {
-  val all = TrieMap[LoggerName, Logger](
-    Api -> scalalogging.Logger(LoggerFactory.getLogger("api"))
-  )
+  val default = scalalogging.Logger(LoggerFactory.getLogger("default"))
+
+  def silent(): Unit = setLogLevel(Level.OFF)
+
+  def debugging(): Unit = setLogLevel(Level.DEBUG)
+
+  private[this] def setLogLevel(level: Level): Unit = {
+    val root = LoggerFactory.getLogger(SlfLogger.ROOT_LOGGER_NAME).asInstanceOf[LogbackLogger]
+    root.setLevel(level)
+  }
 }

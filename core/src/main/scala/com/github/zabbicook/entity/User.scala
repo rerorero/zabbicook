@@ -1,24 +1,27 @@
-package com.github.zabbicook.user
+package com.github.zabbicook.entity
 
-import com.github.zabbicook.entity._
-import com.github.zabbicook.user.User.{AutoLogin, UserId}
+import com.github.zabbicook.entity.User.{AutoLogin, UserId}
+import com.github.zabbicook.hocon.HoconReads
+import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json.{Format, Json}
 
-sealed abstract class Theme(val value: String) extends StringEnumProp
+sealed abstract class Theme(val value: String) extends StringEnumProp {
+  override def validate(): ValidationResult = Theme.validate(this)
+}
 
 object Theme extends StringEnumCompanion[Theme] {
-  override val all: Set[Theme] = Set(default,classic,originalBlue,darkBlue,darkOrange,unknown)
+  override val all: Set[Theme] = Set(default,blue,dark,unknown)
   case object default extends Theme("default")
-  case object classic extends Theme("classic")
-  case object originalBlue extends Theme("originalblue")
-  case object darkBlue extends Theme("darkblue")
-  case object darkOrange  extends Theme("darkorange")
+  case object blue  extends Theme("blue-theme")
+  case object dark  extends Theme("dark-theme")
   case object unknown extends Theme("unknown")
 }
 
-sealed abstract class UserType(val value: NumProp) extends NumberEnumProp
+sealed abstract class UserType(val value: NumProp) extends NumberEnumDescribedWithString {
+  override def validate(): ValidationResult = UserType.validate(this)
+}
 
-object UserType extends NumberEnumPropCompanion[UserType] {
+object UserType extends NumberEnumDescribedWithStringCompanion[UserType] {
   override val all: Set[UserType] = Set(user,admin,superAdmin,unknown)
   case object user extends UserType(1)
   case object admin extends UserType(2)
@@ -41,8 +44,9 @@ case class User(
   name: Option[String] = None,
   refresh: Option[NumProp] = None,
   rows_per_page: Option[NumProp] = None,
-  sername: Option[String] = None,
+  surname: Option[String] = None,
   theme: Option[Theme] = None,
+  `type`: Option[UserType] = None,
   url: Option[String] = None
 ) extends Entity {
   def removeReadOnly: User = copy(userid = None)
@@ -61,7 +65,7 @@ case class User(
     shouldBeUpdated(name, constant.name) ||
     shouldBeUpdated(refresh, constant.refresh) ||
     shouldBeUpdated(rows_per_page, constant.rows_per_page) ||
-    shouldBeUpdated(sername, constant.sername) ||
+    shouldBeUpdated(surname, constant.surname) ||
     shouldBeUpdated(theme, constant.theme) ||
     shouldBeUpdated(url, constant.url)
   }
@@ -71,4 +75,34 @@ object User {
   type UserId = String
   type AutoLogin = EnabledEnum
   implicit val format: Format[User] = Json.format[User]
+
+  implicit val hocon: HoconReads[User] = {
+    for {
+      alias <- required[String]("alias")
+      autologin <- optional[EnabledEnum]("autoLogin")
+      autologout <- optional[Int]("autoLogout")
+      lang <- optional[String]("lang")
+      name <- optional[String]("name")
+      surName <- optional[String]("surName")
+      refresh <- optional[Int]("refresh")
+      rowsPerPage <- optional[Int]("rowsPerPage")
+      theme <- optional[Theme]("theme")
+      userType <- optional[UserType]("type")
+      url <- optional[String]("url")
+    } yield {
+      User(
+        alias = alias,
+        autologin = autologin,
+        autologout = autologout,
+        lang = lang,
+        name = name,
+        refresh = refresh,
+        rows_per_page = rowsPerPage,
+        surname = surName,
+        theme = theme,
+        `type` = userType,
+        url = url
+      )
+    }
+  }
 }

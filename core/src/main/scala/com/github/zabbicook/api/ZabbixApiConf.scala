@@ -6,19 +6,30 @@ import com.typesafe.config.Config
 import scala.concurrent.ExecutionContext
 
 /**
-  * @param url zabbix API URL ex) http://company.com/zabbix/api_jsonrpc.php
+  * @param apiPath zabbix API URL ex) http://company.com/zabbix/api_jsonrpc.php
   * @param jsonrpc jsonrpc version
   * @param httpClientConfig HttpClientConfig
   * @param executionContext execution context
   */
 case class ZabbixApiConf(
-  url: String,
+  apiPath: String,
   jsonrpc: String = "2.0",
   httpClientConfig: AsyncHttpClientConfig = ZabbixApiConf.defaultHttpClientConfig,
   authUser: String,
   authPass: String,
   executionContext: ExecutionContext = ExecutionContext.global
-)
+) {
+  val jsonRpcUrl = {
+    val php = "api_jsonrpc.php"
+    if (apiPath.endsWith(php)) {
+      apiPath
+    } else if (apiPath.endsWith("/")) {
+      apiPath + php
+    } else {
+      apiPath + "/" + php
+    }
+  }
+}
 
 object ZabbixApiConf {
   val defaultHttpClientConfig =
@@ -29,7 +40,7 @@ object ZabbixApiConf {
 
   def load(config: Config): ZabbixApiConf = {
     ZabbixApiConf(
-      url = config.getString("endpoint.url"),
+      apiPath = config.getString("endpoint.url"),
       authUser = config.getString("endpoint.auth.user"),
       authPass = config.getString("endpoint.auth.password")
     )

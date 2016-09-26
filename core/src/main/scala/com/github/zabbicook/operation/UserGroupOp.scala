@@ -1,11 +1,12 @@
-package com.github.zabbicook.user
+package com.github.zabbicook.operation
 
+import com.github.zabbicook.Logging
 import com.github.zabbicook.api.ZabbixApi
-import com.github.zabbicook.hostgroup.HostGroupOp
-import com.github.zabbicook.operation._
-import com.github.zabbicook.user.User._
-import com.github.zabbicook.user.UserGroup.UserGroupId
-import com.github.zabbicook.{LoggerName, Logging}
+import com.github.zabbicook.entity.User._
+import com.github.zabbicook.entity.UserGroup.UserGroupId
+import com.github.zabbicook.entity.{Permission, UserGroup, UserGroupPermission}
+import com.github.zabbicook.hocon.HoconReads
+import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json.{JsObject, Json}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -17,7 +18,7 @@ import scala.util.control.NonFatal
   */
 class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
   private[this] val hostGroupOp = new HostGroupOp(api)
-  private[this] val logger = loggerOf(LoggerName.Api)
+  private[this] val logger = defaultLogger
 
   def findByName(name: String): Future[Option[(UserGroup, Seq[UserGroupPermission])]] = {
     val param = Json.obj()
@@ -100,46 +101,40 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
     * keep the status of the user group to be constant.
     * If the user group with the specified name does not exist, create it.
     * If already exists , it fills the gap.
-    * @param userGroup User group
-    * @param permissionsOfHosts Pairs of name of a host group and a permission which describes the access level to the host.
-    *                           The specified host groups must be presented before calling this.
     * @return User group id and operation state
     */
-  def present(
-    userGroup: UserGroup,
-    permissionsOfHosts: Map[String, Permission]
-  ): Future[(UserGroupId, Report)] = {
+  def present(userGroup: UserGroupConfig): Future[(UserGroupId, Report)] = {
     // convert to UserGroupPermission object
-    val permissionsFut = hostGroupOp.findByNamesAbsolutely(permissionsOfHosts.keys.toSeq).map {
+    val permissionsFut = hostGroupOp.findByNamesAbsolutely(userGroup.permissionsOfHosts.keys.toSeq).map {
       _.map { group =>
         val id = group.groupid.getOrElse(sys.error(s"HostGroupOp.findByName(${group.name}) returns no host group id"))
-        val permission = permissionsOfHosts(group.name)
+        val permission = userGroup.permissionsOfHosts(group.name)
         UserGroupPermission(id, permission)
       }
     }
 
     for {
       permissions <- permissionsFut
-      storedOpt <- findByName(userGroup.name)
+      storedOpt <- findByName(userGroup.userGroup.name)
       result <- storedOpt match {
         case Some((storedUserGroup, storedPermissions)) =>
           val id = storedUserGroup.usrgrpid.getOrElse(sys.error("UserGroup.findByName returns no id"))
           if (
-            storedUserGroup.shouldBeUpdated(userGroup) ||
+            storedUserGroup.shouldBeUpdated(userGroup.userGroup) ||
             storedPermissions.toSet != permissions.toSet
           ) {
-            update(userGroup.copy(usrgrpid = Some(id)), permissions)
+            update(userGroup.userGroup.copy(usrgrpid = Some(id)), permissions)
           } else {
             Future.successful((id, Report.empty()))
           }
         case None =>
-          create(userGroup, permissions)
+          create(userGroup.userGroup, permissions)
       }
     } yield result
   }
 
-  def present(groups: Seq[(UserGroup, Map[String, Permission])]): Future[(Seq[UserGroupId], Report)] = {
-    traverseOperations(groups)(g => present(g._1, g._2))
+  def present(groups: Seq[UserGroupConfig]): Future[(Seq[UserGroupId], Report)] = {
+    traverseOperations(groups)(present)
   }
 
   /**
@@ -150,5 +145,23 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
       r <- findByNames(groupNames)
       ids <- delete(r.map(_._1))
     } yield ids
+  }
+}
+
+/**
+  * @param userGroup User group
+  * @param permissionsOfHosts Pairs of name of a host group and a permission which describes the access level to the host.
+  *                           The specified host groups must be presented before calling present() function.
+  */
+case class UserGroupConfig(userGroup: UserGroup, permissionsOfHosts: Map[String, Permission])
+
+object UserGroupConfig {
+  implicit val hoconReads: HoconReads[UserGroupConfig] = {
+    for {
+      userGroup <- of[UserGroup]
+      permission <- required[Map[String, Permission]]("permission")
+    } yield {
+      UserGroupConfig(userGroup, permission)
+    }
   }
 }

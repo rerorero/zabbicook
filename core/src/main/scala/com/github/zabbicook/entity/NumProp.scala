@@ -12,6 +12,7 @@ case class NumProp(value: Int)
   */
 object NumProp {
   implicit def numToNumProp(n: Int): NumProp = NumProp(n)
+  implicit def numToNumProp(n: Option[Int]): Option[NumProp] = n.map(numToNumProp)
 
   implicit val format: Format[NumProp] = Format(
     Reads[NumProp] {

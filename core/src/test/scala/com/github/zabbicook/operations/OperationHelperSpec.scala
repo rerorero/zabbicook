@@ -1,4 +1,4 @@
-package com.github.zabbicook
+package com.github.zabbicook.operations
 
 import com.github.zabbicook.operation.OperationHelper
 import com.github.zabbicook.test.UnitSpec

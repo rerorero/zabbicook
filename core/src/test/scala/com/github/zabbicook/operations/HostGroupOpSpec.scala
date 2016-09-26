@@ -1,6 +1,7 @@
-package com.github.zabbicook.api.hostgroup
+package com.github.zabbicook.operations
 
-import com.github.zabbicook.hostgroup.{HostGroup, HostGroupFlag, HostGroupOp}
+import com.github.zabbicook.entity.{HostGroup, HostGroupFlag}
+import com.github.zabbicook.operation.HostGroupOp
 import com.github.zabbicook.test.{TestHostGroups, UnitSpec}
 
 class HostGroupOpSpec extends UnitSpec with TestHostGroups {
@@ -52,5 +53,4 @@ class HostGroupOpSpec extends UnitSpec with TestHostGroups {
       }
     }
   }
-
 }

@@ -1,8 +1,8 @@
-package com.github.zabbicook.hostgroup
+package com.github.zabbicook.operation
 
 import com.github.zabbicook.api.ZabbixApi
-import com.github.zabbicook.hostgroup.HostGroup.HostGroupId
-import com.github.zabbicook.operation.{NoSuchEntityException, OperationHelper, Report}
+import com.github.zabbicook.entity.HostGroup
+import com.github.zabbicook.entity.HostGroup.HostGroupId
 import play.api.libs.json.Json
 
 import scala.concurrent.ExecutionContext.Implicits.global

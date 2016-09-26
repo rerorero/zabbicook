@@ -1,10 +1,12 @@
-package com.github.zabbicook.user
+package com.github.zabbicook.operation
 
+import com.github.zabbicook.Logging
 import com.github.zabbicook.api.{ErrorResponseException, ZabbixApi}
-import com.github.zabbicook.operation.{NoSuchEntityException, OperationHelper, Report}
-import com.github.zabbicook.user.User.UserId
-import com.github.zabbicook.user.UserGroup.UserGroupId
-import com.github.zabbicook.{LoggerName, Logging}
+import com.github.zabbicook.entity.User.UserId
+import com.github.zabbicook.entity.UserGroup.UserGroupId
+import com.github.zabbicook.entity.{User, UserGroup}
+import com.github.zabbicook.hocon.HoconReads
+import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -16,7 +18,7 @@ import scala.concurrent.Future
   */
 class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
 
-  private[this] val logger = loggerOf(LoggerName.Api)
+  private[this] val logger = defaultLogger
 
   private[this] lazy val userGroupOp = new UserGroupOp(api)
 
@@ -91,7 +93,7 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
       case Some((user, _)) =>
         val params = Json.obj()
           .prop("user"->alias)
-          .prop("passwd" -> presentedPass)
+          .prop("password" -> presentedPass)
         // attempt to login
         api.request("user.login", params, auth = false)
           .map { _ =>
@@ -101,7 +103,7 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
           }
           .recoverWith {
           case ErrorResponseException(_, response, _) if response.data.contains("incorrect") =>
-            logger.debug(s"presentPassword does nothing with: ${alias}")
+            logger.debug(s"presentPassword will change password for: ${alias}")
             updatePassword(user, presentedPass)
         }
       case None =>
@@ -114,41 +116,48 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
     * If the user with the specified alias does not exist, create it.
     * If already exists, it fills the gap.
     */
-  def present(user: User, userGroupNames: Seq[String], password: String): Future[(UserId, Report)] = {
-    val groupIdsFut = userGroupOp.findByNamesAbsolutely(userGroupNames)
+  def present(userConf: UserConfig): Future[(UserId, Report)] = {
+    val groupIdsFut = userGroupOp.findByNamesAbsolutely(userConf.groupNames.toSeq)
       .map(_.map(_._1.usrgrpid.getOrElse(sys.error(s"UserGroupOp returns no id."))))
 
-    findByAlias(user.alias).flatMap {
+    val generate = findByAlias(userConf.user.alias).flatMap {
       case Some((storedUser, storedGroups)) =>
         val id = storedUser.userid.getOrElse(sys.error("findByAlias returns no user id"))
         if (
-          storedUser.shouldBeUpdated(user) ||
-          storedGroups.map(_.name).toSet != userGroupNames.toSet
+          storedUser.shouldBeUpdated(userConf.user) ||
+          storedGroups.map(_.name).toSet != userConf.groupNames.toSet
         ) {
-          logger.debug(s"presentUser attempt to update user: ${user.alias}")
+          logger.debug(s"presentUser attempt to update user: ${userConf.user.alias}")
           for {
             gids <- groupIdsFut
-            results <- update(user.copy(userid = Some(id)), gids)
+            results <- update(userConf.user.copy(userid = Some(id)), gids)
           } yield results
 
         } else {
-          logger.debug(s"presentUser did nothing with: ${user.alias}")
+          logger.debug(s"presentUser did nothing with: ${userConf.user.alias}")
           Future.successful((id, Report.empty()))
         }
       case None =>
-        logger.debug(s"presentUser attempt to create user: ${user.alias}")
+        logger.debug(s"presentUser attempt to create user: ${userConf.user.alias}")
         for {
           gids <- groupIdsFut
-          results <- create(user, gids, password)
+          results <- create(userConf.user, gids, userConf.password)
         } yield results
+    }
+
+    for {
+      (uid, rGen) <- generate
+      (_, rPass) <- presentPassword(userConf.user.alias, userConf.password)
+    } yield {
+      (uid, rGen + rPass)
     }
   }
 
   /**
     * @param userAndPasswords triples of (user object, names of groups, password)
     */
-  def present(userAndPasswords: Seq[(User, Seq[String], String)]): Future[(Seq[UserId], Report)] = {
-    traverseOperations(userAndPasswords)(uap => present(uap._1, uap._2, uap._3))
+  def present(userAndPasswords: Seq[UserConfig]): Future[(Seq[UserId], Report)] = {
+    traverseOperations(userAndPasswords)(present)
   }
 
   /**
@@ -159,5 +168,25 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
       storedUsers <- findByAliases(aliases)
       tpl <- delete(storedUsers.map(_._1))
     } yield tpl
+  }
+}
+
+/**
+  * @param user user object
+  * @param groupNames names of groups to which the user belongs
+  * @param password password (it is used only if the user does not exist yet)
+  * TODO: Do we need to separate the password from here?
+  */
+case class UserConfig(user: User, groupNames: Set[String], password: String)
+
+object UserConfig {
+  implicit val hoconReads: HoconReads[UserConfig] = {
+    for {
+      user <- of[User]
+      groupNames <- required[Set[String]]("groups")
+      password <- required[String]("password")
+    } yield {
+      UserConfig(user, groupNames, password)
+    }
   }
 }

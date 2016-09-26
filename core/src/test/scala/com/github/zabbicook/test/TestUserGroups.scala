@@ -1,8 +1,9 @@
 package com.github.zabbicook.test
 
-import com.github.zabbicook.hostgroup.HostGroup.HostGroupId
-import com.github.zabbicook.user.UserGroup.UserGroupId
-import com.github.zabbicook.user.{Permission, UserGroup, UserGroupOp}
+import com.github.zabbicook.entity.HostGroup.HostGroupId
+import com.github.zabbicook.entity.UserGroup.UserGroupId
+import com.github.zabbicook.entity.{Permission, UserGroup}
+import com.github.zabbicook.operation.{UserGroupConfig, UserGroupOp}
 
 trait TestUserGroups extends TestConfig with TestHostGroups { self: UnitSpec =>
   private[this] lazy val testUserGroupOp = new UserGroupOp(cachedApi)
@@ -11,8 +12,8 @@ trait TestUserGroups extends TestConfig with TestHostGroups { self: UnitSpec =>
     * you can override to customize generated users.
     */
   protected[this] val testUserGroups = Seq(
-    (UserGroup(name = specName("group1")), Map(testHostGroups(0).name -> Permission.readOnly)),
-    (UserGroup(name = specName("group2")), Map(testHostGroups(1).name -> Permission.readWrite))
+    UserGroupConfig(UserGroup(name = specName("group1")), Map(testHostGroups(0).name -> Permission.readOnly)),
+    UserGroupConfig(UserGroup(name = specName("group2")), Map(testHostGroups(1).name -> Permission.readWrite))
   )
 
   def presentTestUserGroups(): (Seq[UserGroupId], Seq[HostGroupId])  = {
@@ -23,7 +24,7 @@ trait TestUserGroups extends TestConfig with TestHostGroups { self: UnitSpec =>
   }
 
   def cleanTestUserGroups(): Unit = {
-    await(testUserGroupOp.absent(testUserGroups.map(_._1.name)))
+    await(testUserGroupOp.absent(testUserGroups.map(_.userGroup.name)))
     cleanTestHostGroups()
   }
 }
