@@ -10,17 +10,15 @@ class UserSpec extends UnitSpec {
       s"""{
          |alias: "Alice"
          |autoLogin: true
-         |autoLogout: 10
          |theme: "dark"
          |type: "user"
          |}""".stripMargin
     val HoconSuccess(actual) = HoconReader.read[User](s)
-    assert(actual === User(
+    assert(User(
       alias = "Alice",
       autologin = Some(EnabledEnum.enabled),
-      autologout = Some(NumProp(10)),
       theme = Some(Theme.dark),
       `type` = Some(UserType.user)
-    ))
+    ) === actual)
   }
 }

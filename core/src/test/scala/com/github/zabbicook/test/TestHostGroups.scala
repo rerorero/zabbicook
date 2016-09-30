@@ -18,7 +18,7 @@ trait TestHostGroups extends TestConfig { self: UnitSpec =>
   )
 
   def presentTestHostGroups(): Seq[HostGroupId] = {
-    await(Future.traverse(testHostGroups) (g => testHostGroupOp.create(g)).map(_.map(_._1)))
+    await(Future.traverse(testHostGroups) (g => testHostGroupOp.present(g)).map(_.map(_._1)))
   }
 
   def cleanTestHostGroups(): Unit = {

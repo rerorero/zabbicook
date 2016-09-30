@@ -36,9 +36,9 @@ object HostGroup {
   implicit val apiFormat: Format[HostGroup] = Json.format[HostGroup]
 
   implicit val hoconReads: HoconReads[HostGroup] = {
-    required[String]("name").map(from)
+    required[String]("name").map(fromString)
   }
 
-  def from(name: String): HostGroup = HostGroup(name = name)
+  def fromString(name: String): HostGroup = HostGroup(name = name)
 }
 

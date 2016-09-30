@@ -14,7 +14,7 @@ case class Recipe(
 object Recipe {
   implicit val hoconReads: HoconReads[Recipe] = {
     for {
-      hostGroups <- optional[Seq[String]]("hostGroups").map(_.map(_.map(HostGroup.from)))
+      hostGroups <- optional[Seq[String]]("hostGroups").map(_.map(_.map(HostGroup.fromString)))
       userGroups <- optionalMapToSet[UserGroupConfig]("userGroups", "name")
       users <- optionalMapToSet[UserConfig]("users", "alias")
     } yield {

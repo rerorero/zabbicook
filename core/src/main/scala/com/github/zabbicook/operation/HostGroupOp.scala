@@ -24,7 +24,7 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper {
     findByNames(names).map { results =>
       if (results.length < names.length) {
         val notFounds = (names.toSet -- results.map(_.name).toSet).mkString(",")
-        throw NoSuchEntityException(s"No such host groups are not found: ${notFounds}")
+        throw NoSuchEntityException(s"No such host groups: ${notFounds}")
       }
       results
     }
@@ -58,6 +58,11 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper {
   // There are no writable properties of HostGroup,
   // so we do not have update() method.
 
+  /**
+    * Keep the status of the HostGroup to be constant.
+    * If the host group specified name does not exist, create it.
+    * If already exists, it fills the gap.
+    */
   def present(group: HostGroup): Future[(HostGroupId, Report)] = {
     findByName(group.name).flatMap {
       case Some(stored) =>
