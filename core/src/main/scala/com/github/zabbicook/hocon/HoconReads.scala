@@ -9,16 +9,26 @@ import scala.collection.JavaConversions._
 trait HoconReads[T] { self =>
   def read(o: Config): HoconResult[T]
 
+  def acceptableKeys: Option[Set[String]] = None
+
   def map[U](f: T => U): HoconReads[U] = HoconReads[U] { conf => self.read(conf).map(f) }
 
   def flatMap[U](f: T => HoconReads[U]): HoconReads[U] = HoconReads[U] { conf =>
     self.read(conf).flatMap(f(_).read(conf))
   }
+
+  def withAcceptableKeys(keys: String*): HoconReads[T] =
+    HoconReads.withAcceptableKeys(keys.toSet)(self.read)
 }
 
 object HoconReads {
   def apply[T](f: Config => HoconResult[T]): HoconReads[T] = new HoconReads[T] {
     override def read(o: Config): HoconResult[T] = f(o)
+  }
+
+  def withAcceptableKeys[T](keys: Set[String])(f: Config => HoconResult[T]): HoconReads[T] = new HoconReads[T] {
+    override def read(o: Config): HoconResult[T] = f(o)
+    override val acceptableKeys: Option[Set[String]] = Some(keys)
   }
 
   def of[T](implicit reads: HoconReads[T]) = reads
@@ -68,7 +78,15 @@ object HoconReads {
 
   implicit def objetConfigFunc[T](implicit reads: HoconReads[T]): ConfigFunc[T] = ConfigFunc((config, path) => {
     if (config.hasPath(path)) {
-      reads.read(config.getObject(path).toConfig).map(Some(_))
+      val obj = config.getObject(path)
+      // verify names of the fields in the object are all acceptable
+      val keys = reads.acceptableKeys.map(valids => (valids, obj.keySet() -- valids))
+      keys match {
+        case Some((valids, invalids)) if !invalids.isEmpty =>
+          HoconError.UnrecognizedKeys(config.origin(), invalids.toSet, valids, path)
+        case _ =>
+          reads.read(obj.toConfig).map(Some(_))
+      }
     } else {
       HoconSuccess(None)
     }

@@ -90,11 +90,11 @@ object Host {
   implicit val format: Format[Host] = Json.format[Host]
 
   implicit val hocon: HoconReads[Host] = {
-    for {
+    val reads = for {
       host <- required[String]("hostname")
       description <- optional[String]("description")
       inventory_mode <- optional[InventoryMode]("inventoryMode")
-      ipmi_authtype <- optional[IpmiAuthAlgo]("ipmiAuthAlogrithm")
+      ipmi_authtype <- optional[IpmiAuthAlgo]("ipmiAuthAlgorithm")
       ipmi_privilege <- optional[IpmiPrivilege]("ipmiPrivilegeLevel")
       ipmi_username <- optional[String]("ipmiUser")
       ipmi_password <- optional[String]("ipmiPass")
@@ -113,5 +113,16 @@ object Host {
         status = status
       )
     }
+    reads.withAcceptableKeys(
+      "hostname",
+      "description",
+      "inventoryMode",
+      "ipmiAuthAlgorithm",
+      "ipmiPrivilegeLevel",
+      "ipmiUser",
+      "ipmiPass",
+      "visibleName",
+      "enabled"
+    )
   }
 }

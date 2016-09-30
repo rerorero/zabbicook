@@ -50,16 +50,17 @@ object UserGroup {
   implicit val format2: Format[UserGroup[NotStored]] = Json.format[UserGroup[NotStored]]
 
   implicit val hoconReads: HoconReads[UserGroup[NotStored]] = {
-    for {
+    val reads = for {
       name <- required[String]("name")
       debugMode <- optional[DebugMode]("debugMode")
       userStatus <- optional[State]("enabled")
     } yield {
-      UserGroup(
+      UserGroup[NotStored](
         name = name,
         debug_mode = debugMode,
         users_status = userStatus
       )
     }
+    reads.withAcceptableKeys("name", "debugMode", "enabled")
   }
 }

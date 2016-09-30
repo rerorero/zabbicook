@@ -88,7 +88,7 @@ object User {
   implicit val format2: Format[User[NotStored]] = Json.format[User[NotStored]]
 
   implicit val hocon: HoconReads[User[NotStored]] = {
-    for {
+    val reads = for {
       alias <- required[String]("alias")
       autologin <- optional[EnabledEnum]("autoLogin")
       // TODO Can autologout be set ?
@@ -102,7 +102,7 @@ object User {
       userType <- optional[UserType]("type")
       url <- optional[String]("url")
     } yield {
-      User(
+      User[NotStored](
         alias = alias,
         autologin = autologin,
         // autologout = autologout,
@@ -116,5 +116,17 @@ object User {
         url = url
       )
     }
+    reads.withAcceptableKeys(
+      "alias",
+      "autoLogin",
+      "lang",
+      "name",
+      "surName",
+      "refresh",
+      "rowsPerPage",
+      "theme",
+      "type",
+      "url"
+    )
   }
 }

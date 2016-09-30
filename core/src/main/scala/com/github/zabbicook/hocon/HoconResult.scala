@@ -53,6 +53,9 @@ object HoconError {
   case class InvalidConditionProperty(origin: ConfigOrigin, error: Invalid, path: String)
     extends HoconError(error.detail + s" for '${path}'", Some(origin))
 
+  case class UnrecognizedKeys(origin: ConfigOrigin, invalids: Set[String], acceptables: Set[String], path: String)
+    extends HoconError(s"'Unrecognized fields(${invalids.mkString(",")}) of ${path}. Valid fields are (${acceptables.mkString(",")})'", Some(origin))
+
   def from(e: ConfigException): HoconError = {
     e match {
       case ee: ConfigException.WrongType => TypeMismatched(ee)

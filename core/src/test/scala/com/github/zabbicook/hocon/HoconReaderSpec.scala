@@ -32,7 +32,7 @@ class HoconReaderSpec extends UnitSpec {
   case class Person(name: String, age: Option[Int] = None, address: Option[Address] = None, income: Option[Income] = None)
 
   implicit val personReads: HoconReads[Person] = {
-    for {
+    val reads = for {
       name <- required[String]("name")
       age <- optional[Int]("age")
       address <- optional[Address]("address")
@@ -40,6 +40,7 @@ class HoconReaderSpec extends UnitSpec {
     } yield {
       Person(name, age, address, income)
     }
+    reads.withAcceptableKeys("name", "age", "address", "income")
   }
 
   case class World(me: Person, others: Seq[Person], god: Option[Person])
@@ -140,5 +141,19 @@ class HoconReaderSpec extends UnitSpec {
       Person(name = "Alice Alice", address = Some(Address.earth)),
       Person(name = "Bob Bob", address = Some(Address.other))
     )))
+  }
+
+  "read" should "fail with unrecognized keys" in {
+    val s =
+      """
+        |{
+        |  me: { name: "Alice", ages: 10, hooo: "earth" }
+        |  others: []
+        |}
+      """.stripMargin
+    val r = HoconReader.read[World](ConfigFactory.parseString(s))
+    assert(r.isInstanceOf[HoconError.UnrecognizedKeys])
+    assert(r.asInstanceOf[HoconError.UnrecognizedKeys].invalids === Set("ages", "hooo"))
+    assert(r.asInstanceOf[HoconError.UnrecognizedKeys].acceptables === Set("name", "age", "address", "income"))
   }
 }

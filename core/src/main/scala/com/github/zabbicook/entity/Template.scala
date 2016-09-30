@@ -46,16 +46,17 @@ object Template {
   implicit val format2: Format[Template[NotStored]] = Json.format[Template[NotStored]]
 
   implicit val hocon: HoconReads[Template[NotStored]] = {
-    for {
+    val reads = for {
       host <- required[String]("name")
       description <- optional[String]("description")
       name <- optional[String]("visibleName")
     } yield {
-      Template(
+      Template[NotStored](
         host = host,
         description = description,
         name = name
       )
     }
+    reads.withAcceptableKeys("name", "description", "visibleName")
   }
 }
