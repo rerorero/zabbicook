@@ -1,12 +1,13 @@
 package com.github.zabbicook.recipe
 
+import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.HostGroup
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
 import com.github.zabbicook.operation.{UserConfig, UserGroupConfig}
 
 case class Recipe(
-  hostGroups: Seq[HostGroup],
+  hostGroups: Seq[HostGroup[NotStored]],
   userGroupsAndPermissions: Set[UserGroupConfig],
   users: Set[UserConfig]
 )

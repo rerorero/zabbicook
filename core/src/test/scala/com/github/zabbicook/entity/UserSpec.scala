@@ -1,5 +1,6 @@
 package com.github.zabbicook.entity
 
+import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.hocon.{HoconReader, HoconSuccess}
 import com.github.zabbicook.test.UnitSpec
 
@@ -13,8 +14,8 @@ class UserSpec extends UnitSpec {
          |theme: "dark"
          |type: "user"
          |}""".stripMargin
-    val HoconSuccess(actual) = HoconReader.read[User](s)
-    assert(User(
+    val HoconSuccess(actual) = HoconReader.read[User[NotStored]](s)
+    assert(User[NotStored](
       alias = "Alice",
       autologin = Some(EnabledEnum.enabled),
       theme = Some(Theme.dark),

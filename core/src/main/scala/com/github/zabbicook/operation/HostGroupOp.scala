@@ -1,26 +1,27 @@
 package com.github.zabbicook.operation
 
 import com.github.zabbicook.api.ZabbixApi
+import com.github.zabbicook.entity.Entity.{NotStored, Stored}
+import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.HostGroup
-import com.github.zabbicook.entity.HostGroup.HostGroupId
 import play.api.libs.json.Json
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 class HostGroupOp(api: ZabbixApi) extends OperationHelper {
 
-  def findByName(name: String): Future[Option[HostGroup]] = {
-    api.requestSingleAs[HostGroup]("hostgroup.get", Json.obj().filter("name" -> name).outExtend())
+  def findByName(name: String): Future[Option[HostGroup[Stored]]] = {
+    api.requestSingleAs[HostGroup[Stored]]("hostgroup.get", Json.obj().filter("name" -> name).outExtend())
   }
 
-  def findByNames(names: Seq[String]): Future[Seq[HostGroup]] = {
+  def findByNames(names: Seq[String]): Future[Seq[HostGroup[Stored]]] = {
     Future.traverse(names)(findByName).map(_.flatten)
   }
 
   /**
     * If any one of names does not exist, throw an Exception
     */
-  def findByNamesAbsolutely(names: Seq[String]): Future[Seq[HostGroup]] = {
+  def findByNamesAbsolutely(names: Seq[String]): Future[Seq[HostGroup[Stored]]] = {
     findByNames(names).map { results =>
       if (results.length < names.length) {
         val notFounds = (names.toSet -- results.map(_.name).toSet).mkString(",")
@@ -30,10 +31,10 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper {
     }
   }
 
-  def create(group: HostGroup): Future[(HostGroupId, Report)] = {
-    val param = Json.toJson(group.removeReadOnly)
-    api.requestSingleId[HostGroupId]("hostgroup.create", param, "groupids")
-      .map((_, Report.created(group)))
+  def create(group: HostGroup[NotStored]): Future[(StoredId, Report)] = {
+    val param = Json.toJson(group)
+    api.requestSingleId("hostgroup.create", param, "groupids")
+      .map(id => (id, Report.created(group.toStored(id))))
   }
 
   /**
@@ -44,13 +45,13 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper {
     * - it is used in a global script;
     * - it is used in a correlation condition.
     */
-  def delete(groups: Seq[HostGroup]): Future[(Seq[HostGroupId], Report)] = {
+  def delete(groups: Seq[HostGroup[Stored]]): Future[(Seq[StoredId], Report)] = {
     if (groups.isEmpty) {
       Future.successful((Seq(), Report.empty()))
     } else {
-      val ids = groups.map(g => g.groupid.getOrElse(sys.error(s"HostGroup ${g.name} to be deleted has no id.")))
+      val ids = groups.map(g => g.getStoredId.id)
       val param = Json.toJson(ids)
-      api.requestIds[HostGroupId]("hostgroup.delete", param, "groupids")
+      api.requestIds("hostgroup.delete", param, "groupids")
         .map((_, Report.deleted(groups)))
     }
   }
@@ -63,17 +64,16 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper {
     * If the host group specified name does not exist, create it.
     * If already exists, it fills the gap.
     */
-  def present(group: HostGroup): Future[(HostGroupId, Report)] = {
+  def present(group: HostGroup[NotStored]): Future[(StoredId, Report)] = {
     findByName(group.name).flatMap {
       case Some(stored) =>
-        val id = stored.groupid.getOrElse(sys.error(s"HostGroup.findByName returns no id."))
-        Future.successful((id, Report.empty()))
+        Future.successful((stored.getStoredId, Report.empty()))
       case None =>
         create(group)
     }
   }
 
-  def present(groups: Seq[HostGroup]): Future[(Seq[HostGroupId], Report)] = {
+  def present(groups: Seq[HostGroup[NotStored]]): Future[(Seq[StoredId], Report)] = {
     traverseOperations(groups)(present)
   }
 
@@ -81,7 +81,7 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper {
     * @param names names of host groups to be deleted
     * @return
     */
-  def absent(names: Seq[String]): Future[(Seq[HostGroupId], Report)] = {
+  def absent(names: Seq[String]): Future[(Seq[StoredId], Report)] = {
     findByNames(names).flatMap(delete)
   }
 }

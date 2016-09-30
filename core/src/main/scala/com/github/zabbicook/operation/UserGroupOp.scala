@@ -2,8 +2,8 @@ package com.github.zabbicook.operation
 
 import com.github.zabbicook.Logging
 import com.github.zabbicook.api.ZabbixApi
-import com.github.zabbicook.entity.User._
-import com.github.zabbicook.entity.UserGroup.UserGroupId
+import com.github.zabbicook.entity.Entity.{NotStored, Stored}
+import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.{Permission, UserGroup, UserGroupPermission}
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
@@ -20,7 +20,7 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
   private[this] val hostGroupOp = new HostGroupOp(api)
   private[this] val logger = defaultLogger
 
-  def findByName(name: String): Future[Option[(UserGroup, Seq[UserGroupPermission])]] = {
+  def findByName(name: String): Future[Option[(UserGroup[Stored], Seq[UserGroupPermission[Stored]])]] = {
     val param = Json.obj()
       .filter("name" -> name)
       .prop("selectRights" -> "extend")
@@ -29,8 +29,8 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
       _.map {
         case root: JsObject =>
           try {
-            val userGroup = Json.fromJson[UserGroup](root).get
-            val rights = Json.fromJson[Seq[UserGroupPermission]]((root \ "rights").get).get
+            val userGroup = Json.fromJson[UserGroup[Stored]](root).get
+            val rights = Json.fromJson[Seq[UserGroupPermission[Stored]]]((root \ "rights").get).get
             (userGroup, rights)
           } catch {
             case NonFatal(e) =>
@@ -44,14 +44,14 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
     }
   }
 
-  def findByNames(names: Seq[String]): Future[Seq[(UserGroup, Seq[UserGroupPermission])]] = {
+  def findByNames(names: Seq[String]): Future[Seq[(UserGroup[Stored], Seq[UserGroupPermission[Stored]])]] = {
     Future.traverse(names)(name => findByName(name)).map(_.flatten)
   }
 
   /**
     * If any one of names does not exist, throw an Exception
     */
-  def findByNamesAbsolutely(names: Seq[String]): Future[Seq[(UserGroup, Seq[UserGroupPermission])]] = {
+  def findByNamesAbsolutely(names: Seq[String]): Future[Seq[(UserGroup[Stored], Seq[UserGroupPermission[Stored]])]] = {
     findByNames(names).map { results =>
       if (results.length < names.length) {
         val notFounds = (names.toSet -- results.map(_._1.name).toSet).mkString(",")
@@ -68,31 +68,31 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
     *         throw an Exception if group already exists
     */
   def create(
-    group: UserGroup,
-    rights: Seq[UserGroupPermission]
-  ): Future[(UserGroupId, Report)] = {
-    val param = Json.toJson(group.removeReadOnly).as[JsObject]
+    group: UserGroup[NotStored],
+    rights: Seq[UserGroupPermission[Stored]]
+  ): Future[(StoredId, Report)] = {
+    val param = Json.toJson(group).as[JsObject]
         .prop("rights" -> rights)
-    api.requestSingleId[UserGroupId]("usergroup.create", param, "usrgrpids")
-      .map((_, Report.created(group)))
+    api.requestSingleId("usergroup.create", param, "usrgrpids")
+      .map(id => (id, Report.created(group.toStored(id))))
   }
 
   def update(
-    group: UserGroup,
-    rights: Seq[UserGroupPermission]
-  ): Future[(UserGroupId, Report)] = {
+    group: UserGroup[Stored],
+    rights: Seq[UserGroupPermission[Stored]]
+  ): Future[(StoredId, Report)] = {
     val param = Json.toJson(group).as[JsObject]
       .prop("rights" -> rights)
-    api.requestSingleId[UserGroupId]("usergroup.update", param, "usrgrpids")
+    api.requestSingleId("usergroup.update", param, "usrgrpids")
       .map((_, Report.updated(group)))
   }
 
-  def delete(groups: Seq[UserGroup]): Future[(Seq[UserId], Report)] = {
+  def delete(groups: Seq[UserGroup[Stored]]): Future[(Seq[StoredId], Report)] = {
     if (groups.isEmpty) {
       Future.successful((Seq(), Report.empty()))
     } else {
-      val param = Json.toJson(groups.map(_.usrgrpid.getOrElse(sys.error(s"usergroup.delete requires ids"))))
-      api.requestIds[UserGroupId]("usergroup.delete", param, "usrgrpids")
+      val param = Json.toJson(groups.map(_.getStoredId))
+      api.requestIds("usergroup.delete", param, "usrgrpids")
         .map((_, Report.deleted(groups)))
     }
   }
@@ -103,13 +103,11 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
     * If already exists , it fills the gap.
     * @return User group id and operation state
     */
-  def present(userGroup: UserGroupConfig): Future[(UserGroupId, Report)] = {
+  def present(userGroup: UserGroupConfig): Future[(StoredId, Report)] = {
     // convert to UserGroupPermission object
     val permissionsFut = hostGroupOp.findByNamesAbsolutely(userGroup.permissionsOfHosts.keys.toSeq).map {
       _.map { group =>
-        val id = group.groupid.getOrElse(sys.error(s"HostGroupOp.findByName(${group.name}) returns no host group id"))
-        val permission = userGroup.permissionsOfHosts(group.name)
-        UserGroupPermission(id, permission)
+        UserGroupPermission[Stored](group.getStoredId, userGroup.permissionsOfHosts(group.name))
       }
     }
 
@@ -118,12 +116,12 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
       storedOpt <- findByName(userGroup.userGroup.name)
       result <- storedOpt match {
         case Some((storedUserGroup, storedPermissions)) =>
-          val id = storedUserGroup.usrgrpid.getOrElse(sys.error("UserGroup.findByName returns no id"))
+          val id = storedUserGroup.getStoredId
           if (
             storedUserGroup.shouldBeUpdated(userGroup.userGroup) ||
             storedPermissions.toSet != permissions.toSet
           ) {
-            update(userGroup.userGroup.copy(usrgrpid = Some(id)), permissions)
+            update(userGroup.userGroup.toStored(id), permissions)
           } else {
             Future.successful((id, Report.empty()))
           }
@@ -133,14 +131,14 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
     } yield result
   }
 
-  def present(groups: Seq[UserGroupConfig]): Future[(Seq[UserGroupId], Report)] = {
+  def present(groups: Seq[UserGroupConfig]): Future[(Seq[StoredId], Report)] = {
     traverseOperations(groups)(present)
   }
 
   /**
     * @param groupNames names of gropus to be deleted
     */
-  def absent(groupNames: Seq[String]): Future[(Seq[UserGroupId], Report)] = {
+  def absent(groupNames: Seq[String]): Future[(Seq[StoredId], Report)] = {
     for {
       r <- findByNames(groupNames)
       ids <- delete(r.map(_._1))
@@ -153,12 +151,12 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
   * @param permissionsOfHosts Pairs of name of a host group and a permission which describes the access level to the host.
   *                           The specified host groups must be presented before calling present() function.
   */
-case class UserGroupConfig(userGroup: UserGroup, permissionsOfHosts: Map[String, Permission])
+case class UserGroupConfig(userGroup: UserGroup[NotStored], permissionsOfHosts: Map[String, Permission])
 
 object UserGroupConfig {
   implicit val hoconReads: HoconReads[UserGroupConfig] = {
     for {
-      userGroup <- of[UserGroup]
+      userGroup <- of[UserGroup[NotStored]]
       permission <- required[Map[String, Permission]]("permission")
     } yield {
       UserGroupConfig(userGroup, permission)

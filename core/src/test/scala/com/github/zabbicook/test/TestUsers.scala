@@ -1,9 +1,7 @@
 package com.github.zabbicook.test
 
-import com.github.zabbicook.entity.HostGroup.HostGroupId
+import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.User
-import com.github.zabbicook.entity.User.UserId
-import com.github.zabbicook.entity.UserGroup.UserGroupId
 import com.github.zabbicook.operation.{UserConfig, UserOp}
 
 trait TestUsers extends TestConfig with TestUserGroups{ self: UnitSpec =>
@@ -18,7 +16,7 @@ trait TestUsers extends TestConfig with TestUserGroups{ self: UnitSpec =>
     UserConfig(User(alias = specName("user3")), Set(testUserGroups(1).userGroup.name), "password")
   )
 
-  def presentTestUsers(): (Seq[UserId], Seq[UserGroupId], Seq[HostGroupId]) = {
+  def presentTestUsers(): (Seq[StoredId], Seq[StoredId], Seq[StoredId]) = {
     val (userGroupIds, hostGroupIds) = presentTestUserGroups()
 
     val (userIds, _) = await(testUserOp.present(testUsers))

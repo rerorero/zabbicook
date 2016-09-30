@@ -1,5 +1,6 @@
 package com.github.zabbicook.operations
 
+import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.{HostGroup, HostGroupFlag}
 import com.github.zabbicook.operation.HostGroupOp
 import com.github.zabbicook.test.{TestHostGroups, UnitSpec}
@@ -8,7 +9,7 @@ class HostGroupOpSpec extends UnitSpec with TestHostGroups {
   lazy val sut = new HostGroupOp(cachedApi)
 
   "present and absent" should "create and delete Host Groups" in {
-    val appended = HostGroup(name = specName("hostgroupx"))
+    val appended = HostGroup[NotStored](name = specName("hostgroupx"))
 
     def clean(): Unit = {
       cleanTestHostGroups()

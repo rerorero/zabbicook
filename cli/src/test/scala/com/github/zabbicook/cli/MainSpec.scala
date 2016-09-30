@@ -1,5 +1,6 @@
 package com.github.zabbicook.cli
 
+import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity._
 import com.github.zabbicook.operation.OperationSet
 import com.github.zabbicook.test.{TestConfig, UnitSpec}
@@ -36,11 +37,11 @@ class MainSpec extends UnitSpec with TestConfig {
       HostGroup(name = "zabbicook-spec hostgroup2")
     )
 
-    val userGroups = Seq(
+    val userGroups: Seq[UserGroup[NotStored]] = Seq(
       UserGroup(name = "zabbicook-spec usergroup1", debug_mode = Some(false), users_status = Some(true)),
       UserGroup(name = "zabbicook-spec usergroup2")
     )
-    val users: Seq[(User, Seq[UserGroup])] = Seq(
+    val users: Seq[(User[NotStored], Seq[UserGroup[NotStored]])] = Seq(
       (User(alias = "Zabbicook-spec-Alice", autologin = Some(true), lang = Some("en"),
         theme = Some(Theme.dark), `type` = Some(UserType.superAdmin)), Seq(userGroups(0))),
       (User(alias = "Zabbicook-spec-Bob"), Seq(userGroups(1)))

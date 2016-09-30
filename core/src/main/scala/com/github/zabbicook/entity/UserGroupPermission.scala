@@ -1,6 +1,7 @@
 package com.github.zabbicook.entity
 
-import com.github.zabbicook.entity.HostGroup.HostGroupId
+import com.github.zabbicook.entity.Entity.{NotStored, Stored}
+import com.github.zabbicook.entity.EntityId.StoredId
 import play.api.libs.json.{Format, Json}
 
 sealed abstract class Permission(val value: NumProp) extends NumberEnumDescribedWithString {
@@ -15,11 +16,15 @@ object Permission extends NumberEnumDescribedWithStringCompanion[Permission] {
   case object unknown extends Permission(-1)
 }
 
-case class UserGroupPermission(
-  id: HostGroupId,
+case class UserGroupPermission[S <: EntityState](
+  id: EntityId,
   permission: Permission
-) extends Entity
+) extends Entity[S] {
+  def toStored(_id: StoredId): UserGroupPermission[Stored] = copy(id = _id)
+}
 
 object UserGroupPermission {
-  implicit val format: Format[UserGroupPermission] = Json.format[UserGroupPermission]
+  implicit val format: Format[UserGroupPermission[Stored]] = Json.format[UserGroupPermission[Stored]]
+
+  implicit val format2: Format[UserGroupPermission[NotStored]] = Json.format[UserGroupPermission[NotStored]]
 }

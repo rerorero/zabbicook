@@ -1,9 +1,11 @@
 package com.github.zabbicook.entity
 
-import com.github.zabbicook.entity.User.{AutoLogin, UserId}
+import com.github.zabbicook.entity.Entity.{NotStored, Stored}
+import com.github.zabbicook.entity.EntityId.{NotStoredId, StoredId}
+import com.github.zabbicook.entity.User.AutoLogin
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, JsObject, Json}
 
 sealed abstract class Theme(val value: String) extends StringEnumProp {
   override def validate(): ValidationResult = Theme.validate(this)
@@ -32,8 +34,8 @@ object UserType extends NumberEnumDescribedWithStringCompanion[UserType] {
 /**
   * @see https://www.zabbix.com/documentation/3.2/manual/api/reference/user/object
   */
-case class User(
-  userid: Option[UserId] = None, // read only
+case class User[S <: EntityState](
+  userid: EntityId = NotStoredId, // read only
   alias: String,          // required
 //  attempt_clock: Option[String], // unhandled
 //  attempt_failed: Option[String], // unhandled
@@ -48,8 +50,15 @@ case class User(
   theme: Option[Theme] = None,
   `type`: Option[UserType] = None,
   url: Option[String] = None
-) extends Entity {
-  def removeReadOnly: User = copy(userid = None)
+) extends Entity[S] {
+
+  override protected[this] val id: EntityId = userid
+
+  def toStored(id: StoredId): User[Stored] = copy(userid = id)
+
+  def toJsonForUpdate[T >: S <: NotStored](_id: StoredId): JsObject = {
+    Json.toJson(copy(userid = _id).asInstanceOf[User[Stored]]).as[JsObject]
+  }
 
   /**
     * compare object to check whether or not you need to update the stored object
@@ -57,7 +66,7 @@ case class User(
     * @return true: need to update stored entity
     *         false: There is no differences.
     */
-  def shouldBeUpdated(constant: User): Boolean = {
+  def shouldBeUpdated[T >: S <: Stored](constant: User[NotStored]): Boolean = {
     require(alias == constant.alias)
     shouldBeUpdated(autologin, constant.autologin) ||
     shouldBeUpdated(autologout, constant.autologout) ||
@@ -72,11 +81,13 @@ case class User(
 }
 
 object User {
-  type UserId = String
   type AutoLogin = EnabledEnum
-  implicit val format: Format[User] = Json.format[User]
 
-  implicit val hocon: HoconReads[User] = {
+  implicit val format: Format[User[Stored]] = Json.format[User[Stored]]
+
+  implicit val format2: Format[User[NotStored]] = Json.format[User[NotStored]]
+
+  implicit val hocon: HoconReads[User[NotStored]] = {
     for {
       alias <- required[String]("alias")
       autologin <- optional[EnabledEnum]("autoLogin")

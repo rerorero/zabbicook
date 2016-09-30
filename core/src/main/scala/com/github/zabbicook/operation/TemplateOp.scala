@@ -2,8 +2,9 @@ package com.github.zabbicook.operation
 
 import com.github.zabbicook.Logging
 import com.github.zabbicook.api.ZabbixApi
-import com.github.zabbicook.entity.Template.TemplateId
-import com.github.zabbicook.entity.{HostGroup, Template}
+import com.github.zabbicook.entity.Entity.{NotStored, Stored}
+import com.github.zabbicook.entity.EntityId.StoredId
+import com.github.zabbicook.entity._
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
 import com.github.zabbicook.util.{Futures, TopologicalSort, TopologicalSortable}
@@ -23,7 +24,7 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
 
   private[this] val hostGroupOp = new HostGroupOp(api)
 
-  def findByHostname(hostname: String): Future[Option[TemplateSettings]] = {
+  def findByHostname(hostname: String): Future[Option[TemplateSettings[Stored, Stored, Stored]]] = {
     val params = Json.obj()
       .filter("host" -> hostname)
       .outExtend()
@@ -33,10 +34,10 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
     api.requestSingleAs[JsObject]("template.get", params).map(_.map(mapToTemplateSetting))
   }
 
-  private[this] def mapToTemplateSetting(root: JsValue): TemplateSettings = {
-    val template = root.asOpt[Template].getOrElse(sys.error(s"template.get returns unexpected formats.: ${Json.prettyPrint(root)}"))
-    val parents = (root \ "parentTemplates").asOpt[Seq[Template]].getOrElse(sys.error(s"template.get returns no parentTemplates"))
-    val groups = (root \ "groups").asOpt[Seq[HostGroup]].getOrElse(sys.error(s"template.get returns no hostGroups"))
+  private[this] def mapToTemplateSetting(root: JsValue): TemplateSettings[Stored, Stored, Stored] = {
+    val template = root.asOpt[Template[Stored]].getOrElse(sys.error(s"template.get returns unexpected formats.: ${Json.prettyPrint(root)}"))
+    val parents = (root \ "parentTemplates").asOpt[Seq[Template[Stored]]].getOrElse(sys.error(s"template.get returns no parentTemplates"))
+    val groups = (root \ "groups").asOpt[Seq[HostGroup[Stored]]].getOrElse(sys.error(s"template.get returns no hostGroups"))
     TemplateSettings(
       template = template,
       groups = groups,
@@ -44,14 +45,14 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
     )
   }
 
-  def findByHostnames(hostnames: Seq[String]): Future[Seq[TemplateSettings]] = {
+  def findByHostnames(hostnames: Seq[String]): Future[Seq[TemplateSettings[Stored, Stored, Stored]]] = {
     Future.traverse(hostnames)(findByHostname).map(_.flatten)
   }
 
   /**
     * If any one of templates does not exist, it fails.
     */
-  def findByHostnamesAbsolutely(hostnames: Seq[String]): Future[Seq[TemplateSettings]] = {
+  def findByHostnamesAbsolutely(hostnames: Seq[String]): Future[Seq[TemplateSettings[Stored, Stored, Stored]]] = {
     findByHostnames(hostnames).map { results =>
       if (results.length < hostnames.length) {
         val notFounds = (hostnames.toSet -- results.map(_.template.host).toSet).mkString(",")
@@ -66,42 +67,35 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
     *
     * @return ids of created templates
     */
-  def createTemplate(template: TemplateSettings): Future[(TemplateId, Report)] = {
-    require(template.linkedTemplates.map(_.forall(_.templateid.isDefined)).getOrElse(true))
-    require(template.groups.forall(_.groupid.isDefined))
-
-    val param = Json.toJson(template.template.removeReadOnly).as[JsObject]
-      .prop("groups" -> template.groups.map(g => Json.obj("groupid" -> g.groupid.get)))
-      .propIfDefined(template.linkedTemplates)("templates" -> _.map(t => Json.obj("templateid" -> t.templateid.get)))
-    api.requestSingleId[TemplateId]("template.create", param, "templateids")
-      .map((_, Report.created(template.template)))
+  def createTemplate(template: TemplateSettings[NotStored, Stored, Stored]): Future[(StoredId, Report)] = {
+    val param = Json.toJson(template.template).as[JsObject]
+      .prop("groups" -> template.groups.map(g => Json.obj("groupid" -> g.getStoredId)))
+      .propIfDefined(template.linkedTemplates)("templates" -> _.map(t => Json.obj("templateid" -> t.getStoredId)))
+    api.requestSingleId("template.create", param, "templateids")
+      .map(id => (id, Report.created(template.template.toStored(id))))
   }
 
-  def deleteTemplates(templates: Seq[TemplateSettings]): Future[(Seq[TemplateId], Report)] = {
+  def deleteTemplates(templates: Seq[TemplateSettings[Stored, Stored, Stored]]): Future[(Seq[StoredId], Report)] = {
     if (templates.isEmpty) {
       Future.successful((Seq(), Report.empty()))
     } else {
-      val ids = templates.map(t => t.template.templateid.getOrElse(sys.error(s"Template ${t.template.host} to be deleted has no id.")))
+      val ids = templates.map(t => t.template.getStoredId.id)
       val param = Json.toJson(ids)
-      api.requestIds[TemplateId]("template.delete", param, "templateids")
+      api.requestIds("template.delete", param, "templateids")
         .map((_, Report.deleted(templates.map(_.template))))
     }
   }
 
-  def updateTemplate(current: TemplateSettings, update: TemplateSettings): Future[(TemplateId, Report)] = {
-    require(current.template.templateid.isDefined)
-    require(current.linkedTemplates.map(_.forall(_.templateid.isDefined)).getOrElse(true))
-    require(current.groups.forall(_.groupid.isDefined))
-    require(update.template.templateid.isDefined)
-    require(update.linkedTemplates.map(_.forall(_.templateid.isDefined)).getOrElse(true))
-    require(update.groups.forall(_.groupid.isDefined))
-
-    val param = Json.toJson(update.template).as[JsObject]
-      .prop("groups" -> update.groups.map(g => Json.obj("groupid" -> g.groupid.get)))
-      .propIfDefined(update.linkedTemplates)("templates" -> _.map(t => Json.obj("templateid" -> t.templateid.get)))
-      .propIfDefined(current.linkedTemplates)("templates_clear" -> _.map(t => Json.obj("templateid" -> t.templateid.get)))
-    api.requestSingleId[TemplateId]("template.update", param, "templateids")
-      .map((_, Report.updated(update.template)))
+  def updateTemplate(
+    current: TemplateSettings[Stored, Stored, Stored],
+    update: TemplateSettings[NotStored, Stored, Stored]
+  ): Future[(StoredId, Report)] = {
+    val param = update.template.toJsonForUpdate(current.template.getStoredId)
+      .prop("groups" -> update.groups.map(g => Json.obj("groupid" -> g.getStoredId)))
+      .propIfDefined(update.linkedTemplates)("templates" -> _.map(t => Json.obj("templateid" -> t.getStoredId.id)))
+      .propIfDefined(current.linkedTemplates)("templates_clear" -> _.map(t => Json.obj("templateid" -> t.getStoredId.id)))
+    api.requestSingleId("template.update", param, "templateids")
+      .map(id => (id, Report.updated(update.template.toStored(id))))
   }
 
   /**
@@ -109,7 +103,7 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
     * If the template group specified hostname does not exist, create it.
     * If already exists, it fills the gap.
     */
-  def presentTemplate(template: TemplateSettings): Future[(TemplateId, Report)] = {
+  def presentTemplate(template: TemplateSettings.NotStoredAll): Future[(StoredId, Report)] = {
     for {
       presentGroups <- hostGroupOp.findByNamesAbsolutely(template.groups.map(_.name))
       presentLinkedTemplates <- template.linkedTemplates match {
@@ -127,13 +121,13 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
             _.map(_.host).toSet == _.map(_.host).toSet
           }
           val areTemplateSame = stored.template.shouldBeUpdated(template.template)
-          val id = stored.template.templateid.getOrElse(sys.error(s"template.get returns no id."))
+          val id = stored.template.getStoredId
           if (areGroupsSame && areLinkedSame && areTemplateSame) {
             logger.debug("presentTemplate has nothing to update.")
             Future.successful((id, Report.empty()))
           } else {
-            val newTemplate = TemplateSettings(
-              template.template.copy(templateid = Some(id)),
+            val newTemplate = TemplateSettings[NotStored, Stored, Stored](
+              template.template,
               presentGroups,
               presentLinkedTemplates
             )
@@ -147,11 +141,11 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
     }
   }
 
-  def presentTemplates(templates: Seq[TemplateSettings]): Future[(Seq[TemplateId], Report)] = {
+  def presentTemplates(templates: Seq[TemplateSettings.NotStoredAll]): Future[(Seq[StoredId], Report)] = {
     // sort templates by dependencies described in 'linkedTemplate' properties.
     Future {
-      val sortable = new TopologicalSortable[TemplateSettings] {
-        override def dependencies(t: TemplateSettings): Iterable[TemplateSettings] = {
+      val sortable = new TopologicalSortable[TemplateSettings.NotStoredAll] {
+        override def dependencies(t: TemplateSettings.NotStoredAll): Iterable[TemplateSettings.NotStoredAll] = {
           t.linkedTemplates match {
             case Some(links) => links.map(linkHost => templates.find(_.template.host == linkHost)).flatten
             case None => Seq()
@@ -168,22 +162,23 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
     }
   }
 
-  def absentTemplates(hostnames: Seq[String]): Future[(Seq[TemplateId], Report)] = {
+  def absentTemplates(hostnames: Seq[String]): Future[(Seq[StoredId], Report)] = {
     findByHostnames(hostnames).flatMap(deleteTemplates)
   }
 }
 
-case class TemplateSettings(
-  template: Template,
-  groups: Seq[HostGroup],
-  linkedTemplates: Option[Seq[Template]]
+case class TemplateSettings[TS <: EntityState, GS <: EntityState, LS <: EntityState](
+  template: Template[TS],
+  groups: Seq[HostGroup[GS]],
+  linkedTemplates: Option[Seq[Template[LS]]]
 )
 
 object TemplateSettings {
+  type NotStoredAll = TemplateSettings[NotStored, NotStored, NotStored]
 
-  implicit val hoconReads: HoconReads[TemplateSettings] = {
+  implicit val hoconReads: HoconReads[NotStoredAll] = {
     for {
-      template <- of[Template]
+      template <- of[Template[NotStored]]
       groups <- required[Seq[String]]("groups").map(_.map(HostGroup.fromString))
       linkedTemplates <- optional[Seq[String]]("linkedTemplates").map(_.map(_.map(Template.fromString)))
     } yield {

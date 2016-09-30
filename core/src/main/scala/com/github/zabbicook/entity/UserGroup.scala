@@ -1,9 +1,10 @@
 package com.github.zabbicook.entity
 
-import com.github.zabbicook.entity.UserGroup.UserGroupId
+import com.github.zabbicook.entity.Entity.{NotStored, Stored}
+import com.github.zabbicook.entity.EntityId.{NotStoredId, StoredId}
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, JsObject, Json}
 
 sealed abstract class GuiAccess(val value: NumProp) extends NumberEnumProp {
   override def validate(): ValidationResult = GuiAccess.validate(this)
@@ -17,17 +18,22 @@ object GuiAccess extends NumberEnumPropCompanion[GuiAccess] {
   case object unknown extends GuiAccess(-1)
 }
 
-case class UserGroup(
-  usrgrpid: Option[UserGroupId] = None,   // readonly
+case class UserGroup[S <: EntityState](
+  usrgrpid: EntityId = NotStoredId,   // readonly
   name: String,                     // required
   debug_mode: Option[EnabledEnum] = None,
   gui_access: Option[GuiAccess] = None,
   users_status: Option[EnabledEnumZeroPositive] = None
-) extends Entity {
+) extends Entity[S] {
+  override protected[this] val id: EntityId = usrgrpid
 
-  def removeReadOnly: UserGroup = copy(usrgrpid = None)
+  def toStored(id: StoredId): UserGroup[Stored] = copy(usrgrpid = id)
 
-  def shouldBeUpdated(other: UserGroup): Boolean = {
+  def toJsonForUpdate[T >: S <: NotStored](_id: StoredId): JsObject = {
+    Json.toJson(copy(usrgrpid = _id).asInstanceOf[UserGroup[Stored]]).as[JsObject]
+  }
+
+  def shouldBeUpdated[T >: S <: Stored](other: UserGroup[NotStored]): Boolean = {
     require(name == other.name)
     shouldBeUpdated(debug_mode, other.debug_mode)
     shouldBeUpdated(gui_access, other.gui_access)
@@ -36,13 +42,14 @@ case class UserGroup(
 }
 
 object UserGroup {
-  type UserGroupId = String
   type DebugMode = EnabledEnum
   type State = EnabledEnumZeroPositive
 
-  implicit val format: Format[UserGroup] = Json.format[UserGroup]
+  implicit val format: Format[UserGroup[Stored]] = Json.format[UserGroup[Stored]]
 
-  implicit val hoconReads: HoconReads[UserGroup] = {
+  implicit val format2: Format[UserGroup[NotStored]] = Json.format[UserGroup[NotStored]]
+
+  implicit val hoconReads: HoconReads[UserGroup[NotStored]] = {
     for {
       name <- required[String]("name")
       debugMode <- optional[DebugMode]("debugMode")
