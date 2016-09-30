@@ -143,17 +143,7 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
 
   def presentTemplates(templates: Seq[TemplateSettings.NotStoredAll]): Future[(Seq[StoredId], Report)] = {
     // sort templates by dependencies described in 'linkedTemplate' properties.
-    Future {
-      val sortable = new TopologicalSortable[TemplateSettings.NotStoredAll] {
-        override def dependencies(t: TemplateSettings.NotStoredAll): Iterable[TemplateSettings.NotStoredAll] = {
-          t.linkedTemplates match {
-            case Some(links) => links.map(linkHost => templates.find(_.template.host == linkHost)).flatten
-            case None => Seq()
-          }
-        }
-      }
-      TopologicalSort(templates)(sortable)
-    } flatMap {
+    TopologicalSort(templates) match {
       case Right(sorted) =>
         Futures.sequential(sorted)(presentTemplate).map(foldReports)
       case Left(err) =>
@@ -183,6 +173,13 @@ object TemplateSettings {
       linkedTemplates <- optional[Seq[String]]("linkedTemplates").map(_.map(_.map(Template.fromString)))
     } yield {
       TemplateSettings(template, groups, linkedTemplates)
+    }
+  }
+
+  implicit val topologicalSortable: TopologicalSortable[NotStoredAll] = TopologicalSortable[NotStoredAll] { (node, all) =>
+    node.linkedTemplates match {
+      case Some(links) => links.map(linkHost => all.find(_.template.host == linkHost)).flatten
+      case None => Seq()
     }
   }
 }

@@ -11,7 +11,9 @@ class TopologicalSortSpec extends UnitSpec {
   }
 
   case class Element(name: String, dependencies: Seq[String])
-
+  implicit val sortable: TopologicalSortable[Element] = TopologicalSortable[Element] { (node, _all) =>
+    node.dependencies.map(d => _all.find(_.name == d)).flatten
+  }
   "apply" should "sort T" in {
     val all = Seq(
       Element("e1", Seq("e2", "e3")),
@@ -26,10 +28,6 @@ class TopologicalSortSpec extends UnitSpec {
       // isolated
       Element("e9", Seq())
     )
-    implicit val sortable: TopologicalSortable[Element] = new TopologicalSortable[Element] {
-      override def dependencies(t: Element): Iterable[Element] =
-        t.dependencies.map(d => all.find(_.name == d)).flatten
-    }
     val Right(sorted) = TopologicalSort(Random.shuffle(all))
     val checkOrder = ordered[String](sorted.map(_.name).toSeq) _
     all.map { entity =>
@@ -46,10 +44,6 @@ class TopologicalSortSpec extends UnitSpec {
       Element("e3", Seq("e2", "e4","e5")),
       Element("e4", Seq("e3"))
     )
-    implicit val sortable: TopologicalSortable[Element] = new TopologicalSortable[Element] {
-      override def dependencies(t: Element): Iterable[Element] =
-        t.dependencies.map(d => all.find(_.name == d)).flatten
-    }
     val Left(err) = TopologicalSort(Random.shuffle(all))
     assert(err.entities.exists(_.name == "e2"))
   }
@@ -61,10 +55,6 @@ class TopologicalSortSpec extends UnitSpec {
       Element("e3", Seq()),
       Element("e4", Seq())
     )
-    implicit val sortable: TopologicalSortable[Element] = new TopologicalSortable[Element] {
-      override def dependencies(t: Element): Iterable[Element] =
-        t.dependencies.map(d => all.find(_.name == d)).flatten
-    }
     val Left(err) = TopologicalSort(Random.shuffle(all))
     assert(err.entities.exists(_.name == "e2"))
   }

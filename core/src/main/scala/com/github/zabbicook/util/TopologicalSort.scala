@@ -3,7 +3,13 @@ package com.github.zabbicook.util
 import scala.annotation.tailrec
 
 trait TopologicalSortable[T] {
-  def dependencies(t: T): Iterable[T]
+  def dependencies(node: T, allNodes: Traversable[T]): Iterable[T]
+}
+
+object TopologicalSortable {
+  def apply[T](depends: (T, Traversable[T]) => Iterable[T]) = new TopologicalSortable[T] {
+    override def dependencies(node: T, allNodes: Traversable[T]): Iterable[T] = depends(node, allNodes)
+  }
 }
 
 object TopologicalSort {
@@ -13,8 +19,8 @@ object TopologicalSort {
   private[this] case class Node[T](
     underlying: T
   ) {
-    def dependencies(implicit sortable: TopologicalSortable[T]): Iterable[Node[T]] =
-      sortable.dependencies(underlying).map(Node(_))
+    def dependencies(allNodes: Traversable[T])(implicit sortable: TopologicalSortable[T]): Iterable[Node[T]] =
+      sortable.dependencies(underlying, allNodes).map(Node(_))
   }
 
   private[this] case class Edge[T](src: Node[T], dest: Node[T])
@@ -31,9 +37,9 @@ object TopologicalSort {
     */
   def apply[T](values: Traversable[T])(implicit sortable: TopologicalSortable[T]): Either[CyclicException[T], Iterable[T]] = {
     val nodes = values.map(Node(_))
-    val edges = nodes.map(n => n.dependencies.map(Edge(n, _))).flatten
-    val allDependencies = nodes.map(_.dependencies).flatten
-    val isolations = nodes.filter(t => !allDependencies.exists(_ == t)).filter(_.dependencies.isEmpty)
+    val edges = nodes.map(n => n.dependencies(values).map(Edge(n, _))).flatten
+    val allDependencies = nodes.map(_.dependencies(values)).flatten
+    val isolations = nodes.filter(t => !allDependencies.exists(_ == t)).filter(_.dependencies(values).isEmpty)
     val edgeMaps = edges.foldLeft(Map.empty[Node[T], Set[Node[T]]]) { (acc, e) =>
       acc + (e.src -> acc.getOrElse(e.src, Set())) + (e.dest -> (acc.getOrElse(e.dest, Set()) + e.src))
     }
