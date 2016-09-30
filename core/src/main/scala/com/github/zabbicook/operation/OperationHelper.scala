@@ -46,11 +46,4 @@ trait OperationHelper {
       case (acc, (result, report)) => (result +: acc._1, report + acc._2)
     }
   }
-
-  protected[this] def compareOpt[A,B](a: Option[A], b: Option[B])(diff: (A,B) => Boolean): Boolean = {
-    (a,b) match {
-      case (Some(aa),Some(bb)) => diff(aa,bb)
-      case _ => false
-    }
-  }
 }

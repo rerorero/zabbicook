@@ -31,7 +31,8 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
       .prop("selectParentTemplates" -> "extend")
       .prop("selectGroups" -> "extend")
       .prop("selectHosts" -> "extend")
-    api.requestSingleAs[JsObject]("template.get", params).map(_.map(mapToTemplateSetting))
+    api.requestSingleAs[JsObject]("template.get", params)
+      .map(_.map(mapToTemplateSetting))
   }
 
   private[this] def mapToTemplateSetting(root: JsValue): TemplateSettings[Stored, Stored, Stored] = {
@@ -55,7 +56,7 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
   def findByHostnamesAbsolutely(hostnames: Seq[String]): Future[Seq[TemplateSettings[Stored, Stored, Stored]]] = {
     findByHostnames(hostnames).map { results =>
       if (results.length < hostnames.length) {
-        val notFounds = (hostnames.toSet -- results.map(_.template.host).toSet).mkString(",")
+        val notFounds = (hostnames.toSet -- results.map(_.hostName).toSet).mkString(",")
         throw NoSuchEntityException(s"No such templates: ${notFounds}")
       }
       results
@@ -105,7 +106,7 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
     */
   def presentTemplate(template: TemplateSettings.NotStoredAll): Future[(StoredId, Report)] = {
     for {
-      presentGroups <- hostGroupOp.findByNamesAbsolutely(template.groups.map(_.name))
+      presentGroups <- hostGroupOp.findByNamesAbsolutely(template.groupsNames.toSeq)
       presentLinkedTemplates <- template.linkedTemplates match {
         case Some(templates) =>
           findByHostnamesAbsolutely(templates.map(_.host)).map(_.map(_.template)).map { stored =>
@@ -113,14 +114,15 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
           }
         case None => Future(None)
       }
-      storedTemplateSetting <- findByHostname(template.template.host)
+      storedTemplateSetting <- findByHostname(template.hostName)
       result <- storedTemplateSetting match {
         case Some(stored) =>
-          val areGroupsSame = (stored.groups.map(_.name).toSet == template.groups.map(_.name).toSet)
-          val areLinkedSame = compareOpt(stored.linkedTemplates, template.linkedTemplates) {
-            _.map(_.host).toSet == _.map(_.host).toSet
+          val areGroupsSame = (stored.groupsNames == template.groupsNames)
+          val areLinkedSame = (stored.linkedTemplateHostNames, template.linkedTemplateHostNames) match {
+            case (Some(s), Some(t)) => s == t
+            case _ => true
           }
-          val areTemplateSame = stored.template.shouldBeUpdated(template.template)
+          val areTemplateSame = !stored.template.shouldBeUpdated(template.template)
           val id = stored.template.getStoredId
           if (areGroupsSame && areLinkedSame && areTemplateSame) {
             logger.debug("presentTemplate has nothing to update.")
@@ -147,7 +149,7 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
       case Right(sorted) =>
         Futures.sequential(sorted)(presentTemplate).map(foldReports)
       case Left(err) =>
-        val entities = err.entities.map(_.template.host).mkString(",")
+        val entities = err.entities.map(_.hostName).mkString(",")
         Future.failed(BadReferenceException(s"Cirucular references in template settings.'linkedTemplates' of around $entities", err))
     }
   }
@@ -161,7 +163,11 @@ case class TemplateSettings[TS <: EntityState, GS <: EntityState, LS <: EntitySt
   template: Template[TS],
   groups: Seq[HostGroup[GS]],
   linkedTemplates: Option[Seq[Template[LS]]]
-)
+) {
+  def linkedTemplateHostNames: Option[Set[String]] = linkedTemplates.map(_.map(_.host).toSet)
+  def groupsNames: Set[String] = groups.map(_.name).toSet
+  def hostName = template.host
+}
 
 object TemplateSettings {
   type NotStoredAll = TemplateSettings[NotStored, NotStored, NotStored]
@@ -178,7 +184,7 @@ object TemplateSettings {
 
   implicit val topologicalSortable: TopologicalSortable[NotStoredAll] = TopologicalSortable[NotStoredAll] { (node, all) =>
     node.linkedTemplates match {
-      case Some(links) => links.map(linkHost => all.find(_.template.host == linkHost)).flatten
+      case Some(links) => links.map(linkHost => all.find(_.hostName == linkHost)).flatten
       case None => Seq()
     }
   }

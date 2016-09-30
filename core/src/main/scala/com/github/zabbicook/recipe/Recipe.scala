@@ -4,12 +4,13 @@ import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.HostGroup
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
-import com.github.zabbicook.operation.{UserConfig, UserGroupConfig}
+import com.github.zabbicook.operation.{TemplateSettings, UserConfig, UserGroupConfig}
 
 case class Recipe(
   hostGroups: Seq[HostGroup[NotStored]],
   userGroupsAndPermissions: Set[UserGroupConfig],
-  users: Set[UserConfig]
+  users: Set[UserConfig],
+  templates: Set[TemplateSettings.NotStoredAll]
 )
 
 object Recipe {
@@ -18,11 +19,13 @@ object Recipe {
       hostGroups <- optional[Seq[String]]("hostGroups").map(_.map(_.map(HostGroup.fromString)))
       userGroups <- optionalMapToSet[UserGroupConfig]("userGroups", "name")
       users <- optionalMapToSet[UserConfig]("users", "alias")
+      templates <- optionalMapToSet[TemplateSettings.NotStoredAll]("templates", "name")
     } yield {
       Recipe(
         hostGroups = hostGroups.getOrElse(Seq()),
         userGroupsAndPermissions = userGroups.getOrElse(Set()),
-        users = users.getOrElse(Set())
+        users = users.getOrElse(Set()),
+        templates = templates.getOrElse(Set())
       )
     }
   }

@@ -24,7 +24,7 @@ trait TestTemplates extends TestHostGroups { self: UnitSpec =>
   }
 
   def cleanTestTemplates(): Unit = {
-    await(templateOp.absentTemplates(testTemplates.map(_.template.host)))
+    await(templateOp.absentTemplates(testTemplates.map(_.hostName)))
     cleanTestHostGroups()
   }
 }

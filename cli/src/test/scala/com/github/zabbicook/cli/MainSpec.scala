@@ -2,7 +2,7 @@ package com.github.zabbicook.cli
 
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity._
-import com.github.zabbicook.operation.OperationSet
+import com.github.zabbicook.operation.{OperationSet, TemplateSettings}
 import com.github.zabbicook.test.{TestConfig, UnitSpec}
 
 class MainSpec extends UnitSpec with TestConfig {
@@ -41,13 +41,28 @@ class MainSpec extends UnitSpec with TestConfig {
       UserGroup(name = "zabbicook-spec usergroup1", debug_mode = Some(false), users_status = Some(true)),
       UserGroup(name = "zabbicook-spec usergroup2")
     )
+
     val users: Seq[(User[NotStored], Seq[UserGroup[NotStored]])] = Seq(
       (User(alias = "Zabbicook-spec-Alice", autologin = Some(true), lang = Some("en"),
         theme = Some(Theme.dark), `type` = Some(UserType.superAdmin)), Seq(userGroups(0))),
       (User(alias = "Zabbicook-spec-Bob"), Seq(userGroups(1)))
     )
 
+    val templates: Seq[TemplateSettings.NotStoredAll] = Seq(
+      TemplateSettings(
+        Template(host = "zabbicook-spec template 1", name = Some("template1"), description = Some("hello")),
+        Seq(HostGroup(name = "zabbicook-spec hostgroup1")),
+        Some(Seq(Template(host = "zabbicook-spec template2"), Template(host = "Template OS Linux")))
+      ),
+      TemplateSettings(
+        Template(host = "zabbicook-spec template 2"),
+        Seq(HostGroup(name = "zabbicook-spec hostgroup1"), HostGroup(name = "zabbicook-spec hostgroup2")),
+        None
+      )
+    )
+
     def clean(): Unit = {
+      await(op.template.absentTemplates(templates.map(_.template.host)))
       await(op.user.absent(users.map(_._1.alias)))
       await(op.userGroup.absent(userGroups.map(_.name)))
       await(op.hostGroup.absent(hostGroups.map(_.name)))
@@ -57,31 +72,38 @@ class MainSpec extends UnitSpec with TestConfig {
       // host groups
       val actualHostGroups = await(op.hostGroup.findByNames(hostGroups.map(_.name)))
       (actualHostGroups.sortBy((_.name)) zip hostGroups.sortBy((_.name))) foreach { case (actual, expected) =>
-        assert(actual.name === expected.name)
+        assert(expected.name === actual.name)
       }
       // user groups
       val actualUserGroups = await(op.userGroup.findByNames(userGroups.map(_.name)))
       (actualUserGroups.sortBy((_._1.name)) zip userGroups.sortBy((_.name))) foreach { case (actual, expected) =>
-        assert(actual._1.shouldBeUpdated(expected) === false)
+        assert(false === actual._1.shouldBeUpdated(expected))
       }
       // users
       val actualUsers = await(op.user.findByAliases(users.map(_._1.alias)))
       (actualUsers.sortBy(_._1.alias) zip users.sortBy(_._1.alias)) foreach { case (actual, expected) =>
-        assert(actual._1.shouldBeUpdated(expected._1) === false)
-        assert(actual._2.map(_.name).toSet === expected._2.map(_.name).toSet)
+        assert(false === actual._1.shouldBeUpdated(expected._1))
+        assert(expected._2.map(_.name).toSet === actual._2.map(_.name).toSet)
+      }
+      // templates
+      val actualTemplates = await(op.template.findByHostnames(templates.map(_.template.host)))
+      (actualTemplates.sortBy(_.template.host) zip templates.sortBy(_.template.host)) foreach { case (actual, expected) =>
+        assert(false === actual.template.shouldBeUpdated(expected.template))
+        assert(expected.groupsNames === actual.groupsNames)
+        assert(expected.linkedTemplateHostNames === actual.linkedTemplateHostNames)
       }
     }
 
     cleanRun(clean) {
       val path = getClass.getResource("/mainspec/zabbicook.conf").getPath()
       val (code, _) = runMain("http://localhost:8080/", Some(path))
-      assert(code === 0)
+      assert(0 === code)
       check()
 
       // rerun does not affect
       val (code2, output2) = runMain("http://localhost:8080/", Some(path))
-      assert(code2 === 0)
-      assert(output2.length === 1)
+      assert(0 === code2)
+      assert(1 === output2.length)
       check()
     }
   }

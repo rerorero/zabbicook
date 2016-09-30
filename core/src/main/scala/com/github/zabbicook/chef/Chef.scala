@@ -11,12 +11,14 @@ class Chef(api: OperationSet) {
     // TODO First, check the server connectivity with version api
     for {
       (hostGroupIds, rHostGroup) <- api.hostGroup.present(recipe.hostGroups)
-      // UserGroup requires HostGroup
+      // UserGroups requires HostGroups
       (userGroupIds, rUserGroup) <- api.userGroup.present(recipe.userGroupsAndPermissions.toSeq)
-      // UserOp requires UserGroup
+      // Users requires UserGroups
       (userIds, rUser) <- api.user.present(recipe.users.toSeq)
+      // Template requires HostGroups
+      (templateIds, rTemplate) <- api.template.presentTemplates(recipe.templates.toSeq)
     } yield {
-      rHostGroup + rUserGroup + rUser
+      rHostGroup + rUserGroup + rUser + rTemplate
     }
   }
 }

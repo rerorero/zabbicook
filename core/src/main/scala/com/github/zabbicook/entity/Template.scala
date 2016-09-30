@@ -27,11 +27,12 @@ case class Template[S <: EntityState] (
   }
 
   /**
-    * compare objects to check wheter or not be updated
+    * compare objects to check whether or not be updated
     * @return if it should be updated, returns true.
     */
   def shouldBeUpdated[T >: S <: Stored](constant: Template[NotStored]): Boolean = {
     require(host == constant.host)
+
     shouldBeUpdated(description, constant.description)
     shouldBeUpdated(name, constant.name)
   }
