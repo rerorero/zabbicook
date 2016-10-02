@@ -1,9 +1,8 @@
-package com.github.zabbicook.operation
+package com.github.zabbicook.entity
 
-import com.github.zabbicook.entity._
+import com.github.zabbicook.entity.Host.HostEnabled
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
-import com.github.zabbicook.operation.Host.HostEnabled
 import play.api.libs.json.{Format, Json}
 
 sealed abstract class InventoryMode(val value: NumProp) extends NumberEnumDescribedWithString {
@@ -84,7 +83,6 @@ case class Host(
 )
 
 object Host {
-  type HostId = String
   type HostEnabled = EnabledEnumZeroPositive
 
   implicit val format: Format[Host] = Json.format[Host]

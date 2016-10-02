@@ -88,13 +88,7 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
   }
 
   def delete(groups: Seq[UserGroup[Stored]]): Future[(Seq[StoredId], Report)] = {
-    if (groups.isEmpty) {
-      Future.successful((Seq(), Report.empty()))
-    } else {
-      val param = Json.toJson(groups.map(_.getStoredId))
-      api.requestIds("usergroup.delete", param, "usrgrpids")
-        .map((_, Report.deleted(groups)))
-    }
+    deleteEntities(api, groups, "usergroup.delete", "usrgrpids")
   }
 
   /**

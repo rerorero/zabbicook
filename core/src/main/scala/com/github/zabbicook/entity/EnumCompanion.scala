@@ -14,7 +14,7 @@ trait EnumCompanion[T] {
 
   def validate(value: T): ValidationResult = {
     val acceptable = all - unknown
-    if (all.contains(value))
+    if (acceptable.contains(value))
       Valid
     else
       NotAcceptable(acceptable.map(_.toString))

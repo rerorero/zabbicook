@@ -59,3 +59,4 @@ abstract class Entity[S <: EntityState] { self =>
     }
   }
 }
+

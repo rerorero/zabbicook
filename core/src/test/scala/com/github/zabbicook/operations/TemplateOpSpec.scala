@@ -14,7 +14,7 @@ class TemplateOpSpec extends UnitSpec with TestTemplates {
       Some(Seq(testTemplates(1).template)))
 
     def clean() = {
-      await(sut.absentTemplates(Seq(appended.template.host)))
+      await(sut.absent(Seq(appended.template.host)))
       cleanTestTemplates()
     }
 
@@ -36,13 +36,13 @@ class TemplateOpSpec extends UnitSpec with TestTemplates {
 
       // appends
       {
-        val (_, report) = await(sut.presentTemplates(testTemplates :+ appended))
+        val (_, report) = await(sut.present(testTemplates :+ appended))
         assert(report.count === 1)
         assert(report.created.head.entityName === appended.template.entityName)
         val founds = await(sut.findByHostnames((testTemplates :+ appended).map(_.hostName)))
         assert(founds.length === testTemplates.length + 1)
         // represent does nothing
-        val (_, report2) = await(sut.presentTemplates(testTemplates :+ appended))
+        val (_, report2) = await(sut.present(testTemplates :+ appended))
         assert(report2.isEmpty)
       }
 
@@ -53,7 +53,7 @@ class TemplateOpSpec extends UnitSpec with TestTemplates {
           Seq(testHostGroups(0)),
           Some(Seq(testTemplates(0).template)))
 
-        val (_, report) = await(sut.presentTemplates(testTemplates :+ modified))
+        val (_, report) = await(sut.present(testTemplates :+ modified))
         assert(report.count === 1)
         assert(report.updated.head.entityName === modified.template.entityName)
         val Some(actual) = await(sut.findByHostname(modified.template.host))
@@ -64,12 +64,12 @@ class TemplateOpSpec extends UnitSpec with TestTemplates {
 
       // absent
       {
-        val (_, report) = await(sut.absentTemplates((testTemplates :+ appended).map(_.hostName)))
+        val (_, report) = await(sut.absent((testTemplates :+ appended).map(_.hostName)))
         assert(report.count === testTemplates.length + 1)
         report.deleted.take(report.count).foreach(e => assert(e.entityName === appended.template.entityName))
         assert(Seq() === await(sut.findByHostnames(testTemplates.map(_.hostName))))
         // reabsent does nothing
-        val (_, report2) = await(sut.absentTemplates((testTemplates :+ appended).map(_.hostName)))
+        val (_, report2) = await(sut.absent((testTemplates :+ appended).map(_.hostName)))
         assert(report2.isEmpty())
       }
     }

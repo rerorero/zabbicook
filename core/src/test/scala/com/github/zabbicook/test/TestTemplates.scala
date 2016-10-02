@@ -19,12 +19,12 @@ trait TestTemplates extends TestHostGroups { self: UnitSpec =>
 
   def presentTestTemplates(): (Seq[StoredId], Seq[StoredId]) = {
     val hostGroupIds = presentTestHostGroups()
-    val templates = await(templateOp.presentTemplates(testTemplates))
+    val templates = await(templateOp.present(testTemplates))
     (templates._1, hostGroupIds)
   }
 
   def cleanTestTemplates(): Unit = {
-    await(templateOp.absentTemplates(testTemplates.map(_.hostName)))
+    await(templateOp.absent(testTemplates.map(_.hostName)))
     cleanTestHostGroups()
   }
 }

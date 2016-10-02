@@ -1,12 +1,16 @@
 package com.github.zabbicook.operation
 
+import com.github.zabbicook.api.ZabbixApi
+import com.github.zabbicook.entity.Entity
+import com.github.zabbicook.entity.Entity.Stored
+import com.github.zabbicook.entity.EntityId.StoredId
 import play.api.libs.json._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
-  * Zabbix extended Json object
+  * Extended Json object for zabbix api
   */
 class OperationJsObj(val underlying: JsObject) {
 
@@ -44,6 +48,24 @@ trait OperationHelper {
   protected[this] def foldReports[A](reports: Traversable[(A, Report)]): (Seq[A], Report) = {
     reports.foldLeft((Seq.empty[A], Report.empty)) {
       case (acc, (result, report)) => (result +: acc._1, report + acc._2)
+    }
+  }
+
+  /**
+    * call the delete api then returns deleted id and a report
+    */
+  protected[this] def deleteEntities[A <: Entity[Stored]](
+    api: ZabbixApi,
+    items: Seq[A],
+    method: String,
+    respondId: String
+  ): Future[(Seq[StoredId], Report)] = {
+    if (items.isEmpty) {
+      Future.successful((Seq(), Report.empty()))
+    } else {
+      val param = Json.toJson(items.map(_.getStoredId))
+      api.requestIds(method, param, respondId)
+        .map((_, Report.deleted(items)))
     }
   }
 }

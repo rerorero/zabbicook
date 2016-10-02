@@ -78,13 +78,7 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
   }
 
   def delete(users: Seq[User[Stored]]): Future[(Seq[StoredId], Report)] = {
-    if (users.isEmpty) {
-      Future.successful((Seq(), Report.empty()))
-    } else {
-      val param = Json.toJson(users.map(_.getStoredId))
-      api.requestIds("user.delete", param, "userids")
-        .map((_, Report.deleted(users)))
-    }
+    deleteEntities(api, users, "user.delete", "userids")
   }
 
   def presentPassword(alias: String, presentedPass: String): Future[(StoredId, Report)] = {

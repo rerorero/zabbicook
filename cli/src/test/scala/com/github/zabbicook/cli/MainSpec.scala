@@ -62,7 +62,7 @@ class MainSpec extends UnitSpec with TestConfig {
     )
 
     def clean(): Unit = {
-      await(op.template.absentTemplates(templates.map(_.template.host)))
+      await(op.template.absent(templates.map(_.template.host)))
       await(op.user.absent(users.map(_._1.alias)))
       await(op.userGroup.absent(userGroups.map(_.name)))
       await(op.hostGroup.absent(hostGroups.map(_.name)))

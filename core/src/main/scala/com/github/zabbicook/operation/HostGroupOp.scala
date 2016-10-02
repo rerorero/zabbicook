@@ -46,14 +46,7 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper {
     * - it is used in a correlation condition.
     */
   def delete(groups: Seq[HostGroup[Stored]]): Future[(Seq[StoredId], Report)] = {
-    if (groups.isEmpty) {
-      Future.successful((Seq(), Report.empty()))
-    } else {
-      val ids = groups.map(g => g.getStoredId.id)
-      val param = Json.toJson(ids)
-      api.requestIds("hostgroup.delete", param, "groupids")
-        .map((_, Report.deleted(groups)))
-    }
+    deleteEntities(api, groups, "hostgroup.delete", "groupids")
   }
 
   // There are no writable properties of HostGroup,

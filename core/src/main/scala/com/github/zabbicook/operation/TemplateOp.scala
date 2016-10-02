@@ -68,7 +68,7 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
     *
     * @return ids of created templates
     */
-  def createTemplate(template: TemplateSettings[NotStored, Stored, Stored]): Future[(StoredId, Report)] = {
+  def create(template: TemplateSettings[NotStored, Stored, Stored]): Future[(StoredId, Report)] = {
     val param = Json.toJson(template.template).as[JsObject]
       .prop("groups" -> template.groups.map(g => Json.obj("groupid" -> g.getStoredId)))
       .propIfDefined(template.linkedTemplates)("templates" -> _.map(t => Json.obj("templateid" -> t.getStoredId)))
@@ -76,18 +76,11 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
       .map(id => (id, Report.created(template.template.toStored(id))))
   }
 
-  def deleteTemplates(templates: Seq[TemplateSettings[Stored, Stored, Stored]]): Future[(Seq[StoredId], Report)] = {
-    if (templates.isEmpty) {
-      Future.successful((Seq(), Report.empty()))
-    } else {
-      val ids = templates.map(t => t.template.getStoredId.id)
-      val param = Json.toJson(ids)
-      api.requestIds("template.delete", param, "templateids")
-        .map((_, Report.deleted(templates.map(_.template))))
-    }
+  def delete(templates: Seq[Template[Stored]]): Future[(Seq[StoredId], Report)] = {
+    deleteEntities(api, templates, "template.delete", "templateids")
   }
 
-  def updateTemplate(
+  def update(
     current: TemplateSettings[Stored, Stored, Stored],
     update: TemplateSettings[NotStored, Stored, Stored]
   ): Future[(StoredId, Report)] = {
@@ -104,7 +97,7 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
     * If the template group specified hostname does not exist, create it.
     * If already exists, it fills the gap.
     */
-  def presentTemplate(template: TemplateSettings.NotStoredAll): Future[(StoredId, Report)] = {
+  def present(template: TemplateSettings.NotStoredAll): Future[(StoredId, Report)] = {
     for {
       presentGroups <- hostGroupOp.findByNamesAbsolutely(template.groupsNames.toSeq)
       presentLinkedTemplates <- template.linkedTemplates match {
@@ -133,29 +126,29 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
               presentGroups,
               presentLinkedTemplates
             )
-            updateTemplate(stored, newTemplate)
+            update(stored, newTemplate)
           }
         case None =>
-          createTemplate(TemplateSettings(template.template, presentGroups, presentLinkedTemplates))
+          create(TemplateSettings(template.template, presentGroups, presentLinkedTemplates))
       }
     } yield {
       result
     }
   }
 
-  def presentTemplates(templates: Seq[TemplateSettings.NotStoredAll]): Future[(Seq[StoredId], Report)] = {
+  def present(templates: Seq[TemplateSettings.NotStoredAll]): Future[(Seq[StoredId], Report)] = {
     // sort templates by dependencies described in 'linkedTemplate' properties.
     TopologicalSort(templates) match {
       case Right(sorted) =>
-        Futures.sequential(sorted)(presentTemplate).map(foldReports)
+        Futures.sequential(sorted)(present).map(foldReports)
       case Left(err) =>
         val entities = err.entities.map(_.hostName).mkString(",")
         Future.failed(BadReferenceException(s"Cirucular references in template settings.'linkedTemplates' of around $entities", err))
     }
   }
 
-  def absentTemplates(hostnames: Seq[String]): Future[(Seq[StoredId], Report)] = {
-    findByHostnames(hostnames).flatMap(deleteTemplates)
+  def absent(hostnames: Seq[String]): Future[(Seq[StoredId], Report)] = {
+    findByHostnames(hostnames).flatMap(s => delete(s.map(_.template)))
   }
 }
 

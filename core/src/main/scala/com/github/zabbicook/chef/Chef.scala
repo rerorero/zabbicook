@@ -16,7 +16,7 @@ class Chef(api: OperationSet) {
       // Users requires UserGroups
       (userIds, rUser) <- api.user.present(recipe.users.toSeq)
       // Template requires HostGroups
-      (templateIds, rTemplate) <- api.template.presentTemplates(recipe.templates.toSeq)
+      (templateIds, rTemplate) <- api.template.present(recipe.templates.toSeq)
     } yield {
       rHostGroup + rUserGroup + rUser + rTemplate
     }
