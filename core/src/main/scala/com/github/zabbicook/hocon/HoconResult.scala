@@ -41,26 +41,31 @@ object HoconResult {
 }
 
 object HoconError {
+  // remove origin descriptions from a message if contains redundantly
+  private[this] def removeOrigin(message: String, origin: ConfigOrigin): String = {
+    message.replace(origin.description(), "")
+  }
+
   case class NotExist(origin: ConfigOrigin, path: String)
     extends HoconError(s"does not have required property: '${path}'", Some(origin))
 
   case class TypeMismatched(e: ConfigException.WrongType)
-    extends HoconError(e.getMessage(), Some(e.origin()), Some(e))
+    extends HoconError(removeOrigin(e.getMessage(), e.origin()), Some(e.origin()), Some(e))
 
   case class ParseFailed(e: ConfigException.Parse)
-    extends HoconError(e.getMessage(), Some(e.origin()), Some(e))
+    extends HoconError(removeOrigin(e.getMessage(), e.origin()), Some(e.origin()), Some(e))
 
-  case class InvalidConditionProperty(origin: ConfigOrigin, error: Invalid, path: String)
-    extends HoconError(error.detail + s" for '${path}'", Some(origin))
+  case class InvalidConditionProperty(origin: ConfigOrigin, error: Invalid)
+    extends HoconError(error.detail, Some(origin))
 
-  case class UnrecognizedKeys(origin: ConfigOrigin, invalids: Set[String], acceptables: Set[String], path: String)
-    extends HoconError(s"'Unrecognized fields(${invalids.mkString(",")}) of ${path}. Valid fields are (${acceptables.mkString(",")})'", Some(origin))
+  case class UnrecognizedKeys(origin: ConfigOrigin, invalids: Set[String], acceptables: Set[String])
+    extends HoconError(s"Unrecognized fields (${invalids.mkString(", ")}). Valid fields are (${acceptables.mkString(", ")})'", Some(origin))
 
   def from(e: ConfigException): HoconError = {
     e match {
       case ee: ConfigException.WrongType => TypeMismatched(ee)
       case ee: ConfigException.Parse => ParseFailed(ee)
-      case _ => new HoconError(e.getMessage, Some(e.origin()), Some(e))
+      case _ => new HoconError(removeOrigin(e.getMessage, e.origin()), Some(e.origin()), Some(e))
     }
   }
 }

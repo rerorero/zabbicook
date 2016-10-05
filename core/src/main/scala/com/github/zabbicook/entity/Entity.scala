@@ -42,6 +42,14 @@ object EntityId {
       case StoredId(v) => JsString(v)
     }
   )
+
+  def isDifferent(a: EntityId, b: EntityId): Boolean = {
+    (a, b) match {
+      case (StoredId(aid), StoredId(bid)) => aid != bid
+      case _ => false
+    }
+  }
+
   implicit val readsStored: Reads[StoredId] = Reads.StringReads.map(StoredId)
 }
 
@@ -54,7 +62,7 @@ abstract class Entity[S <: EntityState] { self =>
 
   protected[this] def shouldBeUpdated[T](src: Option[T], dest: Option[T]): Boolean = {
     (src, dest) match {
-      case (Some(s), Some(d)) => s != d
+      case (Some(s), Some(d)) if s != null && d != null => s != d
       case _ => false
     }
   }

@@ -2,13 +2,14 @@ package com.github.zabbicook.entity
 
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.StoredId
+import com.github.zabbicook.entity.prop.{IntProp, IntEnumDescribedWithString, IntEnumDescribedWithStringCompanion}
 import play.api.libs.json.{Format, Json}
 
-sealed abstract class Permission(val value: NumProp) extends NumberEnumDescribedWithString {
+sealed abstract class Permission(val value: IntProp) extends IntEnumDescribedWithString {
   override def validate(): ValidationResult = Permission.validate(this)
 }
 
-object Permission extends NumberEnumDescribedWithStringCompanion[Permission] {
+object Permission extends IntEnumDescribedWithStringCompanion[Permission] {
   override val all: Set[Permission] = Set(denied,readOnly,readWrite,unknown)
   case object denied extends Permission(0)
   case object readOnly extends Permission(2)

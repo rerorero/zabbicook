@@ -1,15 +1,16 @@
 package com.github.zabbicook.entity
 
 import com.github.zabbicook.entity.Host.HostEnabled
+import com.github.zabbicook.entity.prop.{EnabledEnumZeroPositive, IntProp, IntEnumDescribedWithString, IntEnumDescribedWithStringCompanion}
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json.{Format, Json}
 
-sealed abstract class InventoryMode(val value: NumProp) extends NumberEnumDescribedWithString {
+sealed abstract class InventoryMode(val value: IntProp) extends IntEnumDescribedWithString {
   override def validate(): ValidationResult = InventoryMode.validate(this)
 }
 
-object InventoryMode extends NumberEnumDescribedWithStringCompanion[InventoryMode] {
+object InventoryMode extends IntEnumDescribedWithStringCompanion[InventoryMode] {
   override val all: Set[InventoryMode] = Set(disabled,manual,automatic,unknown)
   case object disabled extends InventoryMode(-1)
   case object manual extends InventoryMode(0)
@@ -17,11 +18,11 @@ object InventoryMode extends NumberEnumDescribedWithStringCompanion[InventoryMod
   case object unknown extends InventoryMode(-999)
 }
 
-sealed abstract class IpmiAuthAlgo(val value: NumProp) extends NumberEnumDescribedWithString {
+sealed abstract class IpmiAuthAlgo(val value: IntProp) extends IntEnumDescribedWithString {
   override def validate(): ValidationResult = IpmiAuthAlgo.validate(this)
 }
 
-object IpmiAuthAlgo extends NumberEnumDescribedWithStringCompanion[IpmiAuthAlgo] {
+object IpmiAuthAlgo extends IntEnumDescribedWithStringCompanion[IpmiAuthAlgo] {
   override val all: Set[IpmiAuthAlgo] = Set(default,none,MD2,MD5,straight,OEM,RMCPPlus,unknown)
   case object default extends IpmiAuthAlgo(-1)
   case object none extends IpmiAuthAlgo(0)
@@ -33,11 +34,11 @@ object IpmiAuthAlgo extends NumberEnumDescribedWithStringCompanion[IpmiAuthAlgo]
   case object unknown extends IpmiAuthAlgo(-999)
 }
 
-sealed abstract class IpmiPrivilege(val value: NumProp) extends NumberEnumDescribedWithString {
+sealed abstract class IpmiPrivilege(val value: IntProp) extends IntEnumDescribedWithString {
   override def validate(): ValidationResult = IpmiPrivilege.validate(this)
 }
 
-object IpmiPrivilege extends NumberEnumDescribedWithStringCompanion[IpmiPrivilege] {
+object IpmiPrivilege extends IntEnumDescribedWithStringCompanion[IpmiPrivilege] {
   override val all: Set[IpmiPrivilege] = Set(callback,user,operator,admin,OEM,unknown)
   case object callback extends IpmiPrivilege(1)
   case object user extends IpmiPrivilege(2)

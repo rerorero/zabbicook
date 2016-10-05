@@ -1,4 +1,4 @@
-package com.github.zabbicook.entity
+package com.github.zabbicook.entity.prop
 
 import play.api.libs.json._
 

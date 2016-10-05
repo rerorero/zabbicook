@@ -1,6 +1,5 @@
 package com.github.zabbicook.test
 
-import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.{Permission, UserGroup}
 import com.github.zabbicook.operation.{UserGroupConfig, UserGroupOp}
 
@@ -15,11 +14,9 @@ trait TestUserGroups extends TestConfig with TestHostGroups { self: UnitSpec =>
     UserGroupConfig(UserGroup(name = specName("group2")), Map(testHostGroups(1).name -> Permission.readWrite))
   )
 
-  def presentTestUserGroups(): (Seq[StoredId], Seq[StoredId])  = {
-    val hostGroupIds = presentTestHostGroups()
-
-    val (userGroupIds, _) = await(testUserGroupOp.present(testUserGroups))
-    (userGroupIds, hostGroupIds)
+  def presentTestUserGroups(): Unit = {
+    presentTestHostGroups()
+    await(testUserGroupOp.present(testUserGroups))
   }
 
   def cleanTestUserGroups(): Unit = {

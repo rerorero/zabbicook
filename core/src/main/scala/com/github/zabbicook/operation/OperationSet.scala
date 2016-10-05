@@ -7,6 +7,7 @@ class OperationSet(api: ZabbixApi) {
   val userGroup = new UserGroupOp(api)
   val hostGroup = new HostGroupOp(api)
   val template = new TemplateOp(api)
+  val item = new ItemOp(api)
 
   def close(): Unit = api.close()
 }

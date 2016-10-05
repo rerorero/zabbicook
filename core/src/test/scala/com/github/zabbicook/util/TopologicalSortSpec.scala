@@ -37,6 +37,15 @@ class TopologicalSortSpec extends UnitSpec {
     }
   }
 
+  "applying to 2 elements" should "sort T" in {
+    val all = Seq(
+      Element("e1", Seq()),
+      Element("e2", Seq("e1", "hoge"))
+    )
+    val Right(sorted) = TopologicalSort(Random.shuffle(all))
+    assert(sorted === Seq(all(1), all(0)))
+  }
+
   "apply" should "throws cyclic exception when a circular tree passed" in {
     val all = Seq(
       Element("e1", Seq("e2", "e3")),

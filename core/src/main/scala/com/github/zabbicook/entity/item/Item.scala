@@ -1,21 +1,21 @@
 package com.github.zabbicook.entity.item
 
+import ai.x.play.json.Jsonx
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.{NotStoredId, StoredId}
 import com.github.zabbicook.entity._
 import com.github.zabbicook.entity.item.Item.ItemEnabled
+import com.github.zabbicook.entity.prop.{DoubleProp, EnabledEnum, EnabledEnumZeroPositive, IntProp}
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json.{Format, JsObject, Json}
-
-import ai.x.play.json.Jsonx
 
 /**
   * @see https://www.zabbix.com/documentation/3.2/manual/api/reference/item/object
   */
 case class Item[S <: EntityState](
   itemid: EntityId = NotStoredId, // read only
-  delay: Int,                     // required Update interval of the item in seconds.
+  delay: IntProp,                 // required Update interval of the item in seconds.
   hostid: EntityId = NotStoredId, // required
   //interfaceid: EntityId = NotStoredId, // required, unhandled TODO ID of the item's host interface. Used only for host items.
   `key_`: String,                   // required
@@ -30,9 +30,9 @@ case class Item[S <: EntityState](
   description: Option[String] = None, // Description of the item.
   //error	                            // unhandled string	(readonly) Error text if there are problems updating the item.
   //flags	                            // unhandled integer	(readonly) Origin of the item.
-  formula: Option[Double] = None,     // integer/float	Custom multiplier.
-  history: Option[Int] = None,	      // integer	Number of days to keep item's history data.
-  inventory_link: Option[Int] = None, //	integer	ID of the host inventory field that is populated by the item.
+  formula: Option[DoubleProp] = None, // integer/float	Custom multiplier.
+  history: Option[IntProp] = None,	  // integer	Number of days to keep item's history data.
+  inventory_link: Option[IntProp] = None, //	integer	ID of the host inventory field that is populated by the item.
                                       // @see https://www.zabbix.com/documentation/3.2/manual/api/reference/host/object#host_inventory
   ipmi_sensor: Option[String]=None,   // string	IPMI sensor. Used only by IPMI items.
   //lastclock	                        // unhandled timestamp	(readonly) Time when the item was last updated.
@@ -40,10 +40,10 @@ case class Item[S <: EntityState](
   //lastvalue                         // unhandled	(readonly) Last value of the item.
   logtimefmt: Option[String]=None,    // string	Format of the time in log entries. Used only by log items.
   //mtime	                            // unhandled timestamp	Time when the monitored log file was last updated. Used only by log items.
-  multiplier: Option[Int]=None,       // integer	Whether to use a custom multiplier.
+  multiplier: Option[EnabledEnum]=None,// integer	Whether to use a custom multiplier.
   params: Option[String]=None,        // string	Additional parameters depending on the type of the item:
   password: Option[String]=None,	    // string	Password for authentication. Used by simple check, SSH, Telnet, database monitor and JMX items.
-  port: Option[String]=None,          // string	Port monitored by the item. Used only by SNMP items.
+  port: Option[IntProp]=None,         // !!nullable (it has no default values) // string	Port monitored by the item. Used only by SNMP items.
   //prevvalue: option[String]=None,   // unhandled string	(readonly) Previous value of the item.
   privatekey: Option[String]=None,    //	string	Name of the private key file.
   publickey: Option[String]=None,	    // string	Name of the public key file.
@@ -60,7 +60,7 @@ case class Item[S <: EntityState](
   status: Option[ItemEnabled]=None,   //	integer	Status of the item.
   //templateid	                      // unhandled string	(readonly) ID of the parent template item.
   trapper_hosts: Option[String]=None, //	string	Allowed hosts. Used only by trapper items.
-  trends: Option[Int]=None,           // 	integer	Number of days to keep item's trends data.
+  trends: Option[IntProp]=None,           // 	integer	Number of days to keep item's trends data.
   units: Option[String]=None,         // 	string	Value units.
   username: Option[String]=None       //	string	Username for authentication. Used by simple check, SSH, Telnet, database monitor and JMX items.
   //valuemapid: EntityId	            // unhandled TODO string	ID of the associated value map.
@@ -69,6 +69,8 @@ case class Item[S <: EntityState](
   override protected[this] val id: EntityId = itemid
 
   def toStored(id: StoredId): Item[Stored] = copy(itemid = id)
+
+  def setHost[T >: S <: NotStored](_hostid: StoredId): Item[NotStored] = copy(hostid = _hostid)
 
   def toJsonForUpdate[T >: S <: NotStored](_id: StoredId): JsObject = {
     Json.toJson(copy(itemid = _id).asInstanceOf[Item[Stored]]).as[JsObject]
@@ -81,10 +83,11 @@ case class Item[S <: EntityState](
     *         false: There is no differences.
     */
   def shouldBeUpdated[T >: S <: Stored](constant: Item[NotStored]): Boolean = {
-    require(name == constant.name)
+    require(`key_` == constant.`key_`)
+
     delay != constant.delay ||
-    hostid != constant.hostid ||
-    `key_` != constant.`key_` ||
+    EntityId.isDifferent(hostid, constant.hostid) ||
+    name != constant.name ||
     `type` != constant.`type` ||
     value_type != constant.value_type ||
     shouldBeUpdated(authtype, constant.authtype) ||
@@ -128,7 +131,7 @@ object Item {
 
   implicit val hocon: HoconReads[Item[NotStored]] = {
     val reads = for {
-      delay <- required[Int]("delay")
+      delay <- required[Int]("interval")
       // hostid <- required[String]("host")  provided by the Template name
       key <- required[String]("key")
       name <- required[String]("name")
@@ -138,15 +141,15 @@ object Item {
       dataType <- optional[DataType]("dataType")
       delta <- optional[Delta]("delta")
       description <- optional[String]("description")
-      formula <- optional[Double]("formula")
-      history <- optional[Int]("historyPeriod")
+      formula <- optional[Double]("multiplier")
+      history <- optional[Int]("history")
       inventoryLink <- optional[Int]("hostInventoryField")
       ipmiSensor <- optional[String]("IPMISensor")
       logtimefmt <- optional[String]("logTimeFormat")
-      multiplier <- optional[Int]("customMultiplier")
+      multiplier <- optional[EnabledEnum]("multiplierEnabled")
       params <- optional[String]("params") // TODO will be able to treat the alternative names
       password <- optional[String]("password")
-      port <- optional[String]("port")
+      port <- optional[Int]("port")
       privateKey <- optional[String]("privateKeyFile")
       publicKey <- optional[String]("publicKeyFile")
       snmpCommunity <- optional[String]("SNMPCommunity")
@@ -160,7 +163,7 @@ object Item {
       snmpSecurityName <- optional[String]("SNMPSecurityName")
       status <- optional[ItemEnabled]("enabled")
       trapperHost <- optional[String]("allowedHosts")
-      trends <- optional[Int]("trendPeriod")
+      trends <- optional[Int]("trends")
       units <- optional[String]("units")
       username <- optional[String]("username")
     } yield {
@@ -204,7 +207,8 @@ object Item {
       )
     }
     reads.withAcceptableKeys(
-      "delay",
+      "interval",
+      //("host")  provided by the Template name
       "key",
       "name",
       "type",
@@ -213,13 +217,13 @@ object Item {
       "dataType",
       "delta",
       "description",
-      "formula",
-      "historyPeriod",
+      "multiplier",
+      "history",
       "hostInventoryField",
       "IPMISensor",
       "logTimeFormat",
-      "customMultiplier",
-      "params",
+      "multiplierEnabled",
+      "params", // TODO will be able to treat the alternative names
       "password",
       "port",
       "privateKeyFile",
@@ -235,7 +239,7 @@ object Item {
       "SNMPSecurityName",
       "enabled",
       "allowedHosts",
-      "trendPeriod",
+      "trends",
       "units",
       "username"
     )

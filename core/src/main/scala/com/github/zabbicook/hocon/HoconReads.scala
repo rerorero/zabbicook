@@ -1,8 +1,8 @@
 package com.github.zabbicook.hocon
 
 import com.github.zabbicook.entity.ValidationResult.{Invalid, Valid}
-import com.github.zabbicook.entity._
-import com.typesafe.config.{Config, ConfigFactory, ConfigValue}
+import com.github.zabbicook.entity.prop._
+import com.typesafe.config._
 
 import scala.collection.JavaConversions._
 
@@ -28,163 +28,168 @@ object HoconReads {
 
   def withAcceptableKeys[T](keys: Set[String])(f: Config => HoconResult[T]): HoconReads[T] = new HoconReads[T] {
     override def read(o: Config): HoconResult[T] = f(o)
+
     override val acceptableKeys: Option[Set[String]] = Some(keys)
   }
 
   def of[T](implicit reads: HoconReads[T]) = reads
 
-  case class ConfigFunc[T] (
-    get: (Config, String) => HoconResult[Option[T]]
+  case class ConfigFunc[T](
+    atKey: (Config, String) => HoconResult[Option[T]],
+    fromValue: (ConfigValue) => HoconResult[Option[T]]
   ) {
-    // Is it right way ..?
-    // Option.get used because get() will not fail due to the key not existing
-    def fromValue(c: ConfigValue): HoconResult[T] = get(c.atKey(dummyKey), dummyKey).map(_.get)
+    def map[U](f: T => U): ConfigFunc[U] =
+      ConfigFunc(
+        (c, s) => this.atKey(c, s).map(_.map(f)),
+        (c) => this.fromValue(c).map(_.map(f))
+      )
 
-    def map[U](f: T => U): ConfigFunc[U] = ConfigFunc((c,s) => this.get(c,s).map(_.map(f)))
+    def flatMapWithOrigin[U](f: (T, ConfigOrigin) => HoconResult[Option[U]]) =
+      ConfigFunc(
+        (c, s) => this.atKey(c, s).flatMap {
+          case Some(t) => f(t, c.origin())
+          case None => HoconSuccess(None)
+        },
+        (c) => this.fromValue(c).flatMap {
+          case Some(t) => f(t, c.origin())
+          case None => HoconSuccess(None)
+        }
+      )
+  }
+
+  private[this] def expectTypedAs[A](value: ConfigValue, expectType: ConfigValueType)(expect: => HoconResult[Option[A]]): HoconResult[Option[A]] = {
+    if (value.valueType() == ConfigValueType.NULL)
+      HoconSuccess(None)
+    else if (value.valueType() == expectType)
+      expect
+    else
+      new HoconError(s"Expected type ${expectType} but the actual type is ${value.valueType()}", Some(value.origin()))
   }
 
   object ConfigFunc {
-    def gen[T](f: (Config, String) => T): ConfigFunc[T] = {
-      ConfigFunc( (config: Config, path: String) => {
-        if (config.hasPath(path)) HoconResult(Some(f(config, path))) else HoconSuccess(None)
-      })
+    def gen[T](atKey: (Config, String) => T, valueType: ConfigValueType): ConfigFunc[T] = {
+      ConfigFunc(
+        (c, path) => {
+          if (c.hasPath(path)) HoconResult(Some(atKey(c, path))) else HoconSuccess(None)
+        },
+        (c) => expectTypedAs(c, valueType)(HoconSuccess(Some(c.unwrapped().asInstanceOf[T])))
+      )
     }
   }
 
-  implicit val stringConfigFunc: ConfigFunc[String] = ConfigFunc.gen(_.getString(_))
+  implicit val stringConfigFunc: ConfigFunc[String] = ConfigFunc.gen(_.getString(_), ConfigValueType.STRING)
 
-  implicit val numberConfigFunc: ConfigFunc[Number] = ConfigFunc.gen(_.getNumber(_))
+  implicit val numberConfigFunc: ConfigFunc[Number] = ConfigFunc.gen(_.getNumber(_), ConfigValueType.NUMBER)
 
-  implicit val intConfigFunc: ConfigFunc[Int] = ConfigFunc.gen(_.getInt(_))
+  implicit val intConfigFunc: ConfigFunc[Int] = ConfigFunc.gen(_.getInt(_), ConfigValueType.NUMBER)
 
-  implicit val longConfigFunc: ConfigFunc[Long] = ConfigFunc.gen(_.getLong(_))
+  implicit val longConfigFunc: ConfigFunc[Long] = ConfigFunc.gen(_.getLong(_), ConfigValueType.NUMBER)
 
-  implicit val doubleConfigFunc: ConfigFunc[Double] = ConfigFunc.gen(_.getDouble(_))
+  implicit val doubleConfigFunc: ConfigFunc[Double] = ConfigFunc.gen(_.getDouble(_), ConfigValueType.NUMBER)
 
-  implicit val booleanConfigFunc: ConfigFunc[Boolean] = ConfigFunc.gen(_.getBoolean(_))
+  implicit val booleanConfigFunc: ConfigFunc[Boolean] = ConfigFunc.gen(_.getBoolean(_), ConfigValueType.BOOLEAN)
 
-  private[this] val dummyKey = "_dummy"
+  private[this] def arrayToHoconResult[T](list: ConfigList)(implicit cf: ConfigFunc[T]): HoconResult[Option[Seq[T]]] = {
+    HoconResult.sequence(list)(cf.fromValue).map(_.flatten).map(Some(_))
+  }
 
-  implicit def arrayConfigFunc[T](implicit tf: ConfigFunc[T]): ConfigFunc[Seq[T]] = ConfigFunc((config, path) => {
-    if (config.hasPath(path)) {
-      HoconResult.sequence(config.getList(path))(c => tf.fromValue(c)).map(Some(_))
-    } else {
-      HoconSuccess(None)
-    }
-  })
+  implicit def arrayConfigFunc[T](implicit cf: ConfigFunc[T]): ConfigFunc[Seq[T]] = ConfigFunc(
+    (config, path) => {
+      if (config.hasPath(path)) {
+        arrayToHoconResult(config.getList(path))(cf)
+      } else {
+        HoconSuccess(None)
+      }
+    },
+    (c) => expectTypedAs(c, ConfigValueType.LIST)(
+      arrayToHoconResult(c.asInstanceOf[ConfigList])(cf)
+    )
+  )
 
   implicit def setConfigFunc[T](implicit cf: ConfigFunc[T]): ConfigFunc[Set[T]] =
     arrayConfigFunc(cf).map(_.toSet)
 
-  implicit def objetConfigFunc[T](implicit reads: HoconReads[T]): ConfigFunc[T] = ConfigFunc((config, path) => {
-    if (config.hasPath(path)) {
-      val obj = config.getObject(path)
-      // verify names of the fields in the object are all acceptable
-      val keys = reads.acceptableKeys.map(valids => (valids, obj.keySet() -- valids))
-      keys match {
-        case Some((valids, invalids)) if !invalids.isEmpty =>
-          HoconError.UnrecognizedKeys(config.origin(), invalids.toSet, valids, path)
-        case _ =>
-          reads.read(obj.toConfig).map(Some(_))
-      }
-    } else {
-      HoconSuccess(None)
-    }
-  })
-
-  implicit def mapConfigFunc[T](implicit tf: ConfigFunc[T]): ConfigFunc[Map[String, T]] = ConfigFunc((config, path) => {
-    if (config.hasPath(path)) {
-      val l = HoconResult.sequence(config.getObject(path).entrySet()) { entry =>
-        // Is this right way...?
-        tf.fromValue(entry.getValue).map(v => entry.getKey -> v)
-      }
-      l.map(l => Some(l.toMap))
-    } else {
-      HoconSuccess(None)
-    }
-  })
-
-  private[this] def enumValidResult[T <: EnumProp](config: Config, path: String)(value: Option[T]): HoconResult[Option[T]] = {
-    value match {
-      case Some(v) =>
-        v.validate() match {
-          case Valid => HoconSuccess(Some(v))
-          case e: Invalid => HoconError.InvalidConditionProperty(config.origin(), e, path)
-        }
-      case None =>
-        HoconSuccess(None)
+  private[this] def objToHoconResult[T](obj: ConfigObject)(implicit reads: HoconReads[T]): HoconResult[Option[T]] = {
+    // verify names of the fields in the object are all acceptable
+    val keys = reads.acceptableKeys.map(valids => (valids, obj.keySet() -- valids))
+    keys match {
+      case Some((valids, invalids)) if !invalids.isEmpty =>
+        HoconError.UnrecognizedKeys(obj.origin(), invalids.toSet, valids)
+      case _ =>
+        reads.read(obj.toConfig).map(Some(_))
     }
   }
 
-  implicit def stringEnumConfigFunc[T <: StringEnumProp](implicit f: String => T): ConfigFunc[T] = ConfigFunc((config, path) => {
-    implicitly[ConfigFunc[String]].get(config, path).map(_.map(f)).flatMap(enumValidResult(config, path))
-  })
+  implicit def objetConfigFunc[T](implicit reads: HoconReads[T]): ConfigFunc[T] = ConfigFunc(
+    (config, path) => {
+      if (config.hasPath(path)) {
+        objToHoconResult(config.getObject(path))
+      } else {
+        HoconSuccess(None)
+      }
+    },
+    (c) => expectTypedAs(c, ConfigValueType.OBJECT)(
+      objToHoconResult(c.asInstanceOf[ConfigObject])
+    )
+  )
 
-  implicit def numEnumDescribedWithStringConfigFunc[T <: NumberEnumDescribedWithString](implicit f: String => T): ConfigFunc[T] = ConfigFunc((config, path) => {
-    implicitly[ConfigFunc[String]].get(config, path).map(_.map(f)).flatMap(enumValidResult(config, path))
-  })
+  private[this] def objToMap[T](obj: ConfigObject)(cf: ConfigFunc[T]): HoconResult[Option[Map[String, T]]] = {
+    obj.entrySet().foldLeft(HoconResult(Map.empty[String, T])) {
+      case (HoconSuccess(acc), entry) =>
+        cf.fromValue(entry.getValue) match {
+          case HoconSuccess(None) => HoconSuccess(acc)
+          case HoconSuccess(Some(value)) => HoconSuccess(acc + (entry.getKey -> value))
+          case e: HoconError => e
+        }
+      case (err, _) => err
+    }.map(Some(_))
+  }
 
-  implicit def enabledEnumConfigFunc[T <: EnabledEnum](implicit f: Boolean => T): ConfigFunc[T] = ConfigFunc((config, path) => {
-    implicitly[ConfigFunc[Boolean]].get(config, path).map(_.map(f)).flatMap(enumValidResult(config, path))
-  })
+  implicit def mapConfigFunc[T](implicit tf: ConfigFunc[T]): ConfigFunc[Map[String, T]] = ConfigFunc(
+    (config, path) => {
+      if (config.hasPath(path)) {
+        objToMap(config.getObject(path))(tf)
+      } else {
+        HoconSuccess(None)
+      }
+    },
+    (c) => expectTypedAs(c, ConfigValueType.OBJECT)(
+      objToMap(c.asInstanceOf[ConfigObject])(tf)
+    )
+  )
 
-  implicit def enabledEnumZeroPositiveConfigFunc[T <: EnabledEnumZeroPositive](implicit f: Boolean => T): ConfigFunc[T] = ConfigFunc((config, path) => {
-    implicitly[ConfigFunc[Boolean]].get(config, path).map(_.map(f)).flatMap(enumValidResult(config, path))
-  })
+  private[this] def enumValidResult[T <: EnumProp](value: T, origin: ConfigOrigin): HoconResult[Option[T]] = {
+    value.validate() match {
+      case Valid => HoconSuccess(Some(value))
+      case e: Invalid => HoconError.InvalidConditionProperty(origin, e)
+    }
+  }
 
-  def optional[T](p: String)(implicit func: ConfigFunc[T]): HoconReads[Option[T]] = HoconReads(func.get(_, p))
+  implicit def stringEnumConfigFunc[T <: StringEnumProp](implicit f: String => T): ConfigFunc[T] = {
+    implicitly[ConfigFunc[String]].flatMapWithOrigin((s, origin) => enumValidResult(f(s), origin))
+  }
+
+  implicit def numEnumDescribedWithStringConfigFunc[T <: IntEnumDescribedWithString](implicit f: String => T): ConfigFunc[T] = {
+    implicitly[ConfigFunc[String]].flatMapWithOrigin((s, origin) => enumValidResult(f(s), origin))
+  }
+
+  implicit def enabledEnumConfigFunc[T <: EnabledEnum](implicit f: Boolean => T): ConfigFunc[T] = {
+    implicitly[ConfigFunc[Boolean]].flatMapWithOrigin((s, origin) => enumValidResult(f(s), origin))
+  }
+
+  implicit def enabledEnumZeroPositiveConfigFunc[T <: EnabledEnumZeroPositive](implicit f: Boolean => T): ConfigFunc[T] = {
+    implicitly[ConfigFunc[Boolean]].flatMapWithOrigin((s, origin) => enumValidResult(f(s), origin))
+  }
+
+  def optional[T](p: String)(implicit func: ConfigFunc[T]): HoconReads[Option[T]] = HoconReads(func.atKey(_, p))
 
   def required[T](p: String)(implicit func: ConfigFunc[T]): HoconReads[T] = {
     HoconReads[T] { conf =>
-      func.get(conf, p).flatMap {
+      func.atKey(conf, p).flatMap {
         case Some(v) => HoconSuccess(v)
         case None => HoconError.NotExist(conf.origin(), p)
       }
     }
-  }
-
-  private[this] def configFuncForMapToSet[T](keyName: String)(implicit cf: ConfigFunc[T]): ConfigFunc[Set[T]] = {
-    ConfigFunc((conf, path) => {
-      if (conf.hasPath(path)) {
-        val l = HoconResult.sequence(conf.getObject(path)) { case (k, v) =>
-          val merge = ConfigFactory.parseMap(Map(keyName -> k))
-          val c = v.withFallback(merge)
-          cf.fromValue(c)
-        }
-        l.map(s => Some(s.toSet))
-      } else {
-        HoconSuccess(None)
-      }
-    })
-  }
-
-  /**
-    * Generates HoconReads which parse Hocon Map to Set[T].
-    * The HoconReads parses Hocon Map which has keys to which T belong (as required property)
-    * Both examples shown below are parsed same as Set[User] ('alias' is required and 'name' is optional property)
-    * {{{
-    *   """{ users: [ {alias:"Joey",name:"Ramone"}, {alias:"C.J",name:"Ramone"} ] }""" // Hocon
-    *   optional[Set[User]] // HoconReads
-    * }}}
-    * {{{
-    *   """{ users: {"Joey": {name:"Ramone"}, "C.J": {name:"Ramone"} }""" // Hocon
-    *   optionalMapToSet[User] // HoconReads
-    * }}}
-    *
-    * When the value at the requested path is missing, returns None
-    * If the value is requisite, use requiredMapToSet().
-    * @param path requested path
-    * @param keyName property name of T, which used as keys of Hocon map
-    * @param tf
-    * @tparam T
-    * @return
-    */
-  def optionalMapToSet[T](path: String, keyName: String)(implicit tf: ConfigFunc[T]): HoconReads[Option[Set[T]]] = {
-    optional(path)(configFuncForMapToSet(keyName))
-  }
-
-  def requiredMapToSet[T](path: String, keyName: String)(implicit tf: ConfigFunc[T]): HoconReads[Set[T]] = {
-    required(path)(configFuncForMapToSet(keyName))
   }
 }
 

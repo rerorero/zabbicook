@@ -1,5 +1,6 @@
-package com.github.zabbicook.entity
+package com.github.zabbicook.entity.prop
 
+import com.github.zabbicook.entity.ValidationResult
 import com.github.zabbicook.entity.ValidationResult.{NotAcceptable, Valid}
 
 trait EnumProp {

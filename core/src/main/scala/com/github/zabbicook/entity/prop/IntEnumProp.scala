@@ -1,14 +1,14 @@
-package com.github.zabbicook.entity
+package com.github.zabbicook.entity.prop
 
 import play.api.libs.json._
 
-trait NumberEnumProp extends EnumProp {
-  def value: NumProp
+trait IntEnumProp extends EnumProp {
+  def value: IntProp
 }
 
-trait NumberEnumPropCompanion[T <: NumberEnumProp] extends EnumCompanion[T] {
+trait IntEnumPropCompanion[T <: IntEnumProp] extends EnumCompanion[T] {
   implicit val format: Format[T] = Format(
-    implicitly[Reads[NumProp]].map(n => all.find(_.value == n).getOrElse(unknown)),
+    implicitly[Reads[IntProp]].map(n => all.find(_.value == n).getOrElse(unknown)),
     Writes(t => JsNumber(t.value.value))
   )
 
@@ -21,9 +21,9 @@ trait NumberEnumPropCompanion[T <: NumberEnumProp] extends EnumCompanion[T] {
   implicit def numberToEnum(n: Option[Int]): Option[T] = n.map(numberToEnum)
 }
 
-trait NumberEnumDescribedWithString extends NumberEnumProp
+trait IntEnumDescribedWithString extends IntEnumProp
 
-trait NumberEnumDescribedWithStringCompanion[T <: NumberEnumDescribedWithString] extends NumberEnumPropCompanion[T] {
+trait IntEnumDescribedWithStringCompanion[T <: IntEnumDescribedWithString] extends IntEnumPropCompanion[T] {
 
   // required to resolve HoconReads.ConfigFunc[T] implicitly
   implicit def stringToEnum(s: String): T = {

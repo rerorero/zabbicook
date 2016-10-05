@@ -1,7 +1,6 @@
 package com.github.zabbicook.test
 
 import com.github.zabbicook.entity.Entity.NotStored
-import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.HostGroup
 import com.github.zabbicook.operation.HostGroupOp
 
@@ -18,8 +17,8 @@ trait TestHostGroups extends TestConfig { self: UnitSpec =>
     HostGroup(name = specName("hostgroup2"))
   )
 
-  def presentTestHostGroups(): Seq[StoredId] = {
-    await(Future.traverse(testHostGroups) (g => testHostGroupOp.present(g)).map(_.map(_._1)))
+  def presentTestHostGroups(): Unit = {
+    await(Future.traverse(testHostGroups)(g => testHostGroupOp.present(g)))
   }
 
   def cleanTestHostGroups(): Unit = {

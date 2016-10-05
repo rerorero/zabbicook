@@ -3,7 +3,6 @@ package com.github.zabbicook.operation
 import com.github.zabbicook.api.ZabbixApi
 import com.github.zabbicook.entity.Entity
 import com.github.zabbicook.entity.Entity.Stored
-import com.github.zabbicook.entity.EntityId.StoredId
 import play.api.libs.json._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,14 +40,8 @@ class OperationJsObj(val underlying: JsObject) {
 trait OperationHelper {
   implicit def operationJsObj(o: JsObject): OperationJsObj = new OperationJsObj(o)
 
-  protected[this] def traverseOperations[A,B](in: Traversable[A])(f: A => Future[(B, Report)]): Future[(Seq[B], Report)] = {
-    Future.traverse(in)(f).map(foldReports)
-  }
-
-  protected[this] def foldReports[A](reports: Traversable[(A, Report)]): (Seq[A], Report) = {
-    reports.foldLeft((Seq.empty[A], Report.empty)) {
-      case (acc, (result, report)) => (result +: acc._1, report + acc._2)
-    }
+  protected[this] def traverseOperations[A,B](in: Traversable[A])(f: A => Future[Report]): Future[Report] = {
+    Future.traverse(in)(f).map(Report.flatten)
   }
 
   /**
@@ -59,13 +52,13 @@ trait OperationHelper {
     items: Seq[A],
     method: String,
     respondId: String
-  ): Future[(Seq[StoredId], Report)] = {
+  ): Future[Report] = {
     if (items.isEmpty) {
-      Future.successful((Seq(), Report.empty()))
+      Future.successful(Report.empty())
     } else {
       val param = Json.toJson(items.map(_.getStoredId))
       api.requestIds(method, param, respondId)
-        .map((_, Report.deleted(items)))
+        .map(_ => Report.deleted(items))
     }
   }
 }

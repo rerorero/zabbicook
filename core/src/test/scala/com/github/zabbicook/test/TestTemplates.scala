@@ -1,6 +1,5 @@
 package com.github.zabbicook.test
 
-import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.Template
 import com.github.zabbicook.operation.{TemplateOp, TemplateSettings}
 
@@ -17,10 +16,9 @@ trait TestTemplates extends TestHostGroups { self: UnitSpec =>
       Some(Seq(Template(host = specName("template1")), Template(host = "Template OS Linux"))))
   )
 
-  def presentTestTemplates(): (Seq[StoredId], Seq[StoredId]) = {
-    val hostGroupIds = presentTestHostGroups()
-    val templates = await(templateOp.present(testTemplates))
-    (templates._1, hostGroupIds)
+  def presentTestTemplates(): Unit = {
+    presentTestHostGroups()
+    await(templateOp.present(testTemplates))
   }
 
   def cleanTestTemplates(): Unit = {

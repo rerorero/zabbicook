@@ -1,12 +1,13 @@
 package com.github.zabbicook.entity.item
 
-import com.github.zabbicook.entity.{NumProp, NumberEnumDescribedWithString, NumberEnumDescribedWithStringCompanion, ValidationResult}
+import com.github.zabbicook.entity._
+import com.github.zabbicook.entity.prop.{IntEnumDescribedWithString, IntEnumDescribedWithStringCompanion, IntProp}
 
-sealed abstract class ValueType(val value: NumProp) extends NumberEnumDescribedWithString {
+sealed abstract class ValueType(val value: IntProp) extends IntEnumDescribedWithString {
   override def validate(): ValidationResult = ValueType.validate(this)
 }
 
-object ValueType extends NumberEnumDescribedWithStringCompanion[ValueType] {
+object ValueType extends IntEnumDescribedWithStringCompanion[ValueType] {
   override val all: Set[ValueType] = Set(
     float,character,log,unsigned,text,unknown
   )

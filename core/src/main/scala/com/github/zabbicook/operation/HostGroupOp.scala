@@ -2,7 +2,6 @@ package com.github.zabbicook.operation
 
 import com.github.zabbicook.api.ZabbixApi
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
-import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.HostGroup
 import play.api.libs.json.Json
 
@@ -31,10 +30,10 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper {
     }
   }
 
-  def create(group: HostGroup[NotStored]): Future[(StoredId, Report)] = {
+  def create(group: HostGroup[NotStored]): Future[Report] = {
     val param = Json.toJson(group)
     api.requestSingleId("hostgroup.create", param, "groupids")
-      .map(id => (id, Report.created(group.toStored(id))))
+      .map(id => Report.created(group.toStored(id)))
   }
 
   /**
@@ -45,7 +44,7 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper {
     * - it is used in a global script;
     * - it is used in a correlation condition.
     */
-  def delete(groups: Seq[HostGroup[Stored]]): Future[(Seq[StoredId], Report)] = {
+  def delete(groups: Seq[HostGroup[Stored]]): Future[Report] = {
     deleteEntities(api, groups, "hostgroup.delete", "groupids")
   }
 
@@ -57,16 +56,16 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper {
     * If the host group specified name does not exist, create it.
     * If already exists, it fills the gap.
     */
-  def present(group: HostGroup[NotStored]): Future[(StoredId, Report)] = {
+  def present(group: HostGroup[NotStored]): Future[Report] = {
     findByName(group.name).flatMap {
       case Some(stored) =>
-        Future.successful((stored.getStoredId, Report.empty()))
+        Future.successful(Report.empty())
       case None =>
         create(group)
     }
   }
 
-  def present(groups: Seq[HostGroup[NotStored]]): Future[(Seq[StoredId], Report)] = {
+  def present(groups: Seq[HostGroup[NotStored]]): Future[Report] = {
     traverseOperations(groups)(present)
   }
 
@@ -74,7 +73,7 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper {
     * @param names names of host groups to be deleted
     * @return
     */
-  def absent(names: Seq[String]): Future[(Seq[StoredId], Report)] = {
+  def absent(names: Seq[String]): Future[Report] = {
     findByNames(names).flatMap(delete)
   }
 }

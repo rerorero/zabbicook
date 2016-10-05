@@ -51,37 +51,37 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
   /**
     * throw an Exception if already exists
     */
-  def create(user: User[NotStored], groups: Seq[StoredId], password: String): Future[(StoredId, Report)] = {
+  def create(user: User[NotStored], groups: Seq[StoredId], password: String): Future[Report] = {
     val groupIds = groups.map(g => Json.obj("usrgrpid" -> g))
     val param = Json.toJson(user).as[JsObject]
       .prop("passwd" -> password)
       .prop("usrgrps" -> groupIds)
     api.requestSingleId("user.create", param, "userids")
-      .map(id => (id, Report.created(user.toStored(id))))
+      .map(id => Report.created(user.toStored(id)))
   }
 
-  def update(id: StoredId, user: User[NotStored], groups: Seq[StoredId]): Future[(StoredId, Report)] = {
+  def update(id: StoredId, user: User[NotStored], groups: Seq[StoredId]): Future[Report] = {
     val param = user.toJsonForUpdate(id)
       .prop("usrgrps" -> groups.map(g => Json.obj("usrgrpid" -> g)))
     api.requestSingleId("user.update", param, "userids")
-      .map(id => (id, Report.updated(user.toStored(id))))
+      .map(id => Report.updated(user.toStored(id)))
   }
 
-  def updatePassword(user: User[Stored], password: String): Future[(StoredId, Report)] = {
+  def updatePassword(user: User[Stored], password: String): Future[Report] = {
     val id = user.getStoredId
     val param = Json.obj(
       "userid" -> id,
       "passwd" -> password
     )
     api.requestSingleId("user.update", param, "userids")
-      .map((_, Report.updated(user)))
+      .map(_ => Report.updated(user))
   }
 
-  def delete(users: Seq[User[Stored]]): Future[(Seq[StoredId], Report)] = {
+  def delete(users: Seq[User[Stored]]): Future[Report] = {
     deleteEntities(api, users, "user.delete", "userids")
   }
 
-  def presentPassword(alias: String, presentedPass: String): Future[(StoredId, Report)] = {
+  def presentPassword(alias: String, presentedPass: String): Future[Report] = {
     findByAlias(alias) flatMap {
       case Some((user, _)) =>
         val params = Json.obj()
@@ -91,7 +91,7 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
         api.request("user.login", params, auth = false)
           .map { _ =>
             logger.debug(s"presentPassword does nothing with: ${alias}")
-            (user.getStoredId, Report.empty())
+            Report.empty()
           }
           .recoverWith {
           case ErrorResponseException(_, response, _) if response.data.contains("incorrect") =>
@@ -108,7 +108,7 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
     * If the user with the specified alias does not exist, create it.
     * If already exists, it fills the gap.
     */
-  def present(userConf: UserConfig): Future[(StoredId, Report)] = {
+  def present(userConf: UserConfig): Future[Report] = {
     val groupIdsFut = userGroupOp.findByNamesAbsolutely(userConf.groupNames.toSeq)
       .map(_.map(_._1.getStoredId))
 
@@ -127,7 +127,7 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
 
         } else {
           logger.debug(s"presentUser did nothing with: ${userConf.user.alias}")
-          Future.successful((id, Report.empty()))
+          Future.successful(Report.empty())
         }
       case None =>
         logger.debug(s"presentUser attempt to create user: ${userConf.user.alias}")
@@ -138,28 +138,28 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
     }
 
     for {
-      (uid, rGen) <- generate
-      (_, rPass) <- presentPassword(userConf.user.alias, userConf.password)
+      rGen <- generate
+      rPass <- presentPassword(userConf.user.alias, userConf.password)
     } yield {
-      (uid, rGen + rPass)
+      rGen + rPass
     }
   }
 
   /**
     * @param userAndPasswords triples of (user object, names of groups, password)
     */
-  def present(userAndPasswords: Seq[UserConfig]): Future[(Seq[StoredId], Report)] = {
+  def present(userAndPasswords: Seq[UserConfig]): Future[Report] = {
     traverseOperations(userAndPasswords)(present)
   }
 
   /**
     * @param aliases aliases of users to be deleted
     */
-  def absent(aliases: Seq[String]): Future[(Seq[StoredId], Report)] = {
+  def absent(aliases: Seq[String]): Future[Report] = {
     for {
       storedUsers <- findByAliases(aliases)
-      tpl <- delete(storedUsers.map(_._1))
-    } yield tpl
+      r <- delete(storedUsers.map(_._1))
+    } yield r
   }
 }
 

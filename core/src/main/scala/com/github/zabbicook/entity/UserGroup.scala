@@ -2,15 +2,16 @@ package com.github.zabbicook.entity
 
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.{NotStoredId, StoredId}
+import com.github.zabbicook.entity.prop._
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json.{Format, JsObject, Json}
 
-sealed abstract class GuiAccess(val value: NumProp) extends NumberEnumProp {
+sealed abstract class GuiAccess(val value: IntProp) extends IntEnumProp {
   override def validate(): ValidationResult = GuiAccess.validate(this)
 }
 
-object GuiAccess extends NumberEnumPropCompanion[GuiAccess] {
+object GuiAccess extends IntEnumPropCompanion[GuiAccess] {
   override val all: Set[GuiAccess] = Set(default,internal,disable,unknown)
   case object default extends GuiAccess(0)
   case object internal extends GuiAccess(1)

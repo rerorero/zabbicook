@@ -1,8 +1,11 @@
 package com.github.zabbicook.operations
 
-import com.github.zabbicook.entity.{EnabledEnum, User}
+import com.github.zabbicook.entity.User
+import com.github.zabbicook.entity.prop.EnabledEnum
+import com.github.zabbicook.hocon.HoconSuccess
 import com.github.zabbicook.operation.{UserConfig, UserOp}
 import com.github.zabbicook.test.{TestUsers, UnitSpec}
+import com.typesafe.config.ConfigFactory
 
 class UserOpSpec extends UnitSpec with TestUsers {
   lazy val sut = new UserOp(cachedApi)
@@ -33,13 +36,13 @@ class UserOpSpec extends UnitSpec with TestUsers {
 
       // appends
       {
-        val (_, report) = await(sut.present(testUsers :+ appended))
+        val report = await(sut.present(testUsers :+ appended))
         assert(report.count === 1)
         assert(report.created.head.entityName === appended.user.entityName)
         val founds = await(sut.findByAliases((testUsers :+ appended).map(_.user.alias)))
         assert(founds.length === testUsers.length + 1)
         // represent does nothing
-        val (_, report2) = await(sut.present(testUsers :+ appended))
+        val report2 = await(sut.present(testUsers :+ appended))
         assert(report2.isEmpty)
       }
 
@@ -48,7 +51,7 @@ class UserOpSpec extends UnitSpec with TestUsers {
         val modified = UserConfig(User(alias = specName("userx"), autologin = Some(EnabledEnum.disabled), name = Some("Bob")),
           Set(testUserGroups(0).userGroup.name), "password")
 
-        val (_, report) = await(sut.present(testUsers :+ modified))
+        val report = await(sut.present(testUsers :+ modified))
         assert(report.count === 1)
         assert(report.updated.head.entityName === modified.user.entityName)
         val Some(actual) = await(sut.findByAlias(modified.user.alias))
@@ -61,12 +64,12 @@ class UserOpSpec extends UnitSpec with TestUsers {
 
       // absent
       {
-        val (_, report) = await(sut.absent((testUsers :+ appended).map(_.user.alias)))
+        val report = await(sut.absent((testUsers :+ appended).map(_.user.alias)))
         assert(report.count === testUsers.length + 1)
         report.deleted.take(report.count).foreach(e => assert(e.entityName === appended.user.entityName))
         assert(Seq() === await(sut.findByAliases(testUsers.map(_.user.alias))))
         // reabsent does nothing
-        val (_, report2) = await(sut.absent((testUsers :+ appended).map(_.user.alias)))
+        val report2 = await(sut.absent((testUsers :+ appended).map(_.user.alias)))
         assert(report2.isEmpty())
       }
     }
@@ -81,12 +84,27 @@ class UserOpSpec extends UnitSpec with TestUsers {
       presentTestUsers()
       val user = testUsers(0)
       val r = await(sut.present(user.copy(password = "NewPassword1234")))
-      assert(r._2.count === 1)
-      assert(r._2.updated.head.entityName === user.user.entityName)
+      assert(r.count === 1)
+      assert(r.updated.head.entityName === user.user.entityName)
 
       // now user can login with new password, so re-presentPassword does nothing
       val r2 = await(sut.present(user.copy(password = "NewPassword1234")))
-      assert(r2._2.isEmpty())
+      assert(r2.isEmpty())
     }
+  }
+
+  "UserConfig" should "parsed from Hocon" in {
+    val s = s"""{
+                |  alias: "Alice"
+                |  lang: "en"
+                |  groups: ["g1", "g2"]
+                |  password: "pass"
+                |}""".stripMargin
+    val actual = UserConfig.hoconReads.read(ConfigFactory.parseString(s))
+    assert(actual === HoconSuccess(UserConfig(
+      user = User(alias = "Alice", lang = Some("en")),
+      groupNames = Set("g1", "g2"),
+      password = "pass"
+    )))
   }
 }

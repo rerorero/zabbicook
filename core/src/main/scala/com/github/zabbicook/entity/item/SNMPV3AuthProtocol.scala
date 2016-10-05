@@ -1,12 +1,13 @@
 package com.github.zabbicook.entity.item
 
-import com.github.zabbicook.entity.{NumProp, NumberEnumDescribedWithString, NumberEnumDescribedWithStringCompanion, ValidationResult}
+import com.github.zabbicook.entity._
+import com.github.zabbicook.entity.prop.{IntEnumDescribedWithString, IntEnumDescribedWithStringCompanion, IntProp}
 
-sealed abstract class SNMPV3AuthProtocol(val value: NumProp) extends NumberEnumDescribedWithString {
+sealed abstract class SNMPV3AuthProtocol(val value: IntProp) extends IntEnumDescribedWithString {
   override def validate(): ValidationResult = SNMPV3AuthProtocol.validate(this)
 }
 
-object SNMPV3AuthProtocol extends NumberEnumDescribedWithStringCompanion[SNMPV3AuthProtocol] {
+object SNMPV3AuthProtocol extends IntEnumDescribedWithStringCompanion[SNMPV3AuthProtocol] {
   override val all: Set[SNMPV3AuthProtocol] = Set(
     MD5,SHA,unknown
   )
@@ -15,11 +16,11 @@ object SNMPV3AuthProtocol extends NumberEnumDescribedWithStringCompanion[SNMPV3A
   case object unknown extends SNMPV3AuthProtocol(-1)
 }
 
-sealed abstract class SNMPV3PrivProtocol(val value: NumProp) extends NumberEnumDescribedWithString {
+sealed abstract class SNMPV3PrivProtocol(val value: IntProp) extends IntEnumDescribedWithString {
   override def validate(): ValidationResult = SNMPV3PrivProtocol.validate(this)
 }
 
-object SNMPV3PrivProtocol extends NumberEnumDescribedWithStringCompanion[SNMPV3PrivProtocol] {
+object SNMPV3PrivProtocol extends IntEnumDescribedWithStringCompanion[SNMPV3PrivProtocol] {
   override val all: Set[SNMPV3PrivProtocol] = Set(
     DES,AES,unknown
   )
@@ -28,11 +29,11 @@ object SNMPV3PrivProtocol extends NumberEnumDescribedWithStringCompanion[SNMPV3P
   case object unknown extends SNMPV3PrivProtocol(-1)
 }
 
-sealed abstract class SNMPV3SecurityLevel(val value: NumProp) extends NumberEnumDescribedWithString {
+sealed abstract class SNMPV3SecurityLevel(val value: IntProp) extends IntEnumDescribedWithString {
   override def validate(): ValidationResult = SNMPV3SecurityLevel.validate(this)
 }
 
-object SNMPV3SecurityLevel extends NumberEnumDescribedWithStringCompanion[SNMPV3SecurityLevel] {
+object SNMPV3SecurityLevel extends IntEnumDescribedWithStringCompanion[SNMPV3SecurityLevel] {
   override val all: Set[SNMPV3SecurityLevel] = Set(
     noAuthNoPriv,authNoPriv,authPriv,unknown
   )

@@ -1,7 +1,8 @@
 package com.github.zabbicook.operations
 
 import com.github.zabbicook.api.ZabbixApi
-import com.github.zabbicook.entity.{EnabledEnum, EnabledEnumZeroPositive, Permission, UserGroup}
+import com.github.zabbicook.entity._
+import com.github.zabbicook.entity.prop.{EnabledEnum, EnabledEnumZeroPositive}
 import com.github.zabbicook.operation.{UserGroupConfig, UserGroupOp}
 import com.github.zabbicook.test.{TestConfig, TestUserGroups, UnitSpec}
 
@@ -37,13 +38,13 @@ class UserGroupOpSpec
 
       // appends
       {
-        val (_, report) = await(sut.present(testUserGroups :+ appended))
+        val report = await(sut.present(testUserGroups :+ appended))
         assert(report.count === 1)
         assert(report.created.head.entityName === appended.userGroup.entityName)
         val founds = await(sut.findByNames((testUserGroups :+ appended).map(_.userGroup.name)))
         assert(founds.length === testUserGroups.length + 1)
         // represent does nothing
-        val (_, report2) = await(sut.present(testUserGroups :+ appended))
+        val report2 = await(sut.present(testUserGroups :+ appended))
         assert(report2.isEmpty)
       }
 
@@ -51,7 +52,7 @@ class UserGroupOpSpec
       {
         val modified = UserGroupConfig(UserGroup(name = specName("groupx"), debug_mode = Some(EnabledEnum.enabled), users_status = Some(EnabledEnumZeroPositive.disabled)),
           Map(testHostGroups(0).name -> Permission.readWrite, testHostGroups(1).name -> Permission.readWrite))
-        val (_, report) = await(sut.present(testUserGroups :+ modified))
+        val report = await(sut.present(testUserGroups :+ modified))
         assert(report.count === 1)
         assert(report.updated.head.entityName === modified.userGroup.entityName)
         val Some(actual) = await(sut.findByName(modified.userGroup.name))
@@ -64,12 +65,12 @@ class UserGroupOpSpec
 
       // absent
       {
-        val (_, report) = await(sut.absent((testUserGroups :+ appended).map(_.userGroup.name)))
+        val report = await(sut.absent((testUserGroups :+ appended).map(_.userGroup.name)))
         assert(report.count === testUserGroups.length + 1)
         report.deleted.take(report.count).foreach(e => assert(e.entityName === appended.userGroup.entityName))
         assert(Seq() === await(sut.findByNames(testUserGroups.map(_.userGroup.name))))
         // reabsent does nothing
-        val (_, report2) = await(sut.absent((testUserGroups :+ appended).map(_.userGroup.name)))
+        val report2 = await(sut.absent((testUserGroups :+ appended).map(_.userGroup.name)))
         assert(report2.isEmpty())
       }
     }

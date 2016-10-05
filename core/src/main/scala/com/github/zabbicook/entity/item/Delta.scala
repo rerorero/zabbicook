@@ -1,12 +1,13 @@
 package com.github.zabbicook.entity.item
 
-import com.github.zabbicook.entity.{NumProp, NumberEnumDescribedWithString, NumberEnumDescribedWithStringCompanion, ValidationResult}
+import com.github.zabbicook.entity._
+import com.github.zabbicook.entity.prop.{IntEnumDescribedWithString, IntEnumDescribedWithStringCompanion, IntProp}
 
-sealed abstract class Delta(val value: NumProp) extends NumberEnumDescribedWithString {
+sealed abstract class Delta(val value: IntProp) extends IntEnumDescribedWithString {
   override def validate(): ValidationResult = Delta.validate(this)
 }
 
-object Delta extends NumberEnumDescribedWithStringCompanion[Delta] {
+object Delta extends IntEnumDescribedWithStringCompanion[Delta] {
   override val all: Set[Delta] = Set(
     AsIs,SpeedPerSec,SimpleChange,unknown
   )

@@ -2,15 +2,16 @@ package com.github.zabbicook.entity
 
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.{NotStoredId, StoredId}
+import com.github.zabbicook.entity.prop.{IntProp, IntEnumDescribedWithString, IntEnumDescribedWithStringCompanion}
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json._
 
-sealed abstract class HostGroupFlag(val value: NumProp) extends NumberEnumDescribedWithString {
+sealed abstract class HostGroupFlag(val value: IntProp) extends IntEnumDescribedWithString {
   override def validate(): ValidationResult = HostGroupFlag.validate(this)
 }
 
-object HostGroupFlag extends NumberEnumDescribedWithStringCompanion[HostGroupFlag] {
+object HostGroupFlag extends IntEnumDescribedWithStringCompanion[HostGroupFlag] {
   val all: Set[HostGroupFlag] = Set(plain, discovered, unknown)
   case object plain extends HostGroupFlag(0)
   case object discovered extends HostGroupFlag(4)

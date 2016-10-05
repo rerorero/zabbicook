@@ -3,7 +3,6 @@ package com.github.zabbicook.operation
 import com.github.zabbicook.Logging
 import com.github.zabbicook.api.ZabbixApi
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
-import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.{Permission, UserGroup, UserGroupPermission}
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
@@ -64,30 +63,31 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
   /**
     * @param group user group
     * @param rights permissions to assign to the group
-    * @return user group ID of generated group
+    * @return report of a created entity.
     *         throw an Exception if group already exists
+    *
     */
   def create(
     group: UserGroup[NotStored],
     rights: Seq[UserGroupPermission[Stored]]
-  ): Future[(StoredId, Report)] = {
+  ): Future[Report] = {
     val param = Json.toJson(group).as[JsObject]
         .prop("rights" -> rights)
     api.requestSingleId("usergroup.create", param, "usrgrpids")
-      .map(id => (id, Report.created(group.toStored(id))))
+      .map(id => Report.created(group.toStored(id)))
   }
 
   def update(
     group: UserGroup[Stored],
     rights: Seq[UserGroupPermission[Stored]]
-  ): Future[(StoredId, Report)] = {
+  ): Future[Report] = {
     val param = Json.toJson(group).as[JsObject]
       .prop("rights" -> rights)
     api.requestSingleId("usergroup.update", param, "usrgrpids")
-      .map((_, Report.updated(group)))
+      .map(_ => Report.updated(group))
   }
 
-  def delete(groups: Seq[UserGroup[Stored]]): Future[(Seq[StoredId], Report)] = {
+  def delete(groups: Seq[UserGroup[Stored]]): Future[Report] = {
     deleteEntities(api, groups, "usergroup.delete", "usrgrpids")
   }
 
@@ -97,7 +97,7 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
     * If already exists , it fills the gap.
     * @return User group id and operation state
     */
-  def present(userGroup: UserGroupConfig): Future[(StoredId, Report)] = {
+  def present(userGroup: UserGroupConfig): Future[Report] = {
     // convert to UserGroupPermission object
     val permissionsFut = hostGroupOp.findByNamesAbsolutely(userGroup.permissionsOfHosts.keys.toSeq).map {
       _.map { group =>
@@ -117,7 +117,7 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
           ) {
             update(userGroup.userGroup.toStored(id), permissions)
           } else {
-            Future.successful((id, Report.empty()))
+            Future.successful(Report.empty())
           }
         case None =>
           create(userGroup.userGroup, permissions)
@@ -125,18 +125,18 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
     } yield result
   }
 
-  def present(groups: Seq[UserGroupConfig]): Future[(Seq[StoredId], Report)] = {
+  def present(groups: Seq[UserGroupConfig]): Future[Report] = {
     traverseOperations(groups)(present)
   }
 
   /**
     * @param groupNames names of gropus to be deleted
     */
-  def absent(groupNames: Seq[String]): Future[(Seq[StoredId], Report)] = {
+  def absent(groupNames: Seq[String]): Future[Report] = {
     for {
       r <- findByNames(groupNames)
-      ids <- delete(r.map(_._1))
-    } yield ids
+      report <- delete(r.map(_._1))
+    } yield report
   }
 }
 

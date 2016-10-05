@@ -1,12 +1,13 @@
 package com.github.zabbicook.entity.item
 
-import com.github.zabbicook.entity.{NumProp, NumberEnumDescribedWithString, NumberEnumDescribedWithStringCompanion, ValidationResult}
+import com.github.zabbicook.entity._
+import com.github.zabbicook.entity.prop.{IntEnumDescribedWithString, IntEnumDescribedWithStringCompanion, IntProp}
 
-sealed abstract class ItemType(val value: NumProp) extends NumberEnumDescribedWithString {
+sealed abstract class ItemType(val value: IntProp) extends IntEnumDescribedWithString {
   override def validate(): ValidationResult = ItemType.validate(this)
 }
 
-object ItemType extends NumberEnumDescribedWithStringCompanion[ItemType] {
+object ItemType extends IntEnumDescribedWithStringCompanion[ItemType] {
   override val all: Set[ItemType] = Set(
     ZabbixAgent,
     SNMPv1agent,
@@ -42,9 +43,9 @@ object ItemType extends NumberEnumDescribedWithStringCompanion[ItemType] {
   case object DatabaseMonitor extends ItemType(11)
   case object IPMIagent extends ItemType(12)
   case object SSHagent extends ItemType(13)
-  case object TELNETagent extends ItemType(13)
+  case object TELNETagent extends ItemType(14)
   case object calculated extends ItemType(15)
-  case object JMXagent extends ItemType(15)
+  case object JMXagent extends ItemType(16)
   case object SNMPtrap extends ItemType(17)
   case object unknown extends ItemType(-1)
 }

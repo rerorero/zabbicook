@@ -35,7 +35,7 @@ object TopologicalSort {
     * @return Success: sorted values.
     *         Failure[CyclieException]: found cyclic references in values.
     */
-  def apply[T](values: Traversable[T])(implicit sortable: TopologicalSortable[T]): Either[CyclicException[T], Iterable[T]] = {
+  def apply[T](values: Traversable[T])(implicit sortable: TopologicalSortable[T]): Either[CyclicException[T], Seq[T]] = {
     val nodes = values.map(Node(_))
     val edges = nodes.map(n => n.dependencies(values).map(Edge(n, _))).flatten
     val allDependencies = nodes.map(_.dependencies(values)).flatten
@@ -61,7 +61,7 @@ object TopologicalSort {
 
     try {
       val ordered = tsort(edgeMaps, Seq())
-      Right((ordered ++ isolations).map(_.underlying))
+      Right((ordered ++ isolations).map(_.underlying).toSeq)
     } catch {
       case e: CyclicException[_] => Left(e.asInstanceOf[CyclicException[T]])
     }

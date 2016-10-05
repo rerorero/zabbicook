@@ -3,6 +3,7 @@ package com.github.zabbicook.entity
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.{NotStoredId, StoredId}
 import com.github.zabbicook.entity.User.AutoLogin
+import com.github.zabbicook.entity.prop._
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json.{Format, JsObject, Json}
@@ -19,11 +20,11 @@ object Theme extends StringEnumCompanion[Theme] {
   case object unknown extends Theme("unknown")
 }
 
-sealed abstract class UserType(val value: NumProp) extends NumberEnumDescribedWithString {
+sealed abstract class UserType(val value: IntProp) extends IntEnumDescribedWithString {
   override def validate(): ValidationResult = UserType.validate(this)
 }
 
-object UserType extends NumberEnumDescribedWithStringCompanion[UserType] {
+object UserType extends IntEnumDescribedWithStringCompanion[UserType] {
   override val all: Set[UserType] = Set(user,admin,superAdmin,unknown)
   case object user extends UserType(1)
   case object admin extends UserType(2)
@@ -41,11 +42,11 @@ case class User[S <: EntityState](
 //  attempt_failed: Option[String], // unhandled
 //  attempt_ip: Option[String], // unhandled
   autologin: Option[AutoLogin] = None,
-  autologout: Option[NumProp] = None,
+  autologout: Option[IntProp] = None,
   lang: Option[String] = None,
   name: Option[String] = None,
-  refresh: Option[NumProp] = None,
-  rows_per_page: Option[NumProp] = None,
+  refresh: Option[IntProp] = None,
+  rows_per_page: Option[IntProp] = None,
   surname: Option[String] = None,
   theme: Option[Theme] = None,
   `type`: Option[UserType] = None,

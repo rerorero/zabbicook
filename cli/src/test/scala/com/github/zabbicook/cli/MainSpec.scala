@@ -2,6 +2,8 @@ package com.github.zabbicook.cli
 
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity._
+import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
+import com.github.zabbicook.entity.prop.EnabledEnum
 import com.github.zabbicook.operation.{OperationSet, TemplateSettings}
 import com.github.zabbicook.test.{TestConfig, UnitSpec}
 
@@ -52,7 +54,7 @@ class MainSpec extends UnitSpec with TestConfig {
       TemplateSettings(
         Template(host = "zabbicook-spec template 1", name = Some("template1"), description = Some("hello")),
         Seq(HostGroup(name = "zabbicook-spec hostgroup1")),
-        Some(Seq(Template(host = "zabbicook-spec template2"), Template(host = "Template OS Linux")))
+        Some(Seq(Template(host = "zabbicook-spec template 2"), Template(host = "Template OS Linux")))
       ),
       TemplateSettings(
         Template(host = "zabbicook-spec template 2"),
@@ -61,7 +63,40 @@ class MainSpec extends UnitSpec with TestConfig {
       )
     )
 
+    val items: Map[String, Seq[Item[NotStored]]] = Map(
+      "zabbicook-spec template 1" -> Seq(Item(
+        delay = 120,
+        `key_` = """jmx["java.lang:type=Compilation",Name]""",
+        name = "zabbicook-spec item0",
+        `type` = ItemType.JMXagent,
+        value_type = ValueType.character
+      )),
+      "zabbicook-spec template 2" -> Seq(Item(
+        delay = 300,
+        `key_` = "vfs.file.cksum[/var/log/messages]",
+        name = "zabbicook-spec item1",
+        `type` = ItemType.ZabbixAgent,
+        value_type = ValueType.unsigned,
+        units = Some("B"),
+        history = Some(7),
+        trends = Some(10)
+      ), Item(
+        delay = 60,
+        `key_` = "sysUpTime",
+        name = "zabbicook-spec item2",
+        `type` = ItemType.SNMPv2Agent,
+        value_type = ValueType.unsigned,
+        data_type = Some(DataType.decimal),
+        formula = Some(0.01),
+        multiplier = Some(EnabledEnum.enabled),
+        snmp_community = Some("mycommunity"),
+        snmp_oid = Some("SNMPv2-MIB::sysUpTime.0"),
+        port = Some(8161)
+      ))
+    )
+
     def clean(): Unit = {
+      await(op.item.absentWithTemplate(items.mapValues(_.map(_.name))))
       await(op.template.absent(templates.map(_.template.host)))
       await(op.user.absent(users.map(_._1.alias)))
       await(op.userGroup.absent(userGroups.map(_.name)))
@@ -71,32 +106,49 @@ class MainSpec extends UnitSpec with TestConfig {
     def check(): Unit = {
       // host groups
       val actualHostGroups = await(op.hostGroup.findByNames(hostGroups.map(_.name)))
+      assert(hostGroups.length === actualHostGroups.length)
       (actualHostGroups.sortBy((_.name)) zip hostGroups.sortBy((_.name))) foreach { case (actual, expected) =>
         assert(expected.name === actual.name)
       }
       // user groups
       val actualUserGroups = await(op.userGroup.findByNames(userGroups.map(_.name)))
+      assert(userGroups.length === actualUserGroups.length)
       (actualUserGroups.sortBy((_._1.name)) zip userGroups.sortBy((_.name))) foreach { case (actual, expected) =>
         assert(false === actual._1.shouldBeUpdated(expected))
       }
       // users
       val actualUsers = await(op.user.findByAliases(users.map(_._1.alias)))
+      assert(users.length === actualUsers.length)
       (actualUsers.sortBy(_._1.alias) zip users.sortBy(_._1.alias)) foreach { case (actual, expected) =>
         assert(false === actual._1.shouldBeUpdated(expected._1))
         assert(expected._2.map(_.name).toSet === actual._2.map(_.name).toSet)
       }
       // templates
       val actualTemplates = await(op.template.findByHostnames(templates.map(_.template.host)))
+      assert(templates.length === actualTemplates.length)
       (actualTemplates.sortBy(_.template.host) zip templates.sortBy(_.template.host)) foreach { case (actual, expected) =>
         assert(false === actual.template.shouldBeUpdated(expected.template))
         assert(expected.groupsNames === actual.groupsNames)
         assert(expected.linkedTemplateHostNames === actual.linkedTemplateHostNames)
       }
+      // items
+      items.foreach { case (template, itemSeq) =>
+        val templateId = actualTemplates.map(_.template).find(_.host == template).get.getStoredId
+        val actuals = await(op.item.getBelongingItems(templateId))
+        assert(itemSeq.length === actuals.length)
+        (itemSeq.sortBy(_.`key_`) zip actuals.sortBy(_.`key_`)) foreach { case (expected, actual) =>
+          assert(false === actual.shouldBeUpdated(expected))
+          assert(expected.name === actual.name)
+          assert(expected.delay === actual.delay)
+          assert(expected.`type` === actual.`type`)
+        }
+      }
     }
 
     cleanRun(clean) {
       val path = getClass.getResource("/mainspec/zabbicook.conf").getPath()
-      val (code, _) = runMain("http://localhost:8080/", Some(path))
+      val (code, out) = runMain("http://localhost:8080/", Some(path))
+      if (code != 0) println(out.foreach(println))
       assert(0 === code)
       check()
 

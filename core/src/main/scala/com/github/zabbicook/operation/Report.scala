@@ -52,6 +52,8 @@ object Report {
 
   def empty(): Report = Report()
 
+  def flatten(reports: Traversable[Report]): Report = reports.foldLeft(Report.empty)(_ + _)
+
   implicit val writesJson: Writes[Report] = Writes[Report] { report =>
     Json.obj(
       "created" -> report.created.length,

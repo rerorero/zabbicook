@@ -32,24 +32,24 @@ class HostGroupOpSpec extends UnitSpec with TestHostGroups {
 
       // appends
       {
-        val (_, report) = await(sut.present(testHostGroups :+ appended))
+        val report = await(sut.present(testHostGroups :+ appended))
         assert(report.count === 1)
         assert(report.created.head.entityName === appended.entityName)
         val founds = await(sut.findByNames((testHostGroups :+ appended).map(_.name)))
         assert(founds.length === testHostGroups.length + 1)
         // represent does nothing
-        val (_, report2) = await(sut.present(testHostGroups :+ appended))
+        val report2 = await(sut.present(testHostGroups :+ appended))
         assert(report2.isEmpty)
       }
 
       // absent
       {
-        val (_, report) = await(sut.absent((testHostGroups :+ appended).map(_.name)))
+        val report = await(sut.absent((testHostGroups :+ appended).map(_.name)))
         assert(report.count === testHostGroups.length + 1)
         report.deleted.take(report.count).foreach(e => assert(e.entityName === appended.entityName))
         assert(Seq() === await(sut.findByNames(testHostGroups.map(_.name))))
         // reabsent does nothing
-        val (_, report2) = await(sut.absent((testHostGroups :+ appended).map(_.name)))
+        val report2 = await(sut.absent((testHostGroups :+ appended).map(_.name)))
         assert(report2.isEmpty())
       }
     }

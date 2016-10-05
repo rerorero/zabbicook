@@ -3,7 +3,6 @@ package com.github.zabbicook.operation
 import com.github.zabbicook.Logging
 import com.github.zabbicook.api.ZabbixApi
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
-import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity._
 import com.github.zabbicook.hocon.HoconReads
 import com.github.zabbicook.hocon.HoconReads._
@@ -65,31 +64,29 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
 
   /**
     * Creates a new template with the linked templates and host groups to which the template belongs
-    *
-    * @return ids of created templates
     */
-  def create(template: TemplateSettings[NotStored, Stored, Stored]): Future[(StoredId, Report)] = {
+  def create(template: TemplateSettings[NotStored, Stored, Stored]): Future[Report] = {
     val param = Json.toJson(template.template).as[JsObject]
       .prop("groups" -> template.groups.map(g => Json.obj("groupid" -> g.getStoredId)))
       .propIfDefined(template.linkedTemplates)("templates" -> _.map(t => Json.obj("templateid" -> t.getStoredId)))
     api.requestSingleId("template.create", param, "templateids")
-      .map(id => (id, Report.created(template.template.toStored(id))))
+      .map(id => Report.created(template.template.toStored(id)))
   }
 
-  def delete(templates: Seq[Template[Stored]]): Future[(Seq[StoredId], Report)] = {
+  def delete(templates: Seq[Template[Stored]]): Future[Report] = {
     deleteEntities(api, templates, "template.delete", "templateids")
   }
 
   def update(
     current: TemplateSettings[Stored, Stored, Stored],
     update: TemplateSettings[NotStored, Stored, Stored]
-  ): Future[(StoredId, Report)] = {
+  ): Future[Report] = {
     val param = update.template.toJsonForUpdate(current.template.getStoredId)
       .prop("groups" -> update.groups.map(g => Json.obj("groupid" -> g.getStoredId)))
       .propIfDefined(update.linkedTemplates)("templates" -> _.map(t => Json.obj("templateid" -> t.getStoredId.id)))
       .propIfDefined(current.linkedTemplates)("templates_clear" -> _.map(t => Json.obj("templateid" -> t.getStoredId.id)))
     api.requestSingleId("template.update", param, "templateids")
-      .map(id => (id, Report.updated(update.template.toStored(id))))
+      .map(id => Report.updated(update.template.toStored(id)))
   }
 
   /**
@@ -97,7 +94,7 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
     * If the template group specified hostname does not exist, create it.
     * If already exists, it fills the gap.
     */
-  def present(template: TemplateSettings.NotStoredAll): Future[(StoredId, Report)] = {
+  def present(template: TemplateSettings.NotStoredAll): Future[Report] = {
     for {
       presentGroups <- hostGroupOp.findByNamesAbsolutely(template.groupsNames.toSeq)
       presentLinkedTemplates <- template.linkedTemplates match {
@@ -116,10 +113,9 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
             case _ => true
           }
           val areTemplateSame = !stored.template.shouldBeUpdated(template.template)
-          val id = stored.template.getStoredId
           if (areGroupsSame && areLinkedSame && areTemplateSame) {
             logger.debug("presentTemplate has nothing to update.")
-            Future.successful((id, Report.empty()))
+            Future.successful(Report.empty())
           } else {
             val newTemplate = TemplateSettings[NotStored, Stored, Stored](
               template.template,
@@ -136,18 +132,18 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
     }
   }
 
-  def present(templates: Seq[TemplateSettings.NotStoredAll]): Future[(Seq[StoredId], Report)] = {
+  def present(templates: Seq[TemplateSettings.NotStoredAll]): Future[Report] = {
     // sort templates by dependencies described in 'linkedTemplate' properties.
     TopologicalSort(templates) match {
       case Right(sorted) =>
-        Futures.sequential(sorted)(present).map(foldReports)
+        Futures.sequential(sorted.reverse)(present).map(Report.flatten)
       case Left(err) =>
         val entities = err.entities.map(_.hostName).mkString(",")
-        Future.failed(BadReferenceException(s"Cirucular references in template settings.'linkedTemplates' of around $entities", err))
+        Future.failed(BadReferenceException(s"Circular references in template settings.'linkedTemplates' of around $entities", err))
     }
   }
 
-  def absent(hostnames: Seq[String]): Future[(Seq[StoredId], Report)] = {
+  def absent(hostnames: Seq[String]): Future[Report] = {
     findByHostnames(hostnames).flatMap(s => delete(s.map(_.template)))
   }
 }
@@ -177,7 +173,8 @@ object TemplateSettings {
 
   implicit val topologicalSortable: TopologicalSortable[NotStoredAll] = TopologicalSortable[NotStoredAll] { (node, all) =>
     node.linkedTemplates match {
-      case Some(links) => links.map(linkHost => all.find(_.hostName == linkHost)).flatten
+      case Some(links) =>
+        links.map(linkHost => all.find(_.hostName == linkHost.host)).flatten
       case None => Seq()
     }
   }

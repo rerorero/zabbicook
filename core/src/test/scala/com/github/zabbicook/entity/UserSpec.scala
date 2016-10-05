@@ -1,6 +1,7 @@
 package com.github.zabbicook.entity
 
 import com.github.zabbicook.entity.Entity.NotStored
+import com.github.zabbicook.entity.prop.EnabledEnum
 import com.github.zabbicook.hocon.{HoconReader, HoconSuccess}
 import com.github.zabbicook.test.UnitSpec
 
