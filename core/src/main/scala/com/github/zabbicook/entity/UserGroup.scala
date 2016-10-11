@@ -2,21 +2,19 @@ package com.github.zabbicook.entity
 
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.{NotStoredId, StoredId}
+import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.prop._
-import com.github.zabbicook.hocon.HoconReads
-import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json.{Format, JsObject, Json}
 
-sealed abstract class GuiAccess(val value: IntProp) extends IntEnumProp {
-  override def validate(): ValidationResult = GuiAccess.validate(this)
-}
+sealed abstract class GuiAccess(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
 
-object GuiAccess extends IntEnumPropCompanion[GuiAccess] {
-  override val all: Set[GuiAccess] = Set(default,internal,disable,unknown)
-  case object default extends GuiAccess(0)
-  case object internal extends GuiAccess(1)
-  case object disable extends GuiAccess(2)
-  case object unknown extends GuiAccess(-1)
+object GuiAccess extends IntEnumProp2Companion[GuiAccess] {
+  override val values: Set[GuiAccess] = Set(default,internal,disable,unknown)
+  override val description: String = "Frontend authentication method of the users in the group."
+  case object default extends GuiAccess(0, "(default) use the system default authentication method")
+  case object internal extends GuiAccess(1, "use internal authentication")
+  case object disable extends GuiAccess(2, "disable access to the frontend")
+  case object unknown extends GuiAccess(-1, "unknown")
 }
 
 case class UserGroup[S <: EntityState](
@@ -42,7 +40,7 @@ case class UserGroup[S <: EntityState](
   }
 }
 
-object UserGroup {
+object UserGroup extends EntityCompanionMetaHelper {
   type DebugMode = EnabledEnum
   type State = EnabledEnumZeroPositive
 
@@ -50,18 +48,11 @@ object UserGroup {
 
   implicit val format2: Format[UserGroup[NotStored]] = Json.format[UserGroup[NotStored]]
 
-  implicit val hoconReads: HoconReads[UserGroup[NotStored]] = {
-    val reads = for {
-      name <- required[String]("name")
-      debugMode <- optional[DebugMode]("debugMode")
-      userStatus <- optional[State]("enabled")
-    } yield {
-      UserGroup[NotStored](
-        name = name,
-        debug_mode = debugMode,
-        users_status = userStatus
-      )
-    }
-    reads.withAcceptableKeys("name", "debugMode", "enabled")
-  }
+  override val meta = entity("User group object.")(
+    readOnly("usrgrpid"),
+    value("name")("name")("(required) Name of the user group."),
+    EnabledEnum.metaWithDesc("debug_mode")("debug", "debugMode")("Whether debug mode is enabled or disabled."),
+    GuiAccess.meta("gui_access")("guiAccess","gui"),
+    EnabledEnumZeroPositive.metaWithDesc("users_status")("enabled", "usersStatus")("Whether the user group is enabled or disabled.")
+  ) _
 }

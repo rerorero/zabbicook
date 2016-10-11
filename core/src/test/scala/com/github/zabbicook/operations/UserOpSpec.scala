@@ -2,7 +2,7 @@ package com.github.zabbicook.operations
 
 import com.github.zabbicook.entity.User
 import com.github.zabbicook.entity.prop.EnabledEnum
-import com.github.zabbicook.hocon.HoconSuccess
+import com.github.zabbicook.hocon.{HoconReader2, HoconSuccess}
 import com.github.zabbicook.operation.{UserConfig, UserOp}
 import com.github.zabbicook.test.{TestUsers, UnitSpec}
 import com.typesafe.config.ConfigFactory
@@ -12,7 +12,7 @@ class UserOpSpec extends UnitSpec with TestUsers {
 
   "present and absent" should "create, delete and update user" in {
     val appended = UserConfig(User(alias = specName("userx"), autologin = Some(EnabledEnum.enabled), name = Some("Alice")),
-      testUserGroups.take(2).map(_.userGroup.name).toSet, "password")
+      testUserGroups.take(2).map(_.userGroup.name), "password")
 
     def clean() = {
       cleanTestUsers()
@@ -49,7 +49,7 @@ class UserOpSpec extends UnitSpec with TestUsers {
       // update
       {
         val modified = UserConfig(User(alias = specName("userx"), autologin = Some(EnabledEnum.disabled), name = Some("Bob")),
-          Set(testUserGroups(0).userGroup.name), "password")
+          Seq(testUserGroups(0).userGroup.name), "password")
 
         val report = await(sut.present(testUsers :+ modified))
         assert(report.count === 1)
@@ -93,17 +93,22 @@ class UserOpSpec extends UnitSpec with TestUsers {
     }
   }
 
+  import com.github.zabbicook.hocon.HoconReadsCompanion._
+  import com.github.zabbicook.hocon.HoconReads2.option
+
   "UserConfig" should "parsed from Hocon" in {
     val s = s"""{
-                |  alias: "Alice"
-                |  lang: "en"
+                |  user {
+                |    alias: "Alice"
+                |    lang: "en"
+                |  }
                 |  groups: ["g1", "g2"]
                 |  password: "pass"
                 |}""".stripMargin
-    val actual = UserConfig.hoconReads.read(ConfigFactory.parseString(s))
+    val actual = HoconReader2.read[UserConfig](ConfigFactory.parseString(s), UserConfig.optional("root"))
     assert(actual === HoconSuccess(UserConfig(
       user = User(alias = "Alice", lang = Some("en")),
-      groupNames = Set("g1", "g2"),
+      groupNames = Seq("g1", "g2"),
       password = "pass"
     )))
   }

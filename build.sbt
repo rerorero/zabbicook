@@ -28,7 +28,8 @@ val core = project.in(file("./core"))
       "com.ning" % "async-http-client" % "1.9.33",
       "com.typesafe.play" % "play-json_2.11" % playVersion,
       "ai.x" %% "play-json-extensions" % "0.8.0", // https://github.com/playframework/playframework/issues/3174
-      "com.typesafe" % "config" % "1.3.0"
+      "com.typesafe" % "config" % "1.3.0",
+      "com.chuusai" %% "shapeless" % "2.3.2"
     )
   )
 

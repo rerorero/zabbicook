@@ -2,8 +2,8 @@ package com.github.zabbicook.entity
 
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.{StoredId, _}
-import com.github.zabbicook.hocon.HoconReads
-import com.github.zabbicook.hocon.HoconReads._
+import com.github.zabbicook.entity.prop.EntityCompanionMetaHelper
+import com.github.zabbicook.entity.prop.Meta._
 import play.api.libs.json._
 
 /**
@@ -38,25 +38,18 @@ case class Template[S <: EntityState] (
   }
 }
 
-object Template {
+object Template extends EntityCompanionMetaHelper {
   def fromString(hostname: String): Template[NotStored] = Template(host = hostname)
 
   implicit val format: Format[Template[Stored]] = Json.format[Template[Stored]]
 
   implicit val format2: Format[Template[NotStored]] = Json.format[Template[NotStored]]
 
-  implicit val hocon: HoconReads[Template[NotStored]] = {
-    val reads = for {
-      host <- required[String]("name")
-      description <- optional[String]("description")
-      name <- optional[String]("visibleName")
-    } yield {
-      Template[NotStored](
-        host = host,
-        description = description,
-        name = name
-      )
-    }
-    reads.withAcceptableKeys("name", "description", "visibleName")
-  }
+  val meta = entity("Template object")(
+    readOnly("templateid"),
+    value("host")("name")("(required) Technical name of the template."),
+    value("description")("description")("Description of the template."),
+    value("name")("visibleName")("""Visible name of the host.
+                                   |Default: name property value.""")
+  ) _
 }

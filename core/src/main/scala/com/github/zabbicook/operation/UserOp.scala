@@ -4,9 +4,9 @@ import com.github.zabbicook.Logging
 import com.github.zabbicook.api.{ErrorResponseException, ZabbixApi}
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.StoredId
+import com.github.zabbicook.entity.prop.EntityCompanionMetaHelper
+import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.{User, UserGroup}
-import com.github.zabbicook.hocon.HoconReads
-import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -169,16 +169,12 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
   * @param password password (it is used only if the user does not exist yet)
   * TODO: Do we need to separate the password from here?
   */
-case class UserConfig(user: User[NotStored], groupNames: Set[String], password: String)
+case class UserConfig(user: User[NotStored], groupNames: Seq[String], password: String)
 
-object UserConfig {
-  implicit val hoconReads: HoconReads[UserConfig] = {
-    for {
-      user <- of[User[NotStored]]
-      groupNames <- required[Set[String]]("groups")
-      password <- required[String]("password")
-    } yield {
-      UserConfig(user, groupNames, password)
-    }
-  }
+object UserConfig extends EntityCompanionMetaHelper {
+  val meta = entity("User settings.")(
+    User.required("user"),
+    array("groupNames")("groups")("(required) User groups to add the user to."),
+    value("password")("password")("(required) User's password.")
+  ) _
 }

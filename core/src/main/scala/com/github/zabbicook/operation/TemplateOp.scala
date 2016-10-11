@@ -4,10 +4,11 @@ import com.github.zabbicook.Logging
 import com.github.zabbicook.api.ZabbixApi
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity._
-import com.github.zabbicook.hocon.HoconReads
-import com.github.zabbicook.hocon.HoconReads._
+import com.github.zabbicook.entity.item.Item
+import com.github.zabbicook.entity.prop.EntityCompanionMetaHelper
 import com.github.zabbicook.util.{Futures, TopologicalSort, TopologicalSortable}
 import play.api.libs.json.{JsObject, JsValue, Json}
+import com.github.zabbicook.entity.prop.Meta._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -158,18 +159,30 @@ case class TemplateSettings[TS <: EntityState, GS <: EntityState, LS <: EntitySt
   def hostName = template.host
 }
 
-object TemplateSettings {
+object TemplateSettings extends EntityCompanionMetaHelper {
   type NotStoredAll = TemplateSettings[NotStored, NotStored, NotStored]
 
-  implicit val hoconReads: HoconReads[NotStoredAll] = {
-    for {
-      template <- of[Template[NotStored]]
-      groups <- required[Seq[String]]("groups").map(_.map(HostGroup.fromString))
-      linkedTemplates <- optional[Seq[String]]("linkedTemplates").map(_.map(_.map(Template.fromString)))
-    } yield {
-      TemplateSettings(template, groups, linkedTemplates)
-    }
+  case class TemplateSettingsConf(
+    template: Template[NotStored],
+    groupNames: Seq[String],
+    linkedTemplateNames: Option[Seq[String]],
+    items: Seq[Item[NotStored]]
+  ) {
+    def toTemplateSettings: NotStoredAll =
+      TemplateSettings(
+        template,
+        groupNames.map(HostGroup.fromString),
+        linkedTemplateNames.map(_.map(Template.fromString))
+      )
   }
+
+  val meta = entity("Template settings and information that belongs to the template")(
+    Template.required("template"),
+    arrayOf("groupNames")(Template.required("groups")),
+    array("groupNames")("groups")("(required) Names of host groups to add the template to."),
+    array("linkedTemplateNames")("linkedTemplates")("Names of templates to be linked to the template."),
+    arrayOf("items")(Item.required("items"))
+  ) _
 
   implicit val topologicalSortable: TopologicalSortable[NotStoredAll] = TopologicalSortable[NotStoredAll] { (node, all) =>
     node.linkedTemplates match {

@@ -32,9 +32,15 @@ object EntityId {
       sys.error(s"Unexpected operation. Entity has no id.")
     }
     def toNotStored: NotStoredId = this
+    override def equals(that: Any): Boolean =
+      that match {
+        case that: NotStoredId => true
+        case _ => false
+      }
   }
 
   case object NotStoredId extends NotStoredId
+
   implicit val format: Format[EntityId] = Format(
     Reads.StringReads.map(StoredId),
     Writes[EntityId] {
@@ -67,4 +73,3 @@ abstract class Entity[S <: EntityState] { self =>
     }
   }
 }
-

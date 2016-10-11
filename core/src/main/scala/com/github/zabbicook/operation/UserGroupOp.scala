@@ -3,9 +3,9 @@ package com.github.zabbicook.operation
 import com.github.zabbicook.Logging
 import com.github.zabbicook.api.ZabbixApi
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
+import com.github.zabbicook.entity.prop.EntityCompanionMetaHelper
+import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.{Permission, UserGroup, UserGroupPermission}
-import com.github.zabbicook.hocon.HoconReads
-import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json.{JsObject, Json}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -99,9 +99,11 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
     */
   def present(userGroup: UserGroupConfig): Future[Report] = {
     // convert to UserGroupPermission object
-    val permissionsFut = hostGroupOp.findByNamesAbsolutely(userGroup.permissionsOfHosts.keys.toSeq).map {
+    val permissionsFut = hostGroupOp.findByNamesAbsolutely(userGroup.permissions.map(_.host)) map {
       _.map { group =>
-        UserGroupPermission[Stored](group.getStoredId, userGroup.permissionsOfHosts(group.name))
+        val permission = userGroup.permissionsOfHostGroup(group.name)
+          .getOrElse(sys.error(s"${group.name} not found"))
+        UserGroupPermission[Stored](group.getStoredId, permission.permission)
       }
     }
 
@@ -140,20 +142,35 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
   }
 }
 
+case class PermissionsOfHosts(
+  host: String,
+  permission: Permission
+)
+
+object PermissionsOfHosts extends EntityCompanionMetaHelper {
+  val meta = entity("Permission of ths host group.")(
+    value("host")("hostgroup", "hostGroup")("Name of the host group"),
+    Permission.meta("permission")("permission")
+  ) _
+}
+
 /**
   * @param userGroup User group
-  * @param permissionsOfHosts Pairs of name of a host group and a permission which describes the access level to the host.
-  *                           The specified host groups must be presented before calling present() function.
+  * @param permissions host group and a permission which describes the access level to the host.
+  *                    The specified host groups must be presented before calling present() function.
   */
-case class UserGroupConfig(userGroup: UserGroup[NotStored], permissionsOfHosts: Map[String, Permission])
-
-object UserGroupConfig {
-  implicit val hoconReads: HoconReads[UserGroupConfig] = {
-    for {
-      userGroup <- of[UserGroup[NotStored]]
-      permission <- required[Map[String, Permission]]("permission")
-    } yield {
-      UserGroupConfig(userGroup, permission)
-    }
+case class UserGroupConfig(
+  userGroup: UserGroup[NotStored],
+  permissions: Seq[PermissionsOfHosts]
+) {
+  def permissionsOfHostGroup(hostgroup: String): Option[PermissionsOfHosts] = {
+    permissions.find(_.host == hostgroup)
   }
+}
+
+object UserGroupConfig extends EntityCompanionMetaHelper {
+  val meta = entity("Permission of a user group.")(
+    UserGroup.required("userGroup"),
+    arrayOf("permissions")(PermissionsOfHosts.required("permissions"))
+  ) _
 }

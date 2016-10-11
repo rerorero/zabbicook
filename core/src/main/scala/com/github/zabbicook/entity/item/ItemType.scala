@@ -1,14 +1,11 @@
 package com.github.zabbicook.entity.item
 
-import com.github.zabbicook.entity._
-import com.github.zabbicook.entity.prop.{IntEnumDescribedWithString, IntEnumDescribedWithStringCompanion, IntProp}
+import com.github.zabbicook.entity.prop._
 
-sealed abstract class ItemType(val value: IntProp) extends IntEnumDescribedWithString {
-  override def validate(): ValidationResult = ItemType.validate(this)
-}
+sealed abstract class ItemType(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
 
-object ItemType extends IntEnumDescribedWithStringCompanion[ItemType] {
-  override val all: Set[ItemType] = Set(
+object ItemType extends IntEnumProp2Companion[ItemType] {
+  override val values: Set[ItemType] = Set(
     ZabbixAgent,
     SNMPv1agent,
     ZabbixTrapper ,
@@ -29,24 +26,25 @@ object ItemType extends IntEnumDescribedWithStringCompanion[ItemType] {
     SNMPtrap ,
     unknown
   )
-  case object ZabbixAgent extends ItemType(0)
-  case object SNMPv1agent extends ItemType(1)
-  case object ZabbixTrapper extends ItemType(2)
-  case object SimpleCheck extends ItemType(3)
-  case object SNMPv2Agent extends ItemType(4)
-  case object ZabbixInternal extends ItemType(5)
-  case object SNMPv3Agent extends ItemType(6)
-  case object ZabbixAgentActive extends ItemType(7)
-  case object ZabbixAggregate extends ItemType(8)
-  case object WebItem extends ItemType(9)
-  case object ExternalCheck extends ItemType(10)
-  case object DatabaseMonitor extends ItemType(11)
-  case object IPMIagent extends ItemType(12)
-  case object SSHagent extends ItemType(13)
-  case object TELNETagent extends ItemType(14)
-  case object calculated extends ItemType(15)
-  case object JMXagent extends ItemType(16)
-  case object SNMPtrap extends ItemType(17)
-  case object unknown extends ItemType(-1)
+  override val description = "(required) Type of item."
+  case object ZabbixAgent extends ItemType(0, "Zabbix agent")
+  case object SNMPv1agent extends ItemType(1, "SNMPv1 agent")
+  case object ZabbixTrapper extends ItemType(2, "Zabbix trapper")
+  case object SimpleCheck extends ItemType(3, "Simple check")
+  case object SNMPv2Agent extends ItemType(4, "SNMPv2 agent")
+  case object ZabbixInternal extends ItemType(5, "Zabbix internal")
+  case object SNMPv3Agent extends ItemType(6, "SNMPv3 agent")
+  case object ZabbixAgentActive extends ItemType(7, "Zabbix agent (active)")
+  case object ZabbixAggregate extends ItemType(8, "Zabbix aggregate")
+  case object WebItem extends ItemType(9, "web item")
+  case object ExternalCheck extends ItemType(10, "external check")
+  case object DatabaseMonitor extends ItemType(11, "database monitor")
+  case object IPMIagent extends ItemType(12, "IPMI agent")
+  case object SSHagent extends ItemType(13, "SSH agent")
+  case object TELNETagent extends ItemType(14, "TELNET agent")
+  case object calculated extends ItemType(15, "calculated")
+  case object JMXagent extends ItemType(16, "JMX agent")
+  case object SNMPtrap extends ItemType(17, "SNMP trap")
+  case object unknown extends ItemType(-1, "unknown")
 }
 

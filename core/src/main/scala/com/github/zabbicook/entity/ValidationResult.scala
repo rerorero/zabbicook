@@ -21,5 +21,14 @@ object ValidationResult {
     }
   }
 
+  case class Nul(acceptable: Set[String] = Set()) extends Invalid {
+    def detail = {
+      val acceptables = if (acceptable.isEmpty) "" else {
+        s"(Acceptable values are: ${acceptable.map(s => s"'$s'").mkString(", ")})"
+      }
+      "null cannot be used. " + acceptables
+    }
+  }
+
   //case class outOfRange(msg: String) extends ValidationResult(msg)
 }

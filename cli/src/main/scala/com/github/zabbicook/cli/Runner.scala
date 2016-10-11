@@ -4,7 +4,7 @@ import com.github.zabbicook.Logging
 import com.github.zabbicook.api.ZabbixApiConf
 import com.github.zabbicook.chef.Chef
 import com.github.zabbicook.cli.RunResult.{OtherError, ParseError, RunSuccess}
-import com.github.zabbicook.hocon.{HoconError, HoconReader, HoconSuccess}
+import com.github.zabbicook.hocon.{HoconError, HoconReader2, HoconSuccess}
 import com.github.zabbicook.operation.{OperationSet, Report}
 import com.github.zabbicook.recipe.Recipe
 import play.api.libs.json.{Json, Writes}
@@ -12,6 +12,9 @@ import play.api.libs.json.{Json, Writes}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.control.NonFatal
+
+import com.github.zabbicook.hocon.HoconReadsCompanion._
+import com.github.zabbicook.hocon.HoconReads2.option
 
 private[cli] sealed trait RunResult {
   def asString: String
@@ -77,7 +80,7 @@ class Runner(conf: Configurations, printer: Printer) extends Logging {
   }
 
   private[this] def presentRecipe(chef: Chef): Future[RunResult] = {
-    (HoconReader.read[Recipe](conf.input) match {
+    (HoconReader2.read[Recipe](conf.input, Recipe.optional("root")) match {
       case HoconSuccess(recipe) =>
         chef.present(recipe).map(RunSuccess)
       case e: HoconError =>

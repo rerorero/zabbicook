@@ -2,34 +2,30 @@ package com.github.zabbicook.entity
 
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.{NotStoredId, StoredId}
-import com.github.zabbicook.entity.User.AutoLogin
+import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.prop._
-import com.github.zabbicook.hocon.HoconReads
-import com.github.zabbicook.hocon.HoconReads._
 import play.api.libs.json.{Format, JsObject, Json}
 
-sealed abstract class Theme(val value: String) extends StringEnumProp {
-  override def validate(): ValidationResult = Theme.validate(this)
+sealed abstract class Theme(val zabbixValue: String, val desc: String) extends EnumProp2[String]
+
+object Theme extends StringEnumProp2Companion[Theme] {
+  override val values: Set[Theme] = Set(default,blue,dark,unknown)
+  override val description: String = "User's theme."
+  case object default extends Theme("default", "default")
+  case object blue  extends Theme("blue-theme", "Blue")
+  case object dark  extends Theme("dark-theme", "Dark")
+  case object unknown extends Theme("unknown", "Unknown")
 }
 
-object Theme extends StringEnumCompanion[Theme] {
-  override val all: Set[Theme] = Set(default,blue,dark,unknown)
-  case object default extends Theme("default")
-  case object blue  extends Theme("blue-theme")
-  case object dark  extends Theme("dark-theme")
-  case object unknown extends Theme("unknown")
-}
+sealed abstract class UserType(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
 
-sealed abstract class UserType(val value: IntProp) extends IntEnumDescribedWithString {
-  override def validate(): ValidationResult = UserType.validate(this)
-}
-
-object UserType extends IntEnumDescribedWithStringCompanion[UserType] {
-  override val all: Set[UserType] = Set(user,admin,superAdmin,unknown)
-  case object user extends UserType(1)
-  case object admin extends UserType(2)
-  case object superAdmin extends UserType(3)
-  case object unknown extends UserType(-1)
+object UserType extends IntEnumProp2Companion[UserType] {
+  override val values: Set[UserType] = Set(user,admin,superAdmin,unknown)
+  override val description: String = "Type of the user."
+  case object user extends UserType(1, "(default) Zabbix user")
+  case object admin extends UserType(2, "Zabbix admin")
+  case object superAdmin extends UserType(3, "Zabbix super admin")
+  case object unknown extends UserType(-1, "Unknown")
 }
 
 /**
@@ -41,8 +37,8 @@ case class User[S <: EntityState](
 //  attempt_clock: Option[String], // unhandled
 //  attempt_failed: Option[String], // unhandled
 //  attempt_ip: Option[String], // unhandled
-  autologin: Option[AutoLogin] = None,
-  autologout: Option[IntProp] = None,
+  autologin: Option[EnabledEnum] = None,
+  //autologout: Option[IntProp] = None, // unhandled
   lang: Option[String] = None,
   name: Option[String] = None,
   refresh: Option[IntProp] = None,
@@ -70,7 +66,6 @@ case class User[S <: EntityState](
   def shouldBeUpdated[T >: S <: Stored](constant: User[NotStored]): Boolean = {
     require(alias == constant.alias)
     shouldBeUpdated(autologin, constant.autologin) ||
-    shouldBeUpdated(autologout, constant.autologout) ||
     shouldBeUpdated(lang, constant.lang) ||
     shouldBeUpdated(name, constant.name) ||
     shouldBeUpdated(refresh, constant.refresh) ||
@@ -81,53 +76,25 @@ case class User[S <: EntityState](
   }
 }
 
-object User {
-  type AutoLogin = EnabledEnum
-
+object User extends EntityCompanionMetaHelper {
   implicit val format: Format[User[Stored]] = Json.format[User[Stored]]
 
   implicit val format2: Format[User[NotStored]] = Json.format[User[NotStored]]
 
-  implicit val hocon: HoconReads[User[NotStored]] = {
-    val reads = for {
-      alias <- required[String]("alias")
-      autologin <- optional[EnabledEnum]("autoLogin")
-      // TODO Can autologout be set ?
-      // autologout <- optional[Int]("autoLogout")
-      lang <- optional[String]("lang")
-      name <- optional[String]("name")
-      surName <- optional[String]("surName")
-      refresh <- optional[Int]("refresh")
-      rowsPerPage <- optional[Int]("rowsPerPage")
-      theme <- optional[Theme]("theme")
-      userType <- optional[UserType]("type")
-      url <- optional[String]("url")
-    } yield {
-      User[NotStored](
-        alias = alias,
-        autologin = autologin,
-        // autologout = autologout,
-        lang = lang,
-        name = name,
-        refresh = refresh,
-        rows_per_page = rowsPerPage,
-        surname = surName,
-        theme = theme,
-        `type` = userType,
-        url = url
-      )
-    }
-    reads.withAcceptableKeys(
-      "alias",
-      "autoLogin",
-      "lang",
-      "name",
-      "surName",
-      "refresh",
-      "rowsPerPage",
-      "theme",
-      "type",
-      "url"
-    )
-  }
+  override val meta = entity("User object.")(
+    readOnly("userid"),
+    value("alias")("alias")("(required) User alias."),
+    EnabledEnum.metaWithDesc("autologin")("autoLogin","autologin")("Whether to enable auto-login."),
+    value("lang")("lang","language")(""" Language code of the user's language.
+                                     |Default: en_GB.""".stripMargin),
+    value("name")("name")("Name of the user."),
+    value("refresh")("refresh")("""Automatic refresh period in seconds.
+                                  |Default: 30."""),
+    value("rows_per_page")("rowsPerPage","rows")("""Amount of object rows to show per page.
+                                                   |Default: 50."""),
+    value("surname")("surName","surname","sur")("Surname of the user."),
+    Theme.meta("theme")("theme"),
+    UserType.meta("type")("type"),
+    value("url")("url")("URL of the page to redirect the user to after logging in.")
+  ) _
 }

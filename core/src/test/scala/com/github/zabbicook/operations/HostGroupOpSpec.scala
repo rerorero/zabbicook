@@ -1,7 +1,7 @@
 package com.github.zabbicook.operations
 
 import com.github.zabbicook.entity.Entity.NotStored
-import com.github.zabbicook.entity.{HostGroup, HostGroupFlag}
+import com.github.zabbicook.entity.HostGroup
 import com.github.zabbicook.operation.HostGroupOp
 import com.github.zabbicook.test.{TestHostGroups, UnitSpec}
 
@@ -24,10 +24,7 @@ class HostGroupOpSpec extends UnitSpec with TestHostGroups {
         presentTestHostGroups()
         val founds = await(sut.findByNames(testHostGroups.map(_.name)))
         assert(founds.length === testHostGroups.length)
-        testHostGroups.map { expected =>
-          val actual = founds.find(_.name == expected.name).get
-          assert(actual.flags === Some(HostGroupFlag.plain))
-        }
+        assert(testHostGroups.map(_.name).toSet === founds.map(_.name).toSet)
       }
 
       // appends

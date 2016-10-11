@@ -1,51 +1,45 @@
 package com.github.zabbicook.entity
 
-import com.github.zabbicook.entity.Host.HostEnabled
-import com.github.zabbicook.entity.prop.{EnabledEnumZeroPositive, IntProp, IntEnumDescribedWithString, IntEnumDescribedWithStringCompanion}
-import com.github.zabbicook.hocon.HoconReads
-import com.github.zabbicook.hocon.HoconReads._
+import com.github.zabbicook.entity.prop._
 import play.api.libs.json.{Format, Json}
 
-sealed abstract class InventoryMode(val value: IntProp) extends IntEnumDescribedWithString {
-  override def validate(): ValidationResult = InventoryMode.validate(this)
+sealed abstract class InventoryMode(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+
+object InventoryMode extends IntEnumProp2Companion[InventoryMode] {
+  override val values: Set[InventoryMode] = Set(disabled,manual,automatic,unknown)
+  override val description: String = "Host inventory population mode."
+  case object disabled extends InventoryMode(-1, "disabled")
+  case object manual extends InventoryMode(0, "(default) manual")
+  case object automatic extends InventoryMode(1, "automatic")
+  case object unknown extends InventoryMode(-999, "unknown")
 }
 
-object InventoryMode extends IntEnumDescribedWithStringCompanion[InventoryMode] {
-  override val all: Set[InventoryMode] = Set(disabled,manual,automatic,unknown)
-  case object disabled extends InventoryMode(-1)
-  case object manual extends InventoryMode(0)
-  case object automatic extends InventoryMode(1)
-  case object unknown extends InventoryMode(-999)
+sealed abstract class IpmiAuthAlgo(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+
+object IpmiAuthAlgo extends IntEnumProp2Companion[IpmiAuthAlgo] {
+  override val values: Set[IpmiAuthAlgo] = Set(default,none,MD2,MD5,straight,OEM,RMCPPlus,unknown)
+  override val description: String = "IPMI authentication algorithm."
+  case object default extends IpmiAuthAlgo(-1,"default")
+  case object none extends IpmiAuthAlgo(0,"none")
+  case object MD2 extends IpmiAuthAlgo(1,"MD2")
+  case object MD5 extends IpmiAuthAlgo(2,"MD5")
+  case object straight extends IpmiAuthAlgo(4,"straight")
+  case object OEM extends IpmiAuthAlgo(5,"OEM")
+  case object RMCPPlus extends IpmiAuthAlgo(6,"RMCP+")
+  case object unknown extends IpmiAuthAlgo(-999,"unknown")
 }
 
-sealed abstract class IpmiAuthAlgo(val value: IntProp) extends IntEnumDescribedWithString {
-  override def validate(): ValidationResult = IpmiAuthAlgo.validate(this)
-}
+sealed abstract class IpmiPrivilege(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
 
-object IpmiAuthAlgo extends IntEnumDescribedWithStringCompanion[IpmiAuthAlgo] {
-  override val all: Set[IpmiAuthAlgo] = Set(default,none,MD2,MD5,straight,OEM,RMCPPlus,unknown)
-  case object default extends IpmiAuthAlgo(-1)
-  case object none extends IpmiAuthAlgo(0)
-  case object MD2 extends IpmiAuthAlgo(1)
-  case object MD5 extends IpmiAuthAlgo(2)
-  case object straight extends IpmiAuthAlgo(4)
-  case object OEM extends IpmiAuthAlgo(5)
-  case object RMCPPlus extends IpmiAuthAlgo(6)
-  case object unknown extends IpmiAuthAlgo(-999)
-}
-
-sealed abstract class IpmiPrivilege(val value: IntProp) extends IntEnumDescribedWithString {
-  override def validate(): ValidationResult = IpmiPrivilege.validate(this)
-}
-
-object IpmiPrivilege extends IntEnumDescribedWithStringCompanion[IpmiPrivilege] {
-  override val all: Set[IpmiPrivilege] = Set(callback,user,operator,admin,OEM,unknown)
-  case object callback extends IpmiPrivilege(1)
-  case object user extends IpmiPrivilege(2)
-  case object operator extends IpmiPrivilege(3)
-  case object admin extends IpmiPrivilege(4)
-  case object OEM extends IpmiPrivilege(5)
-  case object unknown extends IpmiPrivilege(-1)
+object IpmiPrivilege extends IntEnumProp2Companion[IpmiPrivilege] {
+  override val values: Set[IpmiPrivilege] = Set(callback,user,operator,admin,OEM,unknown)
+  override val description: String = "IPMI privilege level."
+  case object callback extends IpmiPrivilege(1,"callback")
+  case object user extends IpmiPrivilege(2,"(default)user")
+  case object operator extends IpmiPrivilege(3,"operator")
+  case object admin extends IpmiPrivilege(4,"admin")
+  case object OEM extends IpmiPrivilege(5,"OEM")
+  case object unknown extends IpmiPrivilege(-1,"unknown")
 }
 
 case class Host(
@@ -80,48 +74,26 @@ case class Host(
   //snmp_disable_until	          // unhandled 	(readonly) The next polling time of an unavailable SNMP agent.
   //snmp_error	                  // unhandled 	(readonly) Error text if SNMP agent is unavailable.
   //snmp_errors_from	            // unhandled 	(readonly) Time when SNMP agent became unavailable.
-  status: Option[HostEnabled]=None	//	Status and function of the host.(0 - (default) monitored host; 1 - unmonitored host.)
+  status: Option[EnabledEnumZeroPositive]=None	//	Status and function of the host.(0 - (default) monitored host; 1 - unmonitored host.)
 )
 
-object Host {
-  type HostEnabled = EnabledEnumZeroPositive
+object Host extends EntityCompanionMetaHelper {
+  import Meta._
 
   implicit val format: Format[Host] = Json.format[Host]
 
-  implicit val hocon: HoconReads[Host] = {
-    val reads = for {
-      host <- required[String]("hostname")
-      description <- optional[String]("description")
-      inventory_mode <- optional[InventoryMode]("inventoryMode")
-      ipmi_authtype <- optional[IpmiAuthAlgo]("ipmiAuthAlgorithm")
-      ipmi_privilege <- optional[IpmiPrivilege]("ipmiPrivilegeLevel")
-      ipmi_username <- optional[String]("ipmiUser")
-      ipmi_password <- optional[String]("ipmiPass")
-      name <- optional[String]("visibleName")
-      status <- optional[HostEnabled]("enabled")
-    } yield {
-      Host(
-        host = host,
-        description = description,
-        inventory_mode = inventory_mode,
-        ipmi_authtype = ipmi_authtype,
-        ipmi_privilege = ipmi_privilege,
-        ipmi_username = ipmi_username,
-        ipmi_password = ipmi_password,
-        name = name,
-        status = status
-      )
-    }
-    reads.withAcceptableKeys(
-      "hostname",
-      "description",
-      "inventoryMode",
-      "ipmiAuthAlgorithm",
-      "ipmiPrivilegeLevel",
-      "ipmiUser",
-      "ipmiPass",
-      "visibleName",
-      "enabled"
-    )
-  }
+  val meta = entity("The host object")(
+    readOnly("hostid"),
+    value("host")("hostname", "host")("(required) Technical name of the host."),
+    value("description")("description", "desc")("Description of the host."),
+    InventoryMode.meta("inventory_mode")("inventoryMode"),
+    IpmiAuthAlgo.meta("ipmi_authtype")("ipmiAuthAlgorithm"),
+    value("ipmi_password")("ipmiPass")("IPMI password."),
+    IpmiPrivilege.meta("ipmi_privilege")("ipmiPrivilegeLevel"),
+    value("ipmi_username")("ipmiUser")("IPMI username."),
+    value("name")("visibleName")(
+      """Visible name of the host.
+        ||Default: host property value."""),
+    enum("status", EnabledEnumZeroPositive.values)("status")("Status and function of the host.")
+  ) _
 }

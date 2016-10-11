@@ -2,31 +2,23 @@ package com.github.zabbicook.recipe
 
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.HostGroup
-import com.github.zabbicook.hocon.HoconReads._
-import com.github.zabbicook.hocon.{HoconReads, TemplateSection}
-import com.github.zabbicook.operation.{UserConfig, UserGroupConfig}
+import com.github.zabbicook.entity.prop.EntityCompanionMetaHelper
+import com.github.zabbicook.entity.prop.Meta._
+import com.github.zabbicook.operation.TemplateSettings.TemplateSettingsConf
+import com.github.zabbicook.operation.{TemplateSettings, UserConfig, UserGroupConfig}
 
 case class Recipe(
-  hostGroups: Seq[HostGroup[NotStored]],
-  userGroupsAndPermissions: Seq[UserGroupConfig],
-  users: Seq[UserConfig],
-  templates: Seq[TemplateSection]
+  hostGroups: Option[Seq[HostGroup[NotStored]]],
+  userGroups: Option[Seq[UserGroupConfig]],
+  users: Option[Seq[UserConfig]],
+  templates: Option[Seq[TemplateSettingsConf]]
 )
 
-object Recipe {
-  implicit val hoconReads: HoconReads[Recipe] = {
-    for {
-      hostGroups <- optional[Seq[String]]("hostGroups").map(_.map(_.map(HostGroup.fromString)))
-      userGroups <- optional[Seq[UserGroupConfig]]("userGroups")
-      users <- optional[Seq[UserConfig]]("users")
-      templates <- optional[Seq[TemplateSection]]("templates")
-    } yield {
-      Recipe(
-        hostGroups = hostGroups.getOrElse(Seq()),
-        userGroupsAndPermissions = userGroups.getOrElse(Seq()),
-        users = users.getOrElse(Seq()),
-        templates = templates.getOrElse(Seq())
-      )
-    }
-  }
+object Recipe extends EntityCompanionMetaHelper {
+  val meta = entity("root")(
+    arrayOf("hostGroups")(HostGroup.optional("hostGroups")),
+    arrayOf("userGroups")(UserGroupConfig.optional("userGroups")),
+    arrayOf("users")(UserConfig.optional("users")),
+    arrayOf("templates")(TemplateSettings.optional("templates"))
+  ) _
 }

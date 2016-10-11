@@ -1,18 +1,16 @@
 package com.github.zabbicook.entity.item
 
-import com.github.zabbicook.entity._
-import com.github.zabbicook.entity.prop.{IntEnumDescribedWithString, IntEnumDescribedWithStringCompanion, IntProp}
+import com.github.zabbicook.entity.prop._
 
-sealed abstract class Delta(val value: IntProp) extends IntEnumDescribedWithString {
-  override def validate(): ValidationResult = Delta.validate(this)
-}
+sealed abstract class Delta(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
 
-object Delta extends IntEnumDescribedWithStringCompanion[Delta] {
-  override val all: Set[Delta] = Set(
+object Delta extends IntEnumProp2Companion[Delta] {
+  override val values: Set[Delta] = Set(
     AsIs,SpeedPerSec,SimpleChange,unknown
   )
-  case object AsIs extends Delta(0)
-  case object SpeedPerSec extends Delta(1)
-  case object SimpleChange extends Delta(2)
-  case object unknown extends Delta(-1)
+  override val description = "Value that will be stored."
+  case object AsIs extends Delta(0, "(default) as is")
+  case object SpeedPerSec extends Delta(1, "Delta, speed per second.")
+  case object SimpleChange extends Delta(2, "Delta, simple change")
+  case object unknown extends Delta(-1, "unknown")
 }
