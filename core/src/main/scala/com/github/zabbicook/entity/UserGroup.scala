@@ -6,9 +6,9 @@ import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.prop._
 import play.api.libs.json.{Format, JsObject, Json}
 
-sealed abstract class GuiAccess(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+sealed abstract class GuiAccess(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-object GuiAccess extends IntEnumProp2Companion[GuiAccess] {
+object GuiAccess extends IntEnumPropCompanion[GuiAccess] {
   override val values: Set[GuiAccess] = Set(default,internal,disable,unknown)
   override val description: String = "Frontend authentication method of the users in the group."
   case object default extends GuiAccess(0, "(default) use the system default authentication method")

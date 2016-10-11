@@ -2,9 +2,9 @@ package com.github.zabbicook.entity.item
 
 import com.github.zabbicook.entity.prop._
 
-sealed abstract class Delta(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+sealed abstract class Delta(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-object Delta extends IntEnumProp2Companion[Delta] {
+object Delta extends IntEnumPropCompanion[Delta] {
   override val values: Set[Delta] = Set(
     AsIs,SpeedPerSec,SimpleChange,unknown
   )

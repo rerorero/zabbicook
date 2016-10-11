@@ -10,9 +10,9 @@ class HoconReaderSpec extends UnitSpec {
 
   import HoconReads.option
 
-  sealed abstract class Address(val zabbixValue: String, val desc: String) extends EnumProp2[String]
+  sealed abstract class Address(val zabbixValue: String, val desc: String) extends EnumProp[String]
 
-  object Address extends StringEnumProp2Companion[Address] {
+  object Address extends StringEnumPropCompanion[Address] {
     override val values: Set[Address] = Set(earth,other)
     override val description: String = "Address"
     case object earth extends Address("earth", "it is an earth")
@@ -20,9 +20,9 @@ class HoconReaderSpec extends UnitSpec {
     case object unknown extends Address("unknown", "??")
   }
 
-  sealed abstract class Income(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+  sealed abstract class Income(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-  object Income extends IntEnumProp2Companion[Income] {
+  object Income extends IntEnumPropCompanion[Income] {
     override val values: Set[Income] = Set(millionaire, poor)
     override val description: String = "Incomes"
     case object millionaire extends Income(0, "who is a millionaire")

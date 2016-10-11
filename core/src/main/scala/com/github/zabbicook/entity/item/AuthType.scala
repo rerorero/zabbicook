@@ -2,9 +2,9 @@ package com.github.zabbicook.entity.item
 
 import com.github.zabbicook.entity.prop._
 
-sealed abstract class AuthType(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+sealed abstract class AuthType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-object AuthType extends IntEnumProp2Companion[AuthType] {
+object AuthType extends IntEnumPropCompanion[AuthType] {
   override val values: Set[AuthType] = Set(
     password,publicKey,unknown
   )

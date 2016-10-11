@@ -3,9 +3,9 @@ package com.github.zabbicook.entity
 import com.github.zabbicook.entity.prop._
 import play.api.libs.json.{Format, Json}
 
-sealed abstract class InventoryMode(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+sealed abstract class InventoryMode(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-object InventoryMode extends IntEnumProp2Companion[InventoryMode] {
+object InventoryMode extends IntEnumPropCompanion[InventoryMode] {
   override val values: Set[InventoryMode] = Set(disabled,manual,automatic,unknown)
   override val description: String = "Host inventory population mode."
   case object disabled extends InventoryMode(-1, "disabled")
@@ -14,9 +14,9 @@ object InventoryMode extends IntEnumProp2Companion[InventoryMode] {
   case object unknown extends InventoryMode(-999, "unknown")
 }
 
-sealed abstract class IpmiAuthAlgo(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+sealed abstract class IpmiAuthAlgo(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-object IpmiAuthAlgo extends IntEnumProp2Companion[IpmiAuthAlgo] {
+object IpmiAuthAlgo extends IntEnumPropCompanion[IpmiAuthAlgo] {
   override val values: Set[IpmiAuthAlgo] = Set(default,none,MD2,MD5,straight,OEM,RMCPPlus,unknown)
   override val description: String = "IPMI authentication algorithm."
   case object default extends IpmiAuthAlgo(-1,"default")
@@ -29,9 +29,9 @@ object IpmiAuthAlgo extends IntEnumProp2Companion[IpmiAuthAlgo] {
   case object unknown extends IpmiAuthAlgo(-999,"unknown")
 }
 
-sealed abstract class IpmiPrivilege(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+sealed abstract class IpmiPrivilege(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-object IpmiPrivilege extends IntEnumProp2Companion[IpmiPrivilege] {
+object IpmiPrivilege extends IntEnumPropCompanion[IpmiPrivilege] {
   override val values: Set[IpmiPrivilege] = Set(callback,user,operator,admin,OEM,unknown)
   override val description: String = "IPMI privilege level."
   case object callback extends IpmiPrivilege(1,"callback")

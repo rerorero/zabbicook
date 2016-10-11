@@ -62,7 +62,7 @@ object Meta {
   def readOnly(name: String): PropMeta =
     PropMeta(name, Set(), Description("This is read only property."))
 
-  def enum[T <: EnumProp2[_]](name: String, values: Set[T])(aliases: String*)(desc: String): EnumMeta = {
+  def enum[T <: EnumProp[_]](name: String, values: Set[T])(aliases: String*)(desc: String): EnumMeta = {
     val possibles = values.map(v => s"'${v.toString}' - ${v.desc}")
     EnumMeta(name, aliases.toSet, Description(desc, Some(possibles)), values.map(_.toString))
   }

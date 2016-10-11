@@ -6,9 +6,9 @@ import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.prop._
 import play.api.libs.json.{Format, JsObject, Json}
 
-sealed abstract class Theme(val zabbixValue: String, val desc: String) extends EnumProp2[String]
+sealed abstract class Theme(val zabbixValue: String, val desc: String) extends EnumProp[String]
 
-object Theme extends StringEnumProp2Companion[Theme] {
+object Theme extends StringEnumPropCompanion[Theme] {
   override val values: Set[Theme] = Set(default,blue,dark,unknown)
   override val description: String = "User's theme."
   case object default extends Theme("default", "default")
@@ -17,9 +17,9 @@ object Theme extends StringEnumProp2Companion[Theme] {
   case object unknown extends Theme("unknown", "Unknown")
 }
 
-sealed abstract class UserType(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+sealed abstract class UserType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-object UserType extends IntEnumProp2Companion[UserType] {
+object UserType extends IntEnumPropCompanion[UserType] {
   override val values: Set[UserType] = Set(user,admin,superAdmin,unknown)
   override val description: String = "Type of the user."
   case object user extends UserType(1, "(default) Zabbix user")

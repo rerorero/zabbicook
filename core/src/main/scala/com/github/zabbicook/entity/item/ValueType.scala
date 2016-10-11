@@ -2,9 +2,9 @@ package com.github.zabbicook.entity.item
 
 import com.github.zabbicook.entity.prop._
 
-sealed abstract class ValueType(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+sealed abstract class ValueType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-object ValueType extends IntEnumProp2Companion[ValueType] {
+object ValueType extends IntEnumPropCompanion[ValueType] {
   override val values: Set[ValueType] = Set(
     float,character,log,unsigned,text,unknown
   )

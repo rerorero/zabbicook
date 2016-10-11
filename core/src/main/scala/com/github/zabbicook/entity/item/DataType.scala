@@ -2,9 +2,9 @@ package com.github.zabbicook.entity.item
 
 import com.github.zabbicook.entity.prop._
 
-sealed abstract class DataType(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+sealed abstract class DataType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-object DataType extends IntEnumProp2Companion[DataType] {
+object DataType extends IntEnumPropCompanion[DataType] {
   override val values: Set[DataType] = Set(
     decimal,octal,hexadecimal,boolean,unknown
   )

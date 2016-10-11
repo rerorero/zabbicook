@@ -2,12 +2,12 @@ package com.github.zabbicook.entity.prop
 
 import play.api.libs.json._
 
-trait EnumProp2[V] {
+trait EnumProp[V] {
   def zabbixValue: V
   def desc: String
 }
 
-trait EnumProp2Companion[V, T <: EnumProp2[V]] {
+trait EnumPropCompanion[V, T <: EnumProp[V]] {
   def values: Set[T]
 
   def description: String
@@ -23,14 +23,14 @@ trait EnumProp2Companion[V, T <: EnumProp2[V]] {
     Meta.enum(name, possibleValues)(aliases:_*)(overrideDescription)
 }
 
-trait StringEnumProp2Companion[T <: EnumProp2[String]] extends EnumProp2Companion[String, T] {
+trait StringEnumPropCompanion[T <: EnumProp[String]] extends EnumPropCompanion[String, T] {
   implicit val format: Format[T] = Format(
     Reads.StringReads.map(n => possibleValues.find(_.zabbixValue == n).getOrElse(unknown)),
     Writes(v => JsString(v.zabbixValue))
   )
 }
 
-trait IntEnumProp2Companion[T <: EnumProp2[IntProp]] extends EnumProp2Companion[IntProp, T] {
+trait IntEnumPropCompanion[T <: EnumProp[IntProp]] extends EnumPropCompanion[IntProp, T] {
   implicit val format: Format[T] = Format(
     implicitly[Reads[IntProp]].map(n => possibleValues.find(_.zabbixValue.value == n.value).getOrElse(unknown)),
     Writes(v => JsNumber(v.zabbixValue.value))
@@ -40,9 +40,9 @@ trait IntEnumProp2Companion[T <: EnumProp2[IntProp]] extends EnumProp2Companion[
 /**
   * Zabbix represents two patterns of 'enabled' flag... Be careful!
   */
-sealed abstract class EnabledEnum(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+sealed abstract class EnabledEnum(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-object EnabledEnum extends IntEnumProp2Companion[EnabledEnum] {
+object EnabledEnum extends IntEnumPropCompanion[EnabledEnum] {
   override val values: Set[EnabledEnum] = Set(`false`, `true`, unknown)
   override val description: String = "Enabled status"
   case object `false` extends EnabledEnum(0, "Disable")
@@ -55,9 +55,9 @@ object EnabledEnum extends IntEnumProp2Companion[EnabledEnum] {
   implicit def boolean2enum(b: Option[Boolean]): Option[EnabledEnum] = b.map(boolean2enum)
 }
 
-sealed abstract class EnabledEnumZeroPositive(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+sealed abstract class EnabledEnumZeroPositive(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-object EnabledEnumZeroPositive extends IntEnumProp2Companion[EnabledEnumZeroPositive] {
+object EnabledEnumZeroPositive extends IntEnumPropCompanion[EnabledEnumZeroPositive] {
   override val values: Set[EnabledEnumZeroPositive] = Set(`true`, `false`, unknown)
   override val description: String = "Enabled status"
   case object `true` extends EnabledEnumZeroPositive(0, "Enabled")

@@ -6,9 +6,9 @@ import com.github.zabbicook.entity.prop._
 import play.api.libs.json.{Format, Json}
 import Meta._
 
-sealed abstract class Permission(val zabbixValue: IntProp, val desc: String) extends EnumProp2[IntProp]
+sealed abstract class Permission(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
-object Permission extends IntEnumProp2Companion[Permission] {
+object Permission extends IntEnumPropCompanion[Permission] {
   override val values: Set[Permission] = Set(denied,readOnly,readWrite,unknown)
   override val description: String = "Access level to the host group."
   case object denied extends Permission(0, "access denied")
