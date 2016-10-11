@@ -10,36 +10,36 @@ import shapeless._
 
 import scala.collection.JavaConversions._
 
-object HoconReader2 {
-  def read[T](v: => Config, meta: Meta)(implicit reader: HoconReads2[T]): HoconResult[T] = {
-    HoconReads2.withConfigException2(reader.read(v, meta))
+object HoconReader {
+  def read[T](v: => Config, meta: Meta)(implicit reader: HoconReads[T]): HoconResult[T] = {
+    HoconReads.withConfigException2(reader.read(v, meta))
   }
 
-  def read[T](file: File, meta: Meta)(implicit reader: HoconReads2[T]): HoconResult[T] = read(ConfigFactory.parseFile(file), meta)
+  def read[T](file: File, meta: Meta)(implicit reader: HoconReads[T]): HoconResult[T] = read(ConfigFactory.parseFile(file), meta)
 
-  def read[T](s: String, meta: Meta)(implicit reader: HoconReads2[T]): HoconResult[T] = read(ConfigFactory.parseString(s), meta)
+  def read[T](s: String, meta: Meta)(implicit reader: HoconReads[T]): HoconResult[T] = read(ConfigFactory.parseString(s), meta)
 }
 
-trait HoconReads2[T] { self =>
+trait HoconReads[T] { self =>
   def read(o: Config, meta: Meta): HoconResult[T]
 
   def fromValue(v: ConfigValue, meta: Meta): HoconResult[T] = {
     HoconError.UnknownError(v.origin(), s"fromValue function has not been implemented. ${v.valueType()} meta=${meta}")
   }
 
-  def map[U](f: T => U): HoconReads2[U] = HoconReads2.of[U]((conf, meta) =>
+  def map[U](f: T => U): HoconReads[U] = HoconReads.of[U]((conf, meta) =>
     self.read(conf, meta).map(f)
   )
 
-  def flatMap[U](f: T => HoconReads2[U]): HoconReads2[U] = HoconReads2.of[U]((conf, meta) =>
+  def flatMap[U](f: T => HoconReads[U]): HoconReads[U] = HoconReads.of[U]((conf, meta) =>
     self.read(conf, meta).flatMap(f(_).read(conf, meta))
   )
 }
 
-object HoconReads2 {
-  def apply[T](implicit reads: HoconReads2[T]) = reads
+object HoconReads {
+  def apply[T](implicit reads: HoconReads[T]) = reads
 
-  def of[T](f: (Config, Meta) => HoconResult[T]): HoconReads2[T] = new HoconReads2[T] {
+  def of[T](f: (Config, Meta) => HoconResult[T]): HoconReads[T] = new HoconReads[T] {
     override def read(o: Config, m: Meta): HoconResult[T] = f(o, m)
   }
 
@@ -63,8 +63,8 @@ object HoconReads2 {
     }
   }
 
-  private[this] def configFuncOf[T](expectType: ConfigValueType, f: (Config, String) => T): HoconReads2[T] = {
-    new HoconReads2[T] {
+  private[this] def configFuncOf[T](expectType: ConfigValueType, f: (Config, String) => T): HoconReads[T] = {
+    new HoconReads[T] {
       override def read(conf: Config, meta: Meta): HoconResult[T] = {
         getByMetas(conf, meta, (c, _, key) => withConfigException(f(c, key)))
       }
@@ -80,23 +80,23 @@ object HoconReads2 {
     }
   }
 
-  implicit val string: HoconReads2[String] = configFuncOf(ConfigValueType.STRING, _.getString(_))
+  implicit val string: HoconReads[String] = configFuncOf(ConfigValueType.STRING, _.getString(_))
 
-  implicit val integer: HoconReads2[Int] = configFuncOf(ConfigValueType.NUMBER, _.getInt(_))
+  implicit val integer: HoconReads[Int] = configFuncOf(ConfigValueType.NUMBER, _.getInt(_))
 
-  implicit val double: HoconReads2[Double] = configFuncOf(ConfigValueType.NUMBER, _.getDouble(_))
+  implicit val double: HoconReads[Double] = configFuncOf(ConfigValueType.NUMBER, _.getDouble(_))
 
-  implicit val number: HoconReads2[Number] = configFuncOf(ConfigValueType.NUMBER, _.getNumber(_))
+  implicit val number: HoconReads[Number] = configFuncOf(ConfigValueType.NUMBER, _.getNumber(_))
 
-  implicit val long: HoconReads2[Long] = configFuncOf(ConfigValueType.NUMBER, _.getLong(_))
+  implicit val long: HoconReads[Long] = configFuncOf(ConfigValueType.NUMBER, _.getLong(_))
 
-  implicit val boolean: HoconReads2[Boolean] = configFuncOf(ConfigValueType.BOOLEAN, _.getBoolean(_))
+  implicit val boolean: HoconReads[Boolean] = configFuncOf(ConfigValueType.BOOLEAN, _.getBoolean(_))
 
-  implicit val entityId: HoconReads2[EntityId] = HoconReads2.of((_,_) => HoconSuccess(NotStoredId))
+  implicit val entityId: HoconReads[EntityId] = HoconReads.of((_,_) => HoconSuccess(NotStoredId))
 
-  implicit val intProp: HoconReads2[IntProp] = integer.map(IntProp.apply)
+  implicit val intProp: HoconReads[IntProp] = integer.map(IntProp.apply)
 
-  implicit val doubleProp: HoconReads2[DoubleProp] = double.map(DoubleProp.apply)
+  implicit val doubleProp: HoconReads[DoubleProp] = double.map(DoubleProp.apply)
 
   def checkUnrecognizedField(obj: ConfigObject, meta: Meta): HoconResult[Unit] = {
     meta match {
@@ -112,7 +112,7 @@ object HoconReads2 {
     }
   }
 
-  implicit def array[T](implicit r: HoconReads2[T]): HoconReads2[Seq[T]] = HoconReads2.of { (c, m) =>
+  implicit def array[T](implicit r: HoconReads[T]): HoconReads[Seq[T]] = HoconReads.of { (c, m) =>
     getByMetas(c, m, (conf, meta, alias) => {
       withConfigException2 {
         meta match {
@@ -149,7 +149,7 @@ object HoconReads2 {
     * so we need explicitly import this one to override it before using HoconReads
     * @return
     */
-  implicit def option[T](implicit tr: HoconReads2[T]): HoconReads2[Option[T]] = HoconReads2.of[Option[T]]((conf,meta) => {
+  implicit def option[T](implicit tr: HoconReads[T]): HoconReads[Option[T]] = HoconReads.of[Option[T]]((conf,meta) => {
     tr.read(conf, meta) match {
       case HoconSuccess(t) => HoconSuccess(Some(t))
       case _: HoconError.NotExist => HoconSuccess(None)
@@ -158,18 +158,18 @@ object HoconReads2 {
   })
 }
 
-object HoconReadsCompanion extends LabelledTypeClassCompanion[HoconReads2] {
+object HoconReadsCompanion extends LabelledTypeClassCompanion[HoconReads] {
 
-  override object typeClass extends LabelledTypeClass[HoconReads2] {
-    override val emptyProduct: HoconReads2[HNil] = HoconReads2.of((_,_) => HoconSuccess(HNil))
+  override object typeClass extends LabelledTypeClass[HoconReads] {
+    override val emptyProduct: HoconReads[HNil] = HoconReads.of((_,_) => HoconSuccess(HNil))
 
     private[this] def resolveEntityMeta(propName: String, meta: Meta, conf: Config): HoconResult[(Config, Meta)] = {
       def getObjConfByMeta(conf: Config, targetMeta: EntityMeta): HoconResult[Config] = {
-        HoconReads2.getByMetas(conf, targetMeta, (c, m, alias) =>
+        HoconReads.getByMetas(conf, targetMeta, (c, m, alias) =>
           c.getValue(alias).valueType() match {
             case ConfigValueType.OBJECT =>
               val confObj = conf.getObject(alias)
-              HoconReads2.checkUnrecognizedField(confObj, targetMeta).map(_ => confObj.toConfig())
+              HoconReads.checkUnrecognizedField(confObj, targetMeta).map(_ => confObj.toConfig())
             case other =>
               HoconError.TypeMismatched.of(conf.origin(), s"has type $other, but required OBJECT", m)
           }
@@ -195,8 +195,8 @@ object HoconReadsCompanion extends LabelledTypeClassCompanion[HoconReads2] {
       }
     }
 
-    override def product[H, T <: HList](name: String, ch: HoconReads2[H], ct: HoconReads2[T]): HoconReads2[::[H, T]] = {
-      HoconReads2.of[H :: T] { (conf, meta) =>
+    override def product[H, T <: HList](name: String, ch: HoconReads[H], ct: HoconReads[T]): HoconReads[::[H, T]] = {
+      HoconReads.of[H :: T] { (conf, meta) =>
         val headParams = resolveEntityMeta(name, meta, conf)
         for {
           param <- headParams
@@ -208,7 +208,7 @@ object HoconReadsCompanion extends LabelledTypeClassCompanion[HoconReads2] {
       }
     }
 
-    private[this] def checkEnumConcordant[T](conf: Config, meta: EnumMeta)(candidate: T)(implicit strR: HoconReads2[String]): HoconResult[T] = {
+    private[this] def checkEnumConcordant[T](conf: Config, meta: EnumMeta)(candidate: T)(implicit strR: HoconReads[String]): HoconResult[T] = {
       candidate match {
         case _: Inl[_,_] => HoconSuccess(candidate)
         case _: Inr[_,_] => HoconSuccess(candidate)
@@ -225,8 +225,8 @@ object HoconReadsCompanion extends LabelledTypeClassCompanion[HoconReads2] {
       }
     }
 
-    override def coproduct[L, R <: Coproduct](name : String, cl : => HoconReads2[L], cr : => HoconReads2[R]) : HoconReads2[L :+: R] = {
-      HoconReads2.of[L :+: R] { (conf, meta) =>
+    override def coproduct[L, R <: Coproduct](name : String, cl : => HoconReads[L], cr : => HoconReads[R]) : HoconReads[L :+: R] = {
+      HoconReads.of[L :+: R] { (conf, meta) =>
         meta match {
           case enumMeta: EnumMeta =>
             cr.read(conf, enumMeta).flatMap(checkEnumConcordant(conf, enumMeta)).map(Inr(_))
@@ -239,10 +239,10 @@ object HoconReadsCompanion extends LabelledTypeClassCompanion[HoconReads2] {
       }
     }
 
-    override val emptyCoproduct: HoconReads2[CNil] = HoconReads2.of((c, m) =>
+    override val emptyCoproduct: HoconReads[CNil] = HoconReads.of((c, m) =>
       HoconError.UnknownError(c.origin(), "Unexpected coproduct value."))
 
-    override def project[F, G](instance: => HoconReads2[G], to: (F) => G, from: (G) => F): HoconReads2[F] =
-      HoconReads2.of(instance.read(_,_).map(from))
+    override def project[F, G](instance: => HoconReads[G], to: (F) => G, from: (G) => F): HoconReads[F] =
+      HoconReads.of(instance.read(_,_).map(from))
   }
 }

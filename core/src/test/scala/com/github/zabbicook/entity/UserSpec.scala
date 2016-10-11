@@ -9,7 +9,7 @@ class UserSpec extends UnitSpec {
 
   import com.github.zabbicook.hocon.HoconReadsCompanion._
 
-  import com.github.zabbicook.hocon.HoconReads2.option
+  import com.github.zabbicook.hocon.HoconReads.option
 
   "User" should "be parsed in Hocon format" in {
     val s =
@@ -19,7 +19,7 @@ class UserSpec extends UnitSpec {
          |theme: "dark"
          |type: "user"
          |}""".stripMargin
-    val HoconSuccess(actual) = HoconReader2.read[User[NotStored]](s, User.optional("root"))
+    val HoconSuccess(actual) = HoconReader.read[User[NotStored]](s, User.optional("root"))
     assert(User[NotStored](
       alias = "Alice",
       autologin = Some(EnabledEnum.enabled),

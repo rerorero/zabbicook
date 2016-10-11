@@ -2,7 +2,7 @@ package com.github.zabbicook.operations
 
 import com.github.zabbicook.entity.User
 import com.github.zabbicook.entity.prop.EnabledEnum
-import com.github.zabbicook.hocon.{HoconReader2, HoconSuccess}
+import com.github.zabbicook.hocon.{HoconReader, HoconSuccess}
 import com.github.zabbicook.operation.{UserConfig, UserOp}
 import com.github.zabbicook.test.{TestUsers, UnitSpec}
 import com.typesafe.config.ConfigFactory
@@ -94,7 +94,7 @@ class UserOpSpec extends UnitSpec with TestUsers {
   }
 
   import com.github.zabbicook.hocon.HoconReadsCompanion._
-  import com.github.zabbicook.hocon.HoconReads2.option
+  import com.github.zabbicook.hocon.HoconReads.option
 
   "UserConfig" should "parsed from Hocon" in {
     val s = s"""{
@@ -105,7 +105,7 @@ class UserOpSpec extends UnitSpec with TestUsers {
                 |  groups: ["g1", "g2"]
                 |  password: "pass"
                 |}""".stripMargin
-    val actual = HoconReader2.read[UserConfig](ConfigFactory.parseString(s), UserConfig.optional("root"))
+    val actual = HoconReader.read[UserConfig](ConfigFactory.parseString(s), UserConfig.optional("root"))
     assert(actual === HoconSuccess(UserConfig(
       user = User(alias = "Alice", lang = Some("en")),
       groupNames = Seq("g1", "g2"),

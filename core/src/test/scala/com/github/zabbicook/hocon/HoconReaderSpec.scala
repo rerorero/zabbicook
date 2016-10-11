@@ -4,11 +4,11 @@ import com.github.zabbicook.entity.prop._
 import com.github.zabbicook.test.UnitSpec
 import com.typesafe.config.ConfigFactory
 
-class HoconReader2Spec extends UnitSpec {
+class HoconReaderSpec extends UnitSpec {
 
   import HoconReadsCompanion._
 
-  import HoconReads2.option
+  import HoconReads.option
 
   sealed abstract class Address(val zabbixValue: String, val desc: String) extends EnumProp2[String]
 
@@ -60,11 +60,11 @@ class HoconReader2Spec extends UnitSpec {
   }
 
   "reader" should "reads hocon to some objects" in {
-    val alice = HoconReader2.read[Person](
+    val alice = HoconReader.read[Person](
       ConfigFactory.parseString(s"""{ name: "Alice", age: 12 , factor: 0.01 }"""),
       Person.optional("dummy")
     )
-    val bob = HoconReader2.read[Person](
+    val bob = HoconReader.read[Person](
       ConfigFactory.parseString(s"""{name="Bob"}"""),
       Person.optional("dummy")
     )
@@ -84,7 +84,7 @@ class HoconReader2Spec extends UnitSpec {
         |  god: { name: "Yes", age: 2016, address: "other", income: "poor" }
         |}
       """.stripMargin
-    val world = HoconReader2.read[World](
+    val world = HoconReader.read[World](
       ConfigFactory.parseString(s),
       World.optional("dummy")
     )
@@ -96,7 +96,7 @@ class HoconReader2Spec extends UnitSpec {
   }
 
   "read" should "fail when types are mismatched" in {
-    val r = HoconReader2.read[Person](
+    val r = HoconReader.read[Person](
       ConfigFactory.parseString(s"""{ name: "Alice", age: "hoge"}"""),
       Person.optional("dummy")
     )
@@ -104,7 +104,7 @@ class HoconReader2Spec extends UnitSpec {
   }
 
   "read" should "fail when required props do not exist" in {
-    val r = HoconReader2.read[Person](
+    val r = HoconReader.read[Person](
       ConfigFactory.parseString(s"""{age: 1}"""),
       Person.optional("dummy")
     )
@@ -112,7 +112,7 @@ class HoconReader2Spec extends UnitSpec {
   }
 
   "read" should "fail when inputs are invalid format" in {
-    val r = HoconReader2.read[Person](
+    val r = HoconReader.read[Person](
       ConfigFactory.parseString(s"""{age = 1"""),
       Person.optional("dummy")
     )
@@ -120,7 +120,7 @@ class HoconReader2Spec extends UnitSpec {
   }
 
   "read" should "fail when includes invalid enum string" in {
-    val r = HoconReader2.read[Person](
+    val r = HoconReader.read[Person](
       ConfigFactory.parseString(s"""{name: "Alice", address: "not applicative address"}"""),
       Person.optional("dummy")
     )
@@ -128,7 +128,7 @@ class HoconReader2Spec extends UnitSpec {
     assert(r.asInstanceOf[HoconError.NotAcceptableValue].value === "not applicative address")
     assert(r.asInstanceOf[HoconError.NotAcceptableValue].meta.aliases === Set("address"))
 
-    val r2 = HoconReader2.read[Person](
+    val r2 = HoconReader.read[Person](
       ConfigFactory.parseString(s"""{name: "Alice", income: "not applicative address"}"""),
       Person.optional("dummy")
     )
@@ -145,7 +145,7 @@ class HoconReader2Spec extends UnitSpec {
         |  others: []
         |}
       """.stripMargin
-    val r = HoconReader2.read[World](ConfigFactory.parseString(s), World.optional("dummy"))
+    val r = HoconReader.read[World](ConfigFactory.parseString(s), World.optional("dummy"))
     assert(r.isInstanceOf[HoconError.UnrecognizedFields])
     assert(r.asInstanceOf[HoconError.UnrecognizedFields].invalids === Set("ages", "hooo"))
   }
