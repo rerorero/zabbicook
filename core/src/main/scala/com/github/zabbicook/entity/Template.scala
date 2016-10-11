@@ -50,6 +50,6 @@ object Template extends EntityCompanionMetaHelper {
     value("host")("name")("(required) Technical name of the template."),
     value("description")("description")("Description of the template."),
     value("name")("visibleName")("""Visible name of the host.
-                                   |Default: name property value.""")
+                                   |Default: name property value.""".stripMargin)
   ) _
 }

@@ -59,10 +59,7 @@ object HoconReads2 {
     meta.aliases.find(conf.hasPath(_)) match {
       case Some(alias) =>
         get(conf, meta, alias)
-      case None =>
-        println("-- natoring -- not exist", meta.aliases)
-        println("-- natoring -- ", conf)
-        HoconError.NotExist(conf.origin(), meta)
+      case None => HoconError.NotExist(conf.origin(), meta)
     }
   }
 
@@ -101,6 +98,20 @@ object HoconReads2 {
 
   implicit val doubleProp: HoconReads2[DoubleProp] = double.map(DoubleProp.apply)
 
+  def checkUnrecognizedField(obj: ConfigObject, meta: Meta): HoconResult[Unit] = {
+    meta match {
+      case m: EntityMeta =>
+        val unrecognized = (obj.keySet() -- m.entityAliases)
+        if (unrecognized.isEmpty)
+          HoconSuccess(())
+        else {
+          HoconError.UnrecognizedFields(obj.origin(), unrecognized, m)
+        }
+      case els =>
+        HoconError.TypeMismatched.of(obj.origin(), s"OBJECT type is not acceptable.", meta)
+    }
+  }
+
   implicit def array[T](implicit r: HoconReads2[T]): HoconReads2[Seq[T]] = HoconReads2.of { (c, m) =>
     getByMetas(c, m, (conf, meta, alias) => {
       withConfigException2 {
@@ -111,9 +122,14 @@ object HoconReads2 {
               r.fromValue(value, meta).orElse {
                 value.valueType() match {
                   case ConfigValueType.OBJECT =>
-                    am.elements.map( objMeta =>
-                      r.read(value.asInstanceOf[ConfigObject].toConfig, objMeta)
-                    ).getOrElse(HoconError.TypeMismatched.of(value.origin(), "has type OBJECT but required OBJECT", meta))
+                    am.elements.map { objMeta =>
+                      val confObj = value.asInstanceOf[ConfigObject]
+                      checkUnrecognizedField(confObj, objMeta).flatMap(_ =>
+                        r.read(confObj.toConfig, objMeta)
+                      )
+                    }.getOrElse(
+                      HoconError.TypeMismatched.of(value.origin(), s"OBJECT type is not acceptable.", meta)
+                    )
                   case ConfigValueType.NULL =>
                     HoconError.NotAcceptableValue(conf.origin(), "null", meta)
                   case els =>
@@ -136,10 +152,7 @@ object HoconReads2 {
   implicit def option[T](implicit tr: HoconReads2[T]): HoconReads2[Option[T]] = HoconReads2.of[Option[T]]((conf,meta) => {
     tr.read(conf, meta) match {
       case HoconSuccess(t) => HoconSuccess(Some(t))
-      case _: HoconError.NotExist =>
-        println(" -- option natoring -- NotExist", meta.aliases)
-        println(" -- option natoring--", conf)
-        HoconSuccess(None)
+      case _: HoconError.NotExist => HoconSuccess(None)
       case e: HoconError => e
     }
   })
@@ -151,18 +164,12 @@ object HoconReadsCompanion extends LabelledTypeClassCompanion[HoconReads2] {
     override val emptyProduct: HoconReads2[HNil] = HoconReads2.of((_,_) => HoconSuccess(HNil))
 
     private[this] def resolveEntityMeta(propName: String, meta: Meta, conf: Config): HoconResult[(Config, Meta)] = {
-      def getObjConfByMeta(conf: Config, targetMeta: EntityMeta, entityMeta: Option[EntityMeta] = None): HoconResult[Config] = {
-        val parent = entityMeta.getOrElse(targetMeta)
+      def getObjConfByMeta(conf: Config, targetMeta: EntityMeta): HoconResult[Config] = {
         HoconReads2.getByMetas(conf, targetMeta, (c, m, alias) =>
           c.getValue(alias).valueType() match {
             case ConfigValueType.OBJECT =>
               val confObj = conf.getObject(alias)
-              val unrecognized = (confObj.keySet() -- parent.entityAliases)
-              if (unrecognized.isEmpty)
-                HoconResult(confObj.toConfig())
-              else {
-                HoconError.UnrecognizedFields(confObj.origin(), unrecognized, parent)
-              }
+              HoconReads2.checkUnrecognizedField(confObj, targetMeta).map(_ => confObj.toConfig())
             case other =>
               HoconError.TypeMismatched.of(conf.origin(), s"has type $other, but required OBJECT", m)
           }
@@ -190,11 +197,9 @@ object HoconReadsCompanion extends LabelledTypeClassCompanion[HoconReads2] {
 
     override def product[H, T <: HList](name: String, ch: HoconReads2[H], ct: HoconReads2[T]): HoconReads2[::[H, T]] = {
       HoconReads2.of[H :: T] { (conf, meta) =>
-        println("natoring1", name, meta)
         val headParams = resolveEntityMeta(name, meta, conf)
         for {
           param <- headParams
-          _ = println("natoring2", name, headParams)
           head <- ch.read(param._1, param._2)
           tail <- ct.read(conf, meta)
         } yield {

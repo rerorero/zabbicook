@@ -93,7 +93,7 @@ object Host extends EntityCompanionMetaHelper {
     value("ipmi_username")("ipmiUser")("IPMI username."),
     value("name")("visibleName")(
       """Visible name of the host.
-        ||Default: host property value."""),
+        ||Default: host property value.""".stripMargin),
     enum("status", EnabledEnumZeroPositive.values)("status")("Status and function of the host.")
   ) _
 }

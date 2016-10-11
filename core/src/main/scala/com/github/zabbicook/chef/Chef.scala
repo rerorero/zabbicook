@@ -10,7 +10,6 @@ import scala.concurrent.Future
 class Chef(api: OperationSet) {
   def present(recipe: Recipe): Future[Report] = {
     // TODO First, check the connectivity to zabbix api server via version api
-    println("natoring", recipe)
     for {
       rHostGroup <- api.hostGroup.present(recipe.hostGroups.getOrElse(Seq()))
       // UserGroups require HostGroups

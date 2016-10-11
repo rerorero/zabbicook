@@ -151,7 +151,7 @@ object Item extends EntityCompanionMetaHelper {
     value("params")("params")("""Additional parameters depending on the type of the item:
                                 |- executed script for SSH and Telnet items;
                                 |- SQL query for database monitor items;
-                                |- formula for calculated items."""),
+                                |- formula for calculated items.""".stripMargin),
     value("password")("password")("Password for authentication. Used by simple check, SSH, Telnet, database monitor and JMX items."),
     value("port")("port")("Port monitored by the item. Used only by SNMP items."),
     value("privatekey")("privateKey")("Name of the private key file."),
@@ -168,9 +168,9 @@ object Item extends EntityCompanionMetaHelper {
     EnabledEnumZeroPositive.metaWithDesc("status")("status","enabled")("Status of the item."),
     value("trapper_hosts")("allowedHosts","trapperHosts")("Allowed hosts. Used only by trapper items."),
     value("trends")("trends")("""Number of days to keep item's trends data.
-                                |Default: 365."""),
+                                |Default: 365.""".stripMargin),
     value("units")("units")("Value units."),
     value("username")("username")("""Username for authentication. Used by simple check, SSH, Telnet, database monitor and JMX items.
-                                    |Required by SSH and Telnet items.""")
+                                    |Required by SSH and Telnet items.""".stripMargin)
   ) _
 }

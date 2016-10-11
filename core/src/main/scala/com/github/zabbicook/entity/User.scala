@@ -89,9 +89,9 @@ object User extends EntityCompanionMetaHelper {
                                      |Default: en_GB.""".stripMargin),
     value("name")("name")("Name of the user."),
     value("refresh")("refresh")("""Automatic refresh period in seconds.
-                                  |Default: 30."""),
+                                  |Default: 30.""".stripMargin),
     value("rows_per_page")("rowsPerPage","rows")("""Amount of object rows to show per page.
-                                                   |Default: 50."""),
+                                                   |Default: 50.""".stripMargin),
     value("surname")("surName","surname","sur")("Surname of the user."),
     Theme.meta("theme")("theme"),
     UserType.meta("type")("type"),
