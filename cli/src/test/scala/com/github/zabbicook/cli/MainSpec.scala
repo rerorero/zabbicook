@@ -2,9 +2,12 @@ package com.github.zabbicook.cli
 
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity._
+import com.github.zabbicook.entity.host.HostGroup
 import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
 import com.github.zabbicook.entity.prop.EnabledEnum
-import com.github.zabbicook.operation.{OperationSet, TemplateSettings}
+import com.github.zabbicook.entity.template.{Template, TemplateSettings}
+import com.github.zabbicook.entity.user.{Theme, User, UserGroup, UserType}
+import com.github.zabbicook.operation.Ops
 import com.github.zabbicook.test.{TestConfig, UnitSpec}
 
 class MainSpec extends UnitSpec with TestConfig {
@@ -31,7 +34,7 @@ class MainSpec extends UnitSpec with TestConfig {
   }
 
   "CLI Main" should "parse and configure all from files" in {
-    val op = new OperationSet(cachedApi)
+    val op = new Ops(cachedApi)
 
     // expected
     val hostGroups = Seq(

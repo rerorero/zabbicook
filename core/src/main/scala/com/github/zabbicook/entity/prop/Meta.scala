@@ -5,6 +5,10 @@ case class Description(
   possibles: Option[Set[String]] = None
 )
 
+/**
+  * Meta is used for parsing entity settings, and information in error messages.
+  * Todo: Some documentations will be generated from Meta.
+  */
 sealed trait Meta{
   def name: String
   def aliases: Set[String]

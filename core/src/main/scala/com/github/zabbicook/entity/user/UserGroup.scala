@@ -1,9 +1,10 @@
-package com.github.zabbicook.entity
+package com.github.zabbicook.entity.user
 
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.{NotStoredId, StoredId}
 import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.prop._
+import com.github.zabbicook.entity.{Entity, EntityId, EntityState}
 import play.api.libs.json.{Format, JsObject, Json}
 
 sealed abstract class GuiAccess(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]

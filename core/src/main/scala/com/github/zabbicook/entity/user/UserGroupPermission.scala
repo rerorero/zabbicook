@@ -1,10 +1,11 @@
-package com.github.zabbicook.entity
+package com.github.zabbicook.entity.user
 
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.StoredId
+import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.prop._
+import com.github.zabbicook.entity.{Entity, EntityId, EntityState}
 import play.api.libs.json.{Format, Json}
-import Meta._
 
 sealed abstract class Permission(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 

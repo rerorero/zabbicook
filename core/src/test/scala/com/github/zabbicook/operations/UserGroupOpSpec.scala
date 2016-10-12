@@ -1,9 +1,9 @@
 package com.github.zabbicook.operations
 
 import com.github.zabbicook.api.ZabbixApi
-import com.github.zabbicook.entity._
 import com.github.zabbicook.entity.prop.{EnabledEnum, EnabledEnumZeroPositive}
-import com.github.zabbicook.operation.{PermissionsOfHosts, UserGroupConfig, UserGroupOp}
+import com.github.zabbicook.entity.user.{Permission, PermissionsOfHosts, UserGroup, UserGroupConfig}
+import com.github.zabbicook.operation.UserGroupOp
 import com.github.zabbicook.test.{TestConfig, TestUserGroups, UnitSpec}
 
 class UserGroupOpSpec

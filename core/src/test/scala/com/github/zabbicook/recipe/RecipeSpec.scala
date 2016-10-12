@@ -1,8 +1,7 @@
 package com.github.zabbicook.recipe
 
-import com.github.zabbicook.entity.User
+import com.github.zabbicook.entity.user.{User, UserConfig}
 import com.github.zabbicook.hocon.{HoconError, HoconReader, HoconSuccess}
-import com.github.zabbicook.operation.UserConfig
 import com.github.zabbicook.test.UnitSpec
 
 class RecipeSpec extends UnitSpec {

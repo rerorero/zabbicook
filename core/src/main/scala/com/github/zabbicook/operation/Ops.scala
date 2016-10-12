@@ -2,7 +2,7 @@ package com.github.zabbicook.operation
 
 import com.github.zabbicook.api.{ZabbixApi, ZabbixApiConf}
 
-class OperationSet(api: ZabbixApi) {
+class Ops(api: ZabbixApi) {
   val user =  new UserOp(api)
   val userGroup = new UserGroupOp(api)
   val hostGroup = new HostGroupOp(api)
@@ -12,9 +12,9 @@ class OperationSet(api: ZabbixApi) {
   def close(): Unit = api.close()
 }
 
-object OperationSet {
-  def create(apiConf: ZabbixApiConf): OperationSet = {
+object Ops {
+  def create(apiConf: ZabbixApiConf): Ops = {
     val api = new ZabbixApi(apiConf)
-    new OperationSet(api)
+    new Ops(api)
   }
 }

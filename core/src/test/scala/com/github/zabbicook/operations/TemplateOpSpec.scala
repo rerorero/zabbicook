@@ -1,7 +1,7 @@
 package com.github.zabbicook.operations
 
-import com.github.zabbicook.entity.Template
-import com.github.zabbicook.operation.{TemplateOp, TemplateSettings}
+import com.github.zabbicook.entity.template.{Template, TemplateSettings}
+import com.github.zabbicook.operation.TemplateOp
 import com.github.zabbicook.test.{TestTemplates, UnitSpec}
 
 class TemplateOpSpec extends UnitSpec with TestTemplates {

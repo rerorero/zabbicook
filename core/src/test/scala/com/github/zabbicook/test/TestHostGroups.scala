@@ -1,7 +1,7 @@
 package com.github.zabbicook.test
 
 import com.github.zabbicook.entity.Entity.NotStored
-import com.github.zabbicook.entity.HostGroup
+import com.github.zabbicook.entity.host.HostGroup
 import com.github.zabbicook.operation.HostGroupOp
 
 import scala.concurrent.Future

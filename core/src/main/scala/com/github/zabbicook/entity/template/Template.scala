@@ -1,9 +1,10 @@
-package com.github.zabbicook.entity
+package com.github.zabbicook.entity.template
 
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.{StoredId, _}
 import com.github.zabbicook.entity.prop.EntityCompanionMetaHelper
 import com.github.zabbicook.entity.prop.Meta._
+import com.github.zabbicook.entity.{Entity, EntityId, EntityState}
 import play.api.libs.json._
 
 /**

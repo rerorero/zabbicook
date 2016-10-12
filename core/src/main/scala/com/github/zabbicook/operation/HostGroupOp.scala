@@ -2,7 +2,7 @@ package com.github.zabbicook.operation
 
 import com.github.zabbicook.api.ZabbixApi
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
-import com.github.zabbicook.entity.HostGroup
+import com.github.zabbicook.entity.host.HostGroup
 import play.api.libs.json.Json
 
 import scala.concurrent.ExecutionContext.Implicits.global

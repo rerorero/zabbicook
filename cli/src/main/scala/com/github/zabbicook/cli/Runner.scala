@@ -5,14 +5,13 @@ import com.github.zabbicook.api.ZabbixApiConf
 import com.github.zabbicook.chef.Chef
 import com.github.zabbicook.cli.RunResult.{OtherError, ParseError, RunSuccess}
 import com.github.zabbicook.hocon.{HoconError, HoconReader, HoconSuccess}
-import com.github.zabbicook.operation.{OperationSet, Report}
+import com.github.zabbicook.operation.{Ops, Report}
 import com.github.zabbicook.recipe.Recipe
 import play.api.libs.json.{Json, Writes}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.control.NonFatal
-
 import com.github.zabbicook.hocon.HoconReadsCompanion._
 import com.github.zabbicook.hocon.HoconReads.option
 
@@ -56,7 +55,7 @@ class Runner(conf: Configurations, printer: Printer) extends Logging {
   )
 
   def run(): Future[RunResult] = {
-    val operationSet = OperationSet.create(apiConf)
+    val operationSet = Ops.create(apiConf)
 
     val chef = new Chef(operationSet)
 

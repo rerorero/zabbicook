@@ -1,7 +1,7 @@
 package com.github.zabbicook.operations
 
 import com.github.zabbicook.entity.Entity.NotStored
-import com.github.zabbicook.entity.HostGroup
+import com.github.zabbicook.entity.host.HostGroup
 import com.github.zabbicook.operation.HostGroupOp
 import com.github.zabbicook.test.{TestHostGroups, UnitSpec}
 

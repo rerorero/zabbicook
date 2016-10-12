@@ -1,7 +1,7 @@
 package com.github.zabbicook.test
 
-import com.github.zabbicook.entity.User
-import com.github.zabbicook.operation.{UserConfig, UserOp}
+import com.github.zabbicook.entity.user.{User, UserConfig}
+import com.github.zabbicook.operation.UserOp
 
 trait TestUsers extends TestConfig with TestUserGroups{ self: UnitSpec =>
   private[this] lazy val testUserOp = new UserOp(cachedApi)

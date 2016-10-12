@@ -1,9 +1,9 @@
 package com.github.zabbicook.operations
 
-import com.github.zabbicook.entity.User
 import com.github.zabbicook.entity.prop.EnabledEnum
+import com.github.zabbicook.entity.user.{User, UserConfig}
 import com.github.zabbicook.hocon.{HoconReader, HoconSuccess}
-import com.github.zabbicook.operation.{UserConfig, UserOp}
+import com.github.zabbicook.operation.UserOp
 import com.github.zabbicook.test.{TestUsers, UnitSpec}
 import com.typesafe.config.ConfigFactory
 

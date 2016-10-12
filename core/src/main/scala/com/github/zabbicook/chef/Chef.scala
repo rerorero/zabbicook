@@ -1,13 +1,13 @@
 package com.github.zabbicook.chef
 
-import com.github.zabbicook.operation.TemplateSettings.TemplateSettingsConf
-import com.github.zabbicook.operation.{OperationSet, Report}
+import com.github.zabbicook.entity.template.TemplateSettingsConf
+import com.github.zabbicook.operation.{Ops, Report}
 import com.github.zabbicook.recipe.Recipe
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class Chef(api: OperationSet) {
+class Chef(api: Ops) {
   def present(recipe: Recipe): Future[Report] = {
     // TODO First, check the connectivity to zabbix api server via version api
     for {

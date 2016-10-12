@@ -1,7 +1,7 @@
 package com.github.zabbicook.test
 
-import com.github.zabbicook.entity.Template
-import com.github.zabbicook.operation.{TemplateOp, TemplateSettings}
+import com.github.zabbicook.entity.template.{Template, TemplateSettings}
+import com.github.zabbicook.operation.TemplateOp
 
 trait TestTemplates extends TestHostGroups { self: UnitSpec =>
 
