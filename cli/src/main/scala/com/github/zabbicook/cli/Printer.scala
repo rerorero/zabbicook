@@ -1,11 +1,13 @@
 package com.github.zabbicook.cli
 
 trait Printer {
-  def print(msg: String): Unit
+  def printMsg(msg: String): Unit
+  def errorMsg(msg: String): Unit
 }
 
 object Printer {
-  val stdOutPrinter = new Printer {
-    override def print(msg: String): Unit = println(msg)
+  val default = new Printer {
+    override def printMsg(msg: String): Unit = System.out.println(msg)
+    override def errorMsg(msg: String): Unit = System.err.println(msg)
   }
 }

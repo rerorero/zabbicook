@@ -135,7 +135,9 @@ class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
     // sort templates by dependencies described in 'linkedTemplate' properties.
     TopologicalSort(templates) match {
       case Right(sorted) =>
-        Futures.sequential(sorted.reverse)(present).map(Report.flatten)
+        showStartInfo(logger, sorted.length, "templates").flatMap(_ =>
+          Futures.sequential(sorted.reverse)(present).map(Report.flatten)
+        )
       case Left(err) =>
         val entities = err.entities.map(_.hostName).mkString(",")
         Future.failed(BadReferenceException(s"Circular references in template settings.'linkedTemplates' of around $entities", err))

@@ -3,6 +3,7 @@ package com.github.zabbicook.operation
 import com.github.zabbicook.api.ZabbixApi
 import com.github.zabbicook.entity.Entity
 import com.github.zabbicook.entity.Entity.Stored
+import com.typesafe.scalalogging.Logger
 import play.api.libs.json._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -59,6 +60,12 @@ trait OperationHelper {
       val param = Json.toJson(items.map(_.getStoredId))
       api.requestIds(method, param, respondId)
         .map(_ => Report.deleted(items))
+    }
+  }
+
+  protected[this] def showStartInfo(logger: Logger, count: Int, name: String): Future[Unit] = {
+    Future {
+      if (count > 0) logger.info(s"presenting $count $name ...")
     }
   }
 }

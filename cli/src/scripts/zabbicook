@@ -1,0 +1,27 @@
+#!/bin/sh
+
+PRG="$0"
+
+while [ -h "$PRG" ]; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '/.*' > /dev/null; then
+    PRG="$link"
+  else
+    PRG=`dirname "$PRG"`/"$link"
+  fi
+done
+
+DIR=`dirname "$PRG"`
+CP="$DIR/*"
+
+if [ -z "$JAVA_HOME" ]; then
+  JAVA_CMD=java
+else
+  JAVA_CMD=$JAVA_HOME/bin/java
+fi
+
+
+"$JAVA_CMD" -cp "$CP" com.github.zabbicook.cli.Main "$@"
+
+exit $?

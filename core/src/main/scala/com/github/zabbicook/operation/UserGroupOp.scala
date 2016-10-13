@@ -126,7 +126,9 @@ class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
   }
 
   def present(groups: Seq[UserGroupConfig]): Future[Report] = {
-    traverseOperations(groups)(present)
+    showStartInfo(logger, groups.length, "user groups").flatMap(_ =>
+      traverseOperations(groups)(present)
+    )
   }
 
   /**

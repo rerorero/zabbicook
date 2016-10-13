@@ -17,6 +17,8 @@ object Logging {
 
   def debugging(): Unit = setLogLevel(Level.DEBUG)
 
+  def info(): Unit = setLogLevel(Level.INFO)
+
   private[this] def setLogLevel(level: Level): Unit = {
     val root = LoggerFactory.getLogger(SlfLogger.ROOT_LOGGER_NAME).asInstanceOf[LogbackLogger]
     root.setLevel(level)

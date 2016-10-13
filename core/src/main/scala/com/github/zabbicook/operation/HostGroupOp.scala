@@ -1,5 +1,6 @@
 package com.github.zabbicook.operation
 
+import com.github.zabbicook.Logging
 import com.github.zabbicook.api.ZabbixApi
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.host.HostGroup
@@ -7,7 +8,9 @@ import play.api.libs.json.Json
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-class HostGroupOp(api: ZabbixApi) extends OperationHelper {
+class HostGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
+
+  private[this] val logger = defaultLogger
 
   def findByName(name: String): Future[Option[HostGroup[Stored]]] = {
     api.requestSingleAs[HostGroup[Stored]]("hostgroup.get", Json.obj().filter("name" -> name).outExtend())
@@ -66,7 +69,9 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper {
   }
 
   def present(groups: Seq[HostGroup[NotStored]]): Future[Report] = {
-    traverseOperations(groups)(present)
+    showStartInfo(logger, groups.length, s"host groups").flatMap(_ =>
+      traverseOperations(groups)(present)
+    )
   }
 
   /**

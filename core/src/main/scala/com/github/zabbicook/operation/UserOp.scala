@@ -147,7 +147,9 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
     * @param userAndPasswords triples of (user object, names of groups, password)
     */
   def present(userAndPasswords: Seq[UserConfig]): Future[Report] = {
-    traverseOperations(userAndPasswords)(present)
+    showStartInfo(logger, userAndPasswords.length, "users").flatMap(_ =>
+      traverseOperations(userAndPasswords)(present)
+    )
   }
 
   /**

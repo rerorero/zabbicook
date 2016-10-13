@@ -1,9 +1,11 @@
 package com.github.zabbicook.cli
 
+import java.io.File
+
 import com.github.zabbicook.Logging
 import com.github.zabbicook.api.ZabbixApiConf
 import com.github.zabbicook.chef.Chef
-import com.github.zabbicook.cli.RunResult.{OtherError, ParseError, RunSuccess}
+import com.github.zabbicook.cli.RunResult.{FileNotFound, NoInputSpecified, OtherError, ParseError, RunSuccess}
 import com.github.zabbicook.hocon.{HoconError, HoconReader, HoconSuccess}
 import com.github.zabbicook.operation.{Ops, Report}
 import com.github.zabbicook.recipe.Recipe
@@ -24,7 +26,8 @@ private[cli] object RunResult {
   case class RunSuccess(report: Report) extends RunResult {
     override def asString: String = {
       report.toStringSeq().mkString(System.lineSeparator()) +
-      s"ok: total=${report.count}"
+        System.lineSeparator() +
+        s"Succeed: Total changes = ${report.count}"
     }
   }
 
@@ -38,6 +41,14 @@ private[cli] object RunResult {
     override def asString: String = e.toString()
   }
 
+  case object NoInputSpecified extends RunError {
+    override def asString: String = "No input files specified. Try with --file option."
+  }
+
+  case class FileNotFound(file: File) extends RunError {
+    override def asString: String = s"No such file: ${file.getAbsolutePath}"
+  }
+
   implicit val writesJson: Writes[RunResult] = Writes[RunResult] {
     case RunSuccess(r) =>
       Json.obj("result" -> "success", "report" -> Json.toJson(r))
@@ -46,7 +57,7 @@ private[cli] object RunResult {
   }
 }
 
-class Runner(conf: Configurations, printer: Printer) extends Logging {
+class Runner(conf: Arguments, printer: Printer) extends Logging {
 
   val apiConf = new ZabbixApiConf(
     apiPath = conf.url.toString,
@@ -56,7 +67,6 @@ class Runner(conf: Configurations, printer: Printer) extends Logging {
 
   def run(): Future[RunResult] = {
     val operationSet = Ops.create(apiConf)
-
     val chef = new Chef(operationSet)
 
     configureLogging()
@@ -75,25 +85,36 @@ class Runner(conf: Configurations, printer: Printer) extends Logging {
     } else if (conf.isJson) {
       // When formatted in Json, disables logging to be able to parse output as Json when failure cases.
       Logging.silent()
+    } else {
+      Logging.info()
     }
   }
 
   private[this] def presentRecipe(chef: Chef): Future[RunResult] = {
-    (HoconReader.read[Recipe](conf.input, Recipe.optional("root")) match {
-      case HoconSuccess(recipe) =>
-        chef.present(recipe).map(RunSuccess)
-      case e: HoconError =>
-        Future.successful(ParseError(e))
-    }).recover {
-      case NonFatal(e) => OtherError(e)
+    conf.input match {
+      case Some(f) if (!f.exists() || !f.isFile()) => Future.successful(FileNotFound(f))
+      case Some(f) =>
+        (HoconReader.read[Recipe](f, Recipe.optional("root")) match {
+          case HoconSuccess(recipe) =>
+            chef.present(recipe).map(RunSuccess)
+          case e: HoconError =>
+            Future.successful(ParseError(e))
+        }).recover {
+          case NonFatal(e) => OtherError(e)
+        }
+      case None => Future.successful(NoInputSpecified)
     }
   }
 
   private[this] def outFormatted(result: RunResult): Unit = {
+    def print(msg: String): Unit = result match {
+      case _: RunSuccess => printer.printMsg(msg)
+      case _ => printer.errorMsg(msg)
+    }
     if (conf.isJson) {
-      printer.print(Json.prettyPrint(Json.toJson(result)))
+      print(Json.prettyPrint(Json.toJson(result)))
     } else {
-      printer.print(result.asString)
+      print(result.asString)
     }
   }
 }

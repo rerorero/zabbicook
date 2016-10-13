@@ -15,9 +15,14 @@ object HoconReader {
     HoconReads.withConfigException2(reader.read(v, meta))
   }
 
-  def read[T](file: File, meta: Meta)(implicit reader: HoconReads[T]): HoconResult[T] = read(ConfigFactory.parseFile(file), meta)
+  def read[T](file: File, meta: Meta)(implicit reader: HoconReads[T]): HoconResult[T] = {
+    val opt = ConfigParseOptions.defaults().setAllowMissing(false)
+    read(ConfigFactory.parseFile(file, opt), meta)
+  }
 
-  def read[T](s: String, meta: Meta)(implicit reader: HoconReads[T]): HoconResult[T] = read(ConfigFactory.parseString(s), meta)
+  def read[T](s: String, meta: Meta)(implicit reader: HoconReads[T]): HoconResult[T] = {
+    read(ConfigFactory.parseString(s), meta)
+  }
 }
 
 trait HoconReads[T] { self =>

@@ -1,6 +1,7 @@
 val playVersion = "2.5.7"
+
 val commonSettings = Seq(
-  version := "0.1",
+  version := "0.1.0",
   scalaVersion := "2.11.8",
   scalacOptions ++= Seq(
     "-deprecation",
@@ -17,11 +18,12 @@ val commonSettings = Seq(
     "org.scalatest" % "scalatest_2.11" % "2.2.6" % "test",
     "org.mockito" % "mockito-all" % "1.10.19" % "test"
   ),
-  parallelExecution in Test := false // due to use a single Zabbix stub server
+  parallelExecution in Test := false, // due to use a single Zabbix stub server
+  test in assembly := {}
 )
 
 val core = project.in(file("./core"))
-  .settings(commonSettings)
+  .settings(commonSettings: _*)
   .settings(
     name := "zabbicook-core",
     libraryDependencies ++= Seq(
@@ -34,13 +36,18 @@ val core = project.in(file("./core"))
   )
 
 val cli = project.in(file("./cli"))
-  .settings(commonSettings)
+  .enablePlugins(BuildInfoPlugin)
+  .settings(commonSettings: _*)
   .settings(
     name := "zabbicook-cli",
     resolvers += Resolver.sonatypeRepo("public"),
     libraryDependencies ++= Seq(
       "com.github.scopt" %% "scopt" % "3.5.0"
-    )
+    ),
+    buildInfoKeys := Seq[BuildInfoKey](name, version),
+    buildInfoPackage := "com.github.zabbicook.cli",
+    mainClass in assembly := Some("com.github.zabbicook.cli.Main"),
+    assemblyJarName in assembly := { s"${name.value}-${version.value}.jar" }
   )
   .dependsOn(
     core,
