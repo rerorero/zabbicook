@@ -31,7 +31,7 @@ object Arguments {
 
     opt[String]('p', "pass").optional()
       .valueName("<password>")
-      .action((x, c) => c.copy(adminUser = x))
+      .action((x, c) => c.copy(adminPass = x))
       .text("Password of the administrator user. (default is 'zabbix')")
 
     opt[Unit]('j', "json").optional()

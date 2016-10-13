@@ -10,7 +10,7 @@ class Main(printer: Printer) {
     Arguments.parser.parse(args, Arguments()) match {
       case Some(conf) if conf.showVersion =>
         Future {
-          printer.printMsg(BuildInfo.version)
+          printer.out(BuildInfo.version)
           0
         }
       case Some(conf) =>
@@ -18,11 +18,11 @@ class Main(printer: Printer) {
         runner.run().map {
           case _: RunSuccess => 0
           case e =>
-            printer.errorMsg("Failed.")
+            printer.error("Failed.")
             1
         }
       case None =>
-        printer.errorMsg("Failed in parsing arguments.")
+        printer.error("Failed in parsing arguments.")
         Future.successful(1)
     }
   }

@@ -19,8 +19,8 @@ class MainSpec extends UnitSpec with TestConfig {
   ): (Int, List[String]) = {
     val buf = scala.collection.mutable.ArrayBuffer.empty[String]
     def mockedPrinter() = new Printer {
-      override def printMsg(msg: String): Unit = buf.append(msg)
-      override def errorMsg(msg: String): Unit = buf.append(msg)
+      override def out(msg: String): Unit = buf.append(msg)
+      override def error(msg: String): Unit = buf.append(msg)
     }
 
     val a = Seq("-a", host)

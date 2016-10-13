@@ -108,8 +108,8 @@ class Runner(conf: Arguments, printer: Printer) extends Logging {
 
   private[this] def outFormatted(result: RunResult): Unit = {
     def print(msg: String): Unit = result match {
-      case _: RunSuccess => printer.printMsg(msg)
-      case _ => printer.errorMsg(msg)
+      case _: RunSuccess => printer.out(msg)
+      case _ => printer.error(msg)
     }
     if (conf.isJson) {
       print(Json.prettyPrint(Json.toJson(result)))
