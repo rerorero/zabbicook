@@ -87,7 +87,7 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
     Json.fromJson[T](js) match {
       case JsSuccess(t, _) => t
       case JsError(err) =>
-        logger.error(s"Failed to parse ${method} respond result: ${js}")
+        logger.error(s"Failed to parse ${method} respond result: ${Json.prettyPrint(js)}")
         logger.error(s"parsing errors: ${err}")
         sys.error(s"${method} response does not match ${reads.getClass.getName}")
     }

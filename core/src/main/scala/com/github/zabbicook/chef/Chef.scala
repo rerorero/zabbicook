@@ -17,16 +17,24 @@ class Chef(api: Ops) {
       // Users require UserGroups
       rUser <- api.user.present(recipe.users.getOrElse(Seq()))
       // Templates require HostGroups
-      rTemplate <- api.template.present(recipe.templates.map(_.map(_.toTemplateSettings)).getOrElse(Seq()))
+      templateSection = recipe.templates.getOrElse(Seq())
+      rTemplate <- api.template.present(templateSection.map(_.toTemplateSettings))
       // items require Templates
-      rItems <- presentItems(recipe.templates.getOrElse(Seq()))
+      rItems <- presentItems(templateSection)
+      // graphs require Template
+      rGraphs <- presentGraphs(templateSection)
     } yield {
-      rHostGroup + rUserGroup + rUser + rTemplate + rItems
+      rHostGroup + rUserGroup + rUser + rTemplate + rItems + rGraphs
     }
   }
 
   private[this] def presentItems(section: Seq[TemplateSettingsConf]): Future[Report] = {
-    Future.traverse(section)(s => api.item.presentWithTemplate(s.template.host, s.items))
+    Future.traverse(section)(s => api.item.presentWithTemplate(s.template.host, s.items.getOrElse(Seq())))
+      .map(Report.flatten)
+  }
+
+  private[this] def presentGraphs(section: Seq[TemplateSettingsConf]): Future[Report] = {
+    Future.traverse(section)(s => api.graph.present(s.template.host, s.graphs.getOrElse(Seq())))
       .map(Report.flatten)
   }
 }

@@ -2,15 +2,13 @@ package com.github.zabbicook.entity.template
 
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.EntityState
+import com.github.zabbicook.entity.graph.GraphSetting
 import com.github.zabbicook.entity.host.HostGroup
 import com.github.zabbicook.entity.item.Item
 import com.github.zabbicook.entity.prop.EntityCompanionMetaHelper
 import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.util.TopologicalSortable
 
-/**
-  * Created by ryo_natori on 2016/10/12.
-  */
 case class TemplateSettings[TS <: EntityState, GS <: EntityState, LS <: EntityState](
   template: Template[TS],
   groups: Seq[HostGroup[GS]],
@@ -36,7 +34,8 @@ case class TemplateSettingsConf(
   template: Template[NotStored],
   groupNames: Seq[String],
   linkedTemplateNames: Option[Seq[String]],
-  items: Seq[Item[NotStored]]
+  items: Option[Seq[Item[NotStored]]],
+  graphs: Option[Seq[GraphSetting]]
 ) {
   def toTemplateSettings: TemplateSettings.NotStoredAll =
     TemplateSettings(
@@ -54,6 +53,7 @@ object TemplateSettingsConf extends EntityCompanionMetaHelper {
     arrayOf("groupNames")(Template.required("groups")),
     array("groupNames")("groups")("(required) Names of host groups to add the template to."),
     array("linkedTemplateNames")("linkedTemplates")("Names of templates to be linked to the template."),
-    arrayOf("items")(Item.required("items"))
+    arrayOf("items")(Item.optional("items")),
+    arrayOf("graphs")(GraphSetting.optional("graphs"))
   ) _
 }

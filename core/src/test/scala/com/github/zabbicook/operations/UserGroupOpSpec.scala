@@ -3,7 +3,7 @@ package com.github.zabbicook.operations
 import com.github.zabbicook.api.ZabbixApi
 import com.github.zabbicook.entity.prop.{EnabledEnum, EnabledEnumZeroPositive}
 import com.github.zabbicook.entity.user.{Permission, PermissionsOfHosts, UserGroup, UserGroupConfig}
-import com.github.zabbicook.operation.UserGroupOp
+import com.github.zabbicook.operation.{HostGroupOp, UserGroupOp}
 import com.github.zabbicook.test.{TestConfig, TestUserGroups, UnitSpec}
 
 class UserGroupOpSpec
@@ -11,7 +11,7 @@ class UserGroupOpSpec
   with TestConfig
   with TestUserGroups
 {
-  lazy val sut = new UserGroupOp(new ZabbixApi(apiConf))
+  lazy val sut = new UserGroupOp(new ZabbixApi(apiConf), new HostGroupOp(cachedApi))
 
   "present and absent" should "create and delete and update user groups" in {
     val appended = UserGroupConfig(UserGroup(name = specName("groupx")), Seq(PermissionsOfHosts(testHostGroups(0).name, Permission.readOnly)))

@@ -1,11 +1,11 @@
 package com.github.zabbicook.operations
 
 import com.github.zabbicook.entity.template.{Template, TemplateSettings}
-import com.github.zabbicook.operation.TemplateOp
+import com.github.zabbicook.operation.{HostGroupOp, TemplateOp}
 import com.github.zabbicook.test.{TestTemplates, UnitSpec}
 
 class TemplateOpSpec extends UnitSpec with TestTemplates {
-  lazy val sut = new TemplateOp(cachedApi)
+  lazy val sut = new TemplateOp(cachedApi, new HostGroupOp(cachedApi))
 
   "presentTemplates and absentTemplates" should "create, delete and update templates" in {
     val appended: TemplateSettings.NotStoredAll = TemplateSettings(

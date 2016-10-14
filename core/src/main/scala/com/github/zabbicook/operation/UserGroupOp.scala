@@ -13,8 +13,8 @@ import scala.util.control.NonFatal
 /**
   * @see https://www.zabbix.com/documentation/3.2/manual/api/reference/usergroup
   */
-class UserGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
-  private[this] val hostGroupOp = new HostGroupOp(api)
+class UserGroupOp(api: ZabbixApi, hostGroupOp: HostGroupOp) extends OperationHelper with Logging {
+
   private[this] val logger = defaultLogger
 
   def findByName(name: String): Future[Option[(UserGroup[Stored], Seq[UserGroupPermission[Stored]])]] = {

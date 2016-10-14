@@ -4,7 +4,7 @@ Zabbix configuration management tool.
 [![Build Status](https://travis-ci.org/rerorero/zabbicook.svg?branch=master)](https://travis-ci.org/rerorero/zabbicook)
 
 ## Requirements
-- JRE (8 or later)
+- JRE (7 or later)
 
 ## Getting Started
 Go to release page and download a zip package.   

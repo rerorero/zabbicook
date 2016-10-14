@@ -15,7 +15,7 @@ object Entity {
   final class NotStored extends EntityState
 }
 
-sealed trait EntityId {
+sealed trait EntityId extends Ordered[EntityId] {
   def toStored: EntityId.StoredId
   def toNotStored: EntityId.NotStoredId
 }
@@ -24,6 +24,13 @@ object EntityId {
   case class StoredId(id: String) extends EntityId {
     def toStored: StoredId = this
     def toNotStored: NotStoredId = NotStoredId
+
+    override def compare(that: EntityId): Int = {
+      that match {
+        case StoredId(rid) => id.compare(rid)
+        case _: NotStoredId => 1
+      }
+    }
   }
 
   class NotStoredId extends EntityId {
@@ -37,6 +44,11 @@ object EntityId {
         case that: NotStoredId => true
         case _ => false
       }
+
+    override def compare(that: EntityId): Int = that match {
+      case _: StoredId => -1
+      case _: NotStoredId => 0
+    }
   }
 
   case object NotStoredId extends NotStoredId

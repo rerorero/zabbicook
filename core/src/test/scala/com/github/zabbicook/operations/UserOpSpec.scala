@@ -3,12 +3,12 @@ package com.github.zabbicook.operations
 import com.github.zabbicook.entity.prop.EnabledEnum
 import com.github.zabbicook.entity.user.{User, UserConfig}
 import com.github.zabbicook.hocon.{HoconReader, HoconSuccess}
-import com.github.zabbicook.operation.UserOp
+import com.github.zabbicook.operation.{HostGroupOp, UserGroupOp, UserOp}
 import com.github.zabbicook.test.{TestUsers, UnitSpec}
 import com.typesafe.config.ConfigFactory
 
 class UserOpSpec extends UnitSpec with TestUsers {
-  lazy val sut = new UserOp(cachedApi)
+  lazy val sut = new UserOp(cachedApi, new UserGroupOp(cachedApi, new HostGroupOp(cachedApi)))
 
   "present and absent" should "create, delete and update user" in {
     val appended = UserConfig(User(alias = specName("userx"), autologin = Some(EnabledEnum.enabled), name = Some("Alice")),

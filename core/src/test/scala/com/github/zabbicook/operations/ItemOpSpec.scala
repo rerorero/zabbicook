@@ -2,12 +2,10 @@ package com.github.zabbicook.operations
 
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.item.{Item, ItemType, ValueType}
-import com.github.zabbicook.operation.{ItemOp, TemplateOp}
 import com.github.zabbicook.test.{TestItems, UnitSpec}
 
 class ItemOpSpec extends UnitSpec with TestItems {
-  lazy val sut = new ItemOp(cachedApi)
-  lazy val templateOp = new TemplateOp(cachedApi)
+  val sut = itemOp
 
   val items = Map()
   "present" should "create, delete and update items in templates" in {

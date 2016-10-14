@@ -96,6 +96,7 @@ class Runner(conf: Arguments, printer: Printer) extends Logging {
       case Some(f) =>
         (HoconReader.read[Recipe](f, Recipe.optional("root")) match {
           case HoconSuccess(recipe) =>
+            // TODO validation all entities (avoid duplicated names, etc..)
             chef.present(recipe).map(RunSuccess)
           case e: HoconError =>
             Future.successful(ParseError(e))

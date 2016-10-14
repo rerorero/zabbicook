@@ -14,10 +14,9 @@ import scala.concurrent.Future
   * item api
   * @see https://www.zabbix.com/documentation/3.2/manual/api/reference/item
   */
-class ItemOp(api: ZabbixApi) extends OperationHelper with Logging {
-  private[this] val logger = defaultLogger
+class ItemOp(api: ZabbixApi, templateOp: TemplateOp) extends OperationHelper with Logging {
 
-  private[this] val templateOp = new TemplateOp(api)
+  private[this] val logger = defaultLogger
 
   /**
     * get items inherited from parent templates
@@ -110,7 +109,7 @@ class ItemOp(api: ZabbixApi) extends OperationHelper with Logging {
 
   def presentWithTemplate(items: Map[String, Seq[Item[NotStored]]]): Future[Report] = {
     traverseOperations(items.toSeq) { case (template, _items) =>
-      showStartInfo(logger, _items.length, s"items of '$template'").flatMap(_ =>
+      showStartInfo(logger, _items.length, s"items of template '$template'").flatMap(_ =>
         presentWithTemplate(template, _items)
       )
     }

@@ -14,11 +14,9 @@ import scala.concurrent.Future
   * User api
   * @see https://www.zabbix.com/documentation/3.2/manual/api/reference/user
   */
-class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
+class UserOp(api: ZabbixApi, userGroupOp: UserGroupOp) extends OperationHelper with Logging {
 
   private[this] val logger = defaultLogger
-
-  private[this] lazy val userGroupOp = new UserGroupOp(api)
 
   def findByAlias(alias: String): Future[Option[(User[Stored], Seq[UserGroup[Stored]])]] = {
     val params = Json.obj()
@@ -162,7 +160,3 @@ class UserOp(api: ZabbixApi) extends OperationHelper with Logging {
     } yield r
   }
 }
-
-
-
-

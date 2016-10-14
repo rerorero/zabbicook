@@ -16,11 +16,9 @@ import scala.concurrent.Future
   *
   * @see https://www.zabbix.com/documentation/3.2/manual/api/reference/template
   */
-class TemplateOp(api: ZabbixApi) extends OperationHelper with Logging {
+class TemplateOp(api: ZabbixApi, hostGroupOp: HostGroupOp) extends OperationHelper with Logging {
 
   private[this] val logger = defaultLogger
-
-  private[this] val hostGroupOp = new HostGroupOp(api)
 
   def findByHostname(hostname: String): Future[Option[TemplateSettings[Stored, Stored, Stored]]] = {
     val params = Json.obj()

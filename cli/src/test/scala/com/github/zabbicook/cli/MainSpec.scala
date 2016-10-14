@@ -1,7 +1,8 @@
 package com.github.zabbicook.cli
 
 import com.github.zabbicook.entity.Entity.NotStored
-import com.github.zabbicook.entity._
+import com.github.zabbicook.entity.EntityId.StoredId
+import com.github.zabbicook.entity.graph._
 import com.github.zabbicook.entity.host.HostGroup
 import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
 import com.github.zabbicook.entity.prop.EnabledEnum
@@ -9,6 +10,8 @@ import com.github.zabbicook.entity.template.{Template, TemplateSettings}
 import com.github.zabbicook.entity.user.{Theme, User, UserGroup, UserType}
 import com.github.zabbicook.operation.Ops
 import com.github.zabbicook.test.{TestConfig, UnitSpec}
+
+import scala.concurrent.Future
 
 class MainSpec extends UnitSpec with TestConfig {
 
@@ -23,12 +26,12 @@ class MainSpec extends UnitSpec with TestConfig {
       override def error(msg: String): Unit = buf.append(msg)
     }
 
-    val a = Seq("-a", host)
+    val i = Seq("-i", host)
     val f = filePath.map(s => Seq("-f", s)).getOrElse(Seq())
     val d = if (debug) Seq("-d") else Seq()
     val printer = mockedPrinter()
     val code = await(new Main(printer).run(
-      (a ++ f ++ d).toArray
+      (i ++ f ++ d).toArray
     ))
 
     (code, buf.toList)
@@ -99,12 +102,73 @@ class MainSpec extends UnitSpec with TestConfig {
       ))
     )
 
+    val graphMaps: Map[String, Seq[GraphSetting]] = Map(
+      "zabbicook-spec template 1" -> Seq(
+        GraphSetting(
+          Graph(
+            name = "zabbicook-spec graph1",
+            height = 200,
+            width = 300
+          ),
+          Seq(
+            GraphItemSetting(
+              color = "123456",
+              itemName = "Host local time",
+              drawtype = Some(DrawType.bold)
+            )
+          )
+        )
+      ),
+      "zabbicook-spec template 2" -> Seq(
+        GraphSetting(
+          Graph(
+            name = "zabbicook-spec graph2",
+            height = 200,
+            width = 600,
+            graphtype = Some(GraphType.pie),
+            percent_left = Some(50),
+            show_legend = Some(false),
+            yaxismax = Some(200),
+            ymax_type = Some(GraphMinMaxType.fixed)
+          ),
+          Seq(
+            GraphItemSetting(
+              color = "252525",
+              itemName = "zabbicook-spec item1",
+              drawtype = Some(DrawType.dot),
+              sortorder = Some(2),
+              `type` = Some(GraphItemType.sum),
+              yaxisside = Some(YAxisSide.right)
+            ),
+            GraphItemSetting(
+              color = "012345",
+              itemName = "zabbicook-spec item2"
+            )
+          )
+        ),
+        GraphSetting(
+          Graph(
+            name = "zabbicook-spec graph3",
+            height = 300,
+            width = 500
+          ),
+          Seq(
+            GraphItemSetting(
+              color = "000000",
+              itemName = "zabbicook-spec item1"
+            )
+          )
+        )
+      )
+    )
+
     def clean(): Unit = {
       await(op.item.absentWithTemplate(items.mapValues(_.map(_.name))))
       await(op.template.absent(templates.map(_.template.host)))
       await(op.user.absent(users.map(_._1.alias)))
       await(op.userGroup.absent(userGroups.map(_.name)))
       await(op.hostGroup.absent(hostGroups.map(_.name)))
+      await(Future.traverse(graphMaps) { case (template, graphs) => op.graph.absent(template, graphs)})
     }
 
     def check(): Unit = {
@@ -145,6 +209,20 @@ class MainSpec extends UnitSpec with TestConfig {
           assert(expected.name === actual.name)
           assert(expected.delay === actual.delay)
           assert(expected.`type` === actual.`type`)
+        }
+      }
+      // graphs
+      graphMaps.foreach { case (template, graphSettings) =>
+        val templateId = actualTemplates.map(_.template).find(_.host == template).get.getStoredId
+        val actuals = await(op.graph.getBelongingGraphs(templateId))
+        assert(graphSettings.length === actuals.length)
+        (graphSettings.sortBy(_.graph.name) zip actuals.sortBy(_.name)) foreach { case (expected, actual) =>
+            assert(actual.shouldBeUpdated(expected.graph) === false)
+            val actualItems = await(op.graph.getGraphItems(actual.getStoredId))
+            assert(expected.items.length === actualItems.length)
+            (expected.items.sortBy(_.color) zip actualItems.sortBy(_.color)) foreach { case (expItem, actItem) =>
+              assert(actItem.shouldBeUpdated(expItem.toGraphItem(StoredId("dummy"))) === false)
+            }
         }
       }
     }

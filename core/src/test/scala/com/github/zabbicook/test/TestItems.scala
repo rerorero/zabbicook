@@ -1,13 +1,13 @@
 package com.github.zabbicook.test
 
 import com.github.zabbicook.entity.Entity.NotStored
-import com.github.zabbicook.entity.prop.EnabledEnum
 import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
+import com.github.zabbicook.entity.prop.EnabledEnum
 import com.github.zabbicook.operation.ItemOp
 
 trait TestItems extends TestTemplates { self: UnitSpec =>
 
-  private[this] lazy val itemOp = new ItemOp(cachedApi)
+  protected[this] lazy val itemOp = new ItemOp(cachedApi, templateOp)
 
   protected[this] val item0: Item[NotStored] = Item(
     delay = 300,
