@@ -5,6 +5,7 @@ import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.graph._
 import com.github.zabbicook.entity.host._
 import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
+import com.github.zabbicook.entity.media.{MediaType, MediaTypeType}
 import com.github.zabbicook.entity.prop.EnabledEnum
 import com.github.zabbicook.entity.template.{Template, TemplateSettings}
 import com.github.zabbicook.entity.user.{Theme, User, UserGroup, UserType}
@@ -41,6 +42,27 @@ class MainSpec extends UnitSpec with TestConfig {
     val op = new Ops(cachedApi)
 
     // expected
+    val mediaTypes = Seq(
+      MediaType[NotStored](
+        description = "zabbicook-spec-media1",
+        `type` = MediaTypeType.email,
+        smtp_email = Some("test@example.com"),
+        smtp_helo = Some("zabbicook.example.com"),
+        smtp_server = Some("example.com"),
+        status = true
+      ),
+      MediaType[NotStored](
+        description = "zabbicook-spec-media2",
+        `type` = MediaTypeType.script,
+        exec_path = Some("test.sh"),
+        exec_params = Some("""{ALERT.SENDTO}
+                             |{ALERT.SUBJECT}
+                             |{ALERT.MESSAGE}
+                             |""".stripMargin),
+        status = false
+      )
+    )
+
     val hostGroups = Seq(
       HostGroup(name = "zabbicook-spec hostgroup1"),
       HostGroup(name = "zabbicook-spec hostgroup2"),
@@ -227,9 +249,18 @@ class MainSpec extends UnitSpec with TestConfig {
       await(op.userGroup.absent(userGroups.map(_.name)))
       await(op.hostGroup.absent(hostGroups.map(_.name)))
       await(Future.traverse(graphMaps) { case (template, graphs) => op.graph.absent(template, graphs)})
+      await(op.mediaType.absent(mediaTypes.map(_.description)))
     }
 
     def check(): Unit = {
+      // media types
+      val actualMediaTypes = await(op.mediaType.findByDescriptions(mediaTypes.map(_.description)))
+      assert(mediaTypes.length === actualMediaTypes.length)
+      actualMediaTypes.foreach { actual =>
+        val Some(expected) = mediaTypes.find(_.description == actual.description)
+        assert(false === actual.shouldBeUpdated(expected))
+      }
+
       // host groups
       val actualHostGroups = await(op.hostGroup.findByNames(hostGroups.map(_.name)))
       assert(hostGroups.length === actualHostGroups.length)

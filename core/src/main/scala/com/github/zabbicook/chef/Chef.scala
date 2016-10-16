@@ -12,6 +12,7 @@ class Chef(api: Ops) {
     // TODO First, check the connectivity to zabbix api server via version api
     val templateSection = recipe.templates.getOrElse(Seq())
     for {
+      rMediaTypes <- api.mediaType.present(recipe.mediaTypes.getOrElse(Seq()))
       rHostGroup <- api.hostGroup.present(recipe.hostGroups.getOrElse(Seq()))
       rUserGroup <- api.userGroup.present(recipe.userGroups.getOrElse(Seq()))
       rUser <- api.user.present(recipe.users.getOrElse(Seq()))
@@ -20,7 +21,7 @@ class Chef(api: Ops) {
       rGraphs <- presentGraphs(templateSection)
       rHost <- api.host.present(recipe.hosts.getOrElse(Seq()))
     } yield {
-      rHostGroup + rUserGroup + rUser + rTemplate + rItems + rGraphs + rHost
+      rMediaTypes + rHostGroup + rUserGroup + rUser + rTemplate + rItems + rGraphs + rHost
     }
   }
 

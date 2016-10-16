@@ -3,6 +3,7 @@ package com.github.zabbicook.operation
 import com.github.zabbicook.api.{ZabbixApi, ZabbixApiConf}
 
 class Ops(api: ZabbixApi) {
+  val mediaType = new MediaTypeOp(api)
   val hostGroup = new HostGroupOp(api)
   val userGroup = new UserGroupOp(api, hostGroup)
   val user =  new UserOp(api, userGroup)
