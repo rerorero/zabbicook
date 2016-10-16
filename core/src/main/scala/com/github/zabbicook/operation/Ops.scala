@@ -9,6 +9,7 @@ class Ops(api: ZabbixApi) {
   val template = new TemplateOp(api, hostGroup)
   val item = new ItemOp(api, template)
   val graph = new GraphOp(api, template, item)
+  val host = new HostOp(api, hostGroup, template)
 
   def close(): Unit = api.close()
 }

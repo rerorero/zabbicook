@@ -3,12 +3,12 @@ package com.github.zabbicook.cli
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.graph._
-import com.github.zabbicook.entity.host.HostGroup
+import com.github.zabbicook.entity.host._
 import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
 import com.github.zabbicook.entity.prop.EnabledEnum
 import com.github.zabbicook.entity.template.{Template, TemplateSettings}
 import com.github.zabbicook.entity.user.{Theme, User, UserGroup, UserType}
-import com.github.zabbicook.operation.Ops
+import com.github.zabbicook.operation.{Ops, StoredHost}
 import com.github.zabbicook.test.{TestConfig, UnitSpec}
 
 import scala.concurrent.Future
@@ -43,7 +43,8 @@ class MainSpec extends UnitSpec with TestConfig {
     // expected
     val hostGroups = Seq(
       HostGroup(name = "zabbicook-spec hostgroup1"),
-      HostGroup(name = "zabbicook-spec hostgroup2")
+      HostGroup(name = "zabbicook-spec hostgroup2"),
+      HostGroup(name = "zabbicook-spec hostgroup3")
     )
 
     val userGroups: Seq[UserGroup[NotStored]] = Seq(
@@ -162,7 +163,64 @@ class MainSpec extends UnitSpec with TestConfig {
       )
     )
 
+    val hosts = Seq(
+      HostConf(
+        Host(
+          host="zabbicook-spec host1",
+          description = Some("host1"),
+          inventory_mode = Some(InventoryMode.automatic),
+          ipmi_authtype = Some(IpmiAuthAlgo.MD5),
+          ipmi_password = Some("pass"),
+          ipmi_privilege = Some(IpmiPrivilege.operator),
+          ipmi_username = Some("user"),
+          name = Some("visible host name 1"),
+          status = Some(false)
+        ),
+        hostGroups = Seq("zabbicook-spec hostgroup1"),
+        interfaces = Seq(
+          HostInterface(
+            dns = Some("zabbicook.spec.host1.com"),
+            main = true,
+            port = "10001",
+            `type` = InterfaceType.agent,
+            useip = InterfaceUseIp.dns
+          ),
+          HostInterface(
+            ip = Some("127.0.0.1"),
+            main = false,
+            port = "10002",
+            `type` = InterfaceType.agent,
+            useip = InterfaceUseIp.ip
+          ),
+          HostInterface(
+            ip = Some("127.0.0.1"),
+            main = true,
+            port = "10003",
+            `type` = InterfaceType.SNMP,
+            useip = InterfaceUseIp.ip,
+            bulk = Some(false)
+          )
+        ),
+        templates = Some(Seq("zabbicook-spec template 2"))
+      ),
+      HostConf(
+        Host(host="zabbicook-spec host2",status = Some(true)),
+        Seq("zabbicook-spec hostgroup2","zabbicook-spec hostgroup3"),
+        Seq(
+          HostInterface(
+            ip = Some("127.0.0.2"),
+            main = true,
+            port = "10001",
+            `type` = InterfaceType.agent,
+            useip = InterfaceUseIp.ip
+          )
+        ),
+        None
+      )
+    )
+
     def clean(): Unit = {
+      await(op.host.absent(hosts.map(_.host.host)))
       await(op.item.absentWithTemplate(items.mapValues(_.map(_.name))))
       await(op.template.absent(templates.map(_.template.host)))
       await(op.user.absent(users.map(_._1.alias)))
@@ -224,6 +282,18 @@ class MainSpec extends UnitSpec with TestConfig {
               assert(actItem.shouldBeUpdated(expItem.toGraphItem(StoredId("dummy"))) === false)
             }
         }
+      }
+
+      // hosts
+      hosts.foreach { case HostConf(host, groupNames, interfaces, templatNames) =>
+        //val templateIds = op.template.findByHostnamesAbsolutely(templatNames.getOrElse(Seq()))
+        val Some(StoredHost(storedHost,storedIfs,storedGroups,storedTemplates)) =
+          await(op.host.findByHostname(host.host))
+        assert(false === storedHost.shouldBeUpdated(host))
+        assert(groupNames.toSet === storedGroups.map(_.name).toSet)
+        assert(interfaces.length === storedIfs.length)
+        assert(storedIfs.forall(s => interfaces.exists(_.isIdentical(s))))
+        assert(templatNames.getOrElse(Seq()).toSet === storedTemplates.toSet)
       }
     }
 

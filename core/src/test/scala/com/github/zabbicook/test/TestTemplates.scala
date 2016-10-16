@@ -13,7 +13,8 @@ trait TestTemplates extends TestHostGroups { self: UnitSpec =>
   protected[this] val testTemplates: Seq[TemplateSettings.NotStoredAll] = Seq(
     TemplateSettings(Template(host = specName("template1")), Seq(testHostGroups(0)), None),
     TemplateSettings(Template(host = specName("template2")), Seq(testHostGroups(1)),
-      Some(Seq(Template(host = specName("template1")), Template(host = "Template OS Linux"))))
+      Some(Seq(Template(host = specName("template1")), Template(host = "Template OS Linux")))),
+    TemplateSettings(Template(host = specName("template3")), Seq(testHostGroups(0)), None)
   )
 
   def presentTestTemplates(): Unit = {

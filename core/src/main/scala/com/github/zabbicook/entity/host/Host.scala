@@ -1,6 +1,9 @@
 package com.github.zabbicook.entity.host
 
+import com.github.zabbicook.entity.Entity.{NotStored, Stored}
+import com.github.zabbicook.entity.EntityId.{NotStoredId, StoredId}
 import com.github.zabbicook.entity.prop._
+import com.github.zabbicook.entity.{Entity, EntityId, EntityState}
 import play.api.libs.json.{Format, Json}
 
 sealed abstract class InventoryMode(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
@@ -42,8 +45,8 @@ object IpmiPrivilege extends IntEnumPropCompanion[IpmiPrivilege] {
   case object unknown extends IpmiPrivilege(-1,"unknown")
 }
 
-case class Host(
-  hostid: Option[String] = None,  // readonly
+case class Host[S <: EntityState] (
+  hostid: EntityId = NotStoredId,
   host: String,                   //(required)	string	Technical name of the host.
   //available	                    // unhandled integer	(readonly) Availability of Zabbix agent.
   description: Option[String] = None,	// optional	Description of the host.
@@ -75,25 +78,44 @@ case class Host(
   //snmp_error	                  // unhandled 	(readonly) Error text if SNMP agent is unavailable.
   //snmp_errors_from	            // unhandled 	(readonly) Time when SNMP agent became unavailable.
   status: Option[EnabledEnumZeroPositive]=None	//	Status and function of the host.(0 - (default) monitored host; 1 - unmonitored host.)
-)
+) extends Entity[S] {
+
+  override protected[this] def id: EntityId = hostid
+
+  def toStored(id: StoredId): Host[Stored] = copy(hostid = id)
+
+  def shouldBeUpdated[T >: S <: Stored](constant: Host[NotStored]): Boolean = {
+    require(host == constant.host)
+    shouldBeUpdated(description, constant.description) ||
+      shouldBeUpdated(inventory_mode, constant.inventory_mode) ||
+      shouldBeUpdated(ipmi_authtype, constant.ipmi_authtype) ||
+      shouldBeUpdated(ipmi_password, constant.ipmi_password) ||
+      shouldBeUpdated(ipmi_privilege, constant.ipmi_privilege) ||
+      shouldBeUpdated(ipmi_username, constant.ipmi_username) ||
+      shouldBeUpdated(name, constant.name) ||
+      shouldBeUpdated(status, constant.status)
+  }
+}
 
 object Host extends EntityCompanionMetaHelper {
   import Meta._
 
-  implicit val format: Format[Host] = Json.format[Host]
+  implicit val format: Format[Host[NotStored]] = Json.format[Host[NotStored]]
+
+  implicit val format2: Format[Host[Stored]] = Json.format[Host[Stored]]
 
   val meta = entity("The host object")(
     readOnly("hostid"),
-    value("host")("hostname", "host")("(required) Technical name of the host."),
+    value("host")("hostname","name")("(required) Technical name of the host."),
     value("description")("description", "desc")("Description of the host."),
     InventoryMode.meta("inventory_mode")("inventoryMode"),
     IpmiAuthAlgo.meta("ipmi_authtype")("ipmiAuthAlgorithm"),
-    value("ipmi_password")("ipmiPass")("IPMI password."),
+    value("ipmi_password")("ipmiPass","ipmiPassword")("IPMI password."),
     IpmiPrivilege.meta("ipmi_privilege")("ipmiPrivilegeLevel"),
     value("ipmi_username")("ipmiUser")("IPMI username."),
     value("name")("visibleName")(
       """Visible name of the host.
         ||Default: host property value.""".stripMargin),
-    enum("status", EnabledEnumZeroPositive.values)("status")("Status and function of the host.")
+    EnabledEnumZeroPositive.metaWithDesc("status")("enabled")("Enabled status of the host.")
   ) _
 }

@@ -10,21 +10,17 @@ import scala.concurrent.Future
 class Chef(api: Ops) {
   def present(recipe: Recipe): Future[Report] = {
     // TODO First, check the connectivity to zabbix api server via version api
+    val templateSection = recipe.templates.getOrElse(Seq())
     for {
       rHostGroup <- api.hostGroup.present(recipe.hostGroups.getOrElse(Seq()))
-      // UserGroups require HostGroups
       rUserGroup <- api.userGroup.present(recipe.userGroups.getOrElse(Seq()))
-      // Users require UserGroups
       rUser <- api.user.present(recipe.users.getOrElse(Seq()))
-      // Templates require HostGroups
-      templateSection = recipe.templates.getOrElse(Seq())
       rTemplate <- api.template.present(templateSection.map(_.toTemplateSettings))
-      // items require Templates
       rItems <- presentItems(templateSection)
-      // graphs require Template
       rGraphs <- presentGraphs(templateSection)
+      rHost <- api.host.present(recipe.hosts.getOrElse(Seq()))
     } yield {
-      rHostGroup + rUserGroup + rUser + rTemplate + rItems + rGraphs
+      rHostGroup + rUserGroup + rUser + rTemplate + rItems + rGraphs + rHost
     }
   }
 
