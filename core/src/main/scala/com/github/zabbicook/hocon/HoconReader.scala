@@ -12,7 +12,9 @@ import scala.collection.JavaConversions._
 
 object HoconReader {
   def read[T](v: => Config, meta: Meta)(implicit reader: HoconReads[T]): HoconResult[T] = {
-    HoconReads.withConfigException2(reader.read(v, meta))
+    HoconReads.withConfigException2 {
+      reader.read(v.resolve(), meta)
+    }
   }
 
   def read[T](file: File, meta: Meta)(implicit reader: HoconReads[T]): HoconResult[T] = {
