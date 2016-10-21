@@ -10,7 +10,11 @@ import com.github.zabbicook.entity.prop.Meta._
   * @param password password (it is used only if the user does not exist yet)
   * TODO: Do we need to separate the password from here?
   */
-case class UserConfig(user: User[NotStored], groupNames: Seq[String], password: String)
+case class UserConfig(
+  user: User[NotStored],
+  groupNames: Seq[String],
+  password: String
+)
 
 object UserConfig extends EntityCompanionMetaHelper {
   val meta = entity("User settings.")(

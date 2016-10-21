@@ -46,4 +46,21 @@ class RecipeSpec extends UnitSpec {
     val r = HoconReader.read[Recipe](s, Recipe.optional("root"))
     assert(r.asInstanceOf[HoconError.UnrecognizedFields].invalids.toSet === Set("unknown"))
   }
+
+  "Recipe" should "be failed in parsing if required params dont exist." in {
+    val s =
+      s"""
+         |users: [
+         |  {
+         |    user {
+         |      name: "name"
+         |    }
+         |    groups: ["zabbicook-spec usergroup2"]
+         |    password: pass5678
+         |  }
+         |]
+         |""".stripMargin
+    val r = HoconReader.read[Recipe](s, Recipe.optional("root"))
+    assert(r.asInstanceOf[HoconError.NotExist].meta.aliases.contains("alias"))
+  }
 }

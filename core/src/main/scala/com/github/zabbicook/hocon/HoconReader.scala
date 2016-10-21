@@ -66,7 +66,8 @@ object HoconReads {
     meta.aliases.find(conf.hasPath(_)) match {
       case Some(alias) =>
         get(conf, meta, alias)
-      case None => HoconError.NotExist(conf.origin(), meta)
+      case None =>
+        HoconError.NotExist(conf.origin(), meta)
     }
   }
 
@@ -159,7 +160,8 @@ object HoconReads {
   implicit def option[T](implicit tr: HoconReads[T]): HoconReads[Option[T]] = HoconReads.of[Option[T]]((conf,meta) => {
     tr.read(conf, meta) match {
       case HoconSuccess(t) => HoconSuccess(Some(t))
-      case _: HoconError.NotExist => HoconSuccess(None)
+      case e: HoconError.NotExist if e.meta == meta => // metas should be compared because sub property of T which is required may throw NotExist
+        HoconSuccess(None)
       case e: HoconError => e
     }
   })
