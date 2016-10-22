@@ -90,14 +90,15 @@ class UserOp(api: ZabbixApi, userGroupOp: UserGroupOp) extends OperationHelper w
             Report.empty()
           }
           .recoverWith {
-          case ErrorResponseException(_, response, _) if response.data.contains("incorrect") =>
-            logger.debug(s"presentPassword will change password for: ${alias}")
-            updatePassword(user, presentedPass)
-        }
+            case ErrorResponseException(_, response, _) if response.data.contains("incorrect") =>
+              logger.debug(s"presentPassword will change password for: ${alias}")
+              updatePassword(user, presentedPass)
+          }
       case None =>
         Future.failed(NoSuchEntityException(s"No such user: ${alias} "))
     }
   }
+
 
   /**
     * Keep the status of the user to be constant.
@@ -105,6 +106,12 @@ class UserOp(api: ZabbixApi, userGroupOp: UserGroupOp) extends OperationHelper w
     * If already exists, it fills the gap.
     */
   def present(userConf: UserConfig): Future[Report] = {
+    for {
+      (userid, rUser) <- presentUser(userConf)
+    } yield rUser
+  }
+
+  private[this] def presentUser(userConf: UserConfig): Future[(StoredId, Report)] = {
     val groupIdsFut = userGroupOp.findByNamesAbsolutely(userConf.groupNames.toSeq)
       .map(_.map(_._1.getStoredId))
 
@@ -119,25 +126,29 @@ class UserOp(api: ZabbixApi, userGroupOp: UserGroupOp) extends OperationHelper w
           for {
             gids <- groupIdsFut
             results <- update(id, userConf.user, gids)
-          } yield results
+          } yield (id, results)
 
         } else {
           logger.debug(s"presentUser did nothing with: ${userConf.user.alias}")
-          Future.successful(Report.empty())
+          Future.successful((id, Report.empty()))
         }
       case None =>
         logger.debug(s"presentUser attempt to create user: ${userConf.user.alias}")
         for {
           gids <- groupIdsFut
           results <- create(userConf.user, gids, userConf.password)
-        } yield results
+        } yield (results.created.head.getStoredId, results)
     }
 
     for {
-      rGen <- generate
-      rPass <- presentPassword(userConf.user.alias, userConf.password)
+      (id, rGen) <- generate
+      rPass <- if (userConf.isPasswordInitial) {
+        presentPassword(userConf.user.alias, userConf.password)
+      } else {
+        Future.successful(Report.empty())
+      }
     } yield {
-      rGen + rPass
+      (id, rGen + rPass)
     }
   }
 
