@@ -4,7 +4,8 @@ import com.github.zabbicook.Logging
 import com.github.zabbicook.api.{ErrorResponseException, ZabbixApi}
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.StoredId
-import com.github.zabbicook.entity.user.{User, UserConfig, UserGroup}
+import com.github.zabbicook.entity.media.Media
+import com.github.zabbicook.entity.user.{MediaConfig, User, UserConfig, UserGroup}
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -14,7 +15,7 @@ import scala.concurrent.Future
   * User api
   * @see https://www.zabbix.com/documentation/3.2/manual/api/reference/user
   */
-class UserOp(api: ZabbixApi, userGroupOp: UserGroupOp) extends OperationHelper with Logging {
+class UserOp(api: ZabbixApi, userGroupOp: UserGroupOp, mediaTypeOp: MediaTypeOp) extends OperationHelper with Logging {
 
   private[this] val logger = defaultLogger
 
@@ -107,15 +108,19 @@ class UserOp(api: ZabbixApi, userGroupOp: UserGroupOp) extends OperationHelper w
     */
   def present(userConf: UserConfig): Future[Report] = {
     for {
-      (userid, rUser) <- presentUser(userConf)
-    } yield rUser
+      (user, rUser) <- presentUser(userConf)
+      rMedias <- userConf.media match {
+        case Some(medias) => presentUserMedia(user, medias)
+        case None => Future.successful(Report.empty())
+      }
+    } yield rUser + rMedias
   }
 
-  private[this] def presentUser(userConf: UserConfig): Future[(StoredId, Report)] = {
-    val groupIdsFut = userGroupOp.findByNamesAbsolutely(userConf.groupNames.toSeq)
+  private[this] def presentUser(userConf: UserConfig): Future[(User[Stored], Report)] = {
+    val groupIdsFut = userGroupOp.findByNamesAbsolutely(userConf.groupNames)
       .map(_.map(_._1.getStoredId))
 
-    val generate = findByAlias(userConf.user.alias).flatMap {
+    val generate: Future[(User[Stored], Report)] = findByAlias(userConf.user.alias).flatMap {
       case Some((storedUser, storedGroups)) =>
         val id = storedUser.getStoredId
         if (
@@ -126,29 +131,82 @@ class UserOp(api: ZabbixApi, userGroupOp: UserGroupOp) extends OperationHelper w
           for {
             gids <- groupIdsFut
             results <- update(id, userConf.user, gids)
-          } yield (id, results)
+          } yield (storedUser, results)
 
         } else {
           logger.debug(s"presentUser did nothing with: ${userConf.user.alias}")
-          Future.successful((id, Report.empty()))
+          Future.successful((storedUser, Report.empty()))
         }
       case None =>
         logger.debug(s"presentUser attempt to create user: ${userConf.user.alias}")
         for {
           gids <- groupIdsFut
           results <- create(userConf.user, gids, userConf.password)
-        } yield (results.created.head.getStoredId, results)
+        } yield (results.created.head.asInstanceOf[User[Stored]], results)
     }
 
     for {
-      (id, rGen) <- generate
-      rPass <- if (userConf.isPasswordInitial) {
-        presentPassword(userConf.user.alias, userConf.password)
-      } else {
+      (user, rGen) <- generate
+      rPass <- if (userConf.initialPassword) {
+        // If initialPassword is true, initial password has been set in generate()
         Future.successful(Report.empty())
+      } else {
+        presentPassword(userConf.user.alias, userConf.password)
       }
     } yield {
-      (id, rGen + rPass)
+      (user, rGen + rPass)
+    }
+  }
+
+  def findUserMedias(userId: StoredId): Future[Seq[Media[Stored]]] = {
+    val params = Json.obj()
+      .outExtend()
+      .prop("userids" -> userId)
+    api.requestAs[Seq[Media[Stored]]]("usermedia.get", params)
+  }
+
+  def mediaConfigToNotStoredMedia(mediaConfigs: Seq[MediaConfig], userAlias: String): Future[Seq[Media[NotStored]]] = {
+    Future.traverse(mediaConfigs) { config =>
+      mediaTypeOp.findByDescription(config.mediaType).map {
+        case Some(mediaType) => config.toMedia(mediaType.getStoredId)
+        case None => throw NoSuchEntityException(s"No such media type '${config.mediaType}' for user '$userAlias'.")
+      }
+    }
+  }
+
+  def addUserMedias(userId: StoredId, medias: Seq[Media[NotStored]]): Future[Report] = {
+    val param = Json.obj()
+      .prop("users" -> Json.obj().prop("userid" -> userId))
+      .prop("medias" -> medias)
+    api.requestIds("user.addmedia", param, "mediaids")
+      .map{ids =>
+        val entities = (ids zip medias) map { case (id, m) => m.toStored(id)}
+        Report.created(entities)
+      }
+  }
+
+  def deleteUserMedia(medias: Seq[Media[Stored]]): Future[Report] = {
+    deleteEntities(api, medias, "user.deletemedia", "mediaids")
+  }
+
+  private[this] def presentUserMedia(user: User[Stored], medias: Seq[MediaConfig]): Future[Report] = {
+    findUserMedias(user.getStoredId).flatMap { storedMedias =>
+      mediaConfigToNotStoredMedia(medias, user.alias).flatMap { configs =>
+        if (
+          configs.length == storedMedias.length &&
+          configs.foldLeft(storedMedias)((acc, config) => acc.find(_.isSame(config)).fold(acc)(acc diff List(_))).isEmpty &&
+          storedMedias.foldLeft(configs)((acc, stored) => acc.find(_.isSame(stored)).fold(acc)(acc diff List(_))).isEmpty
+        ) {
+          // stored medias and configurations are exactly same
+          Future.successful(Report.empty())
+        } else {
+          // differenet
+          for {
+            d <- deleteUserMedia(storedMedias)
+            c <- addUserMedias(user.getStoredId, configs)
+          } yield d + c
+        }
+      }
     }
   }
 

@@ -5,7 +5,7 @@ import com.github.zabbicook.entity.media.{MediaType, MediaTypeType}
 import com.github.zabbicook.test.{TestMedia, UnitSpec}
 
 class MediaTypeOpSpec extends UnitSpec with TestMedia {
-  lazy val sut = mediaTypeOp
+  lazy val sut = testMediaTypeOp
 
   "present mediatypes" should "create, delete, and update mediatypes" in {
     val added = MediaType[NotStored](

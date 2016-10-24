@@ -6,7 +6,7 @@ class Ops(api: ZabbixApi) {
   val mediaType = new MediaTypeOp(api)
   val hostGroup = new HostGroupOp(api)
   val userGroup = new UserGroupOp(api, hostGroup)
-  val user =  new UserOp(api, userGroup)
+  val user =  new UserOp(api, userGroup, mediaType)
   val template = new TemplateOp(api, hostGroup)
   val item = new ItemOp(api, template)
   val graph = new GraphOp(api, template, item)

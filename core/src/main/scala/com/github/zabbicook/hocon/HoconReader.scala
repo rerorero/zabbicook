@@ -130,7 +130,7 @@ object HoconReads {
               r.fromValue(value, meta).orElse {
                 value.valueType() match {
                   case ConfigValueType.OBJECT =>
-                    am.elements.map { objMeta =>
+                    am.element.map { objMeta =>
                       val confObj = value.asInstanceOf[ConfigObject]
                       checkUnrecognizedField(confObj, objMeta).flatMap(_ =>
                         r.read(confObj.toConfig, objMeta)
@@ -141,7 +141,14 @@ object HoconReads {
                   case ConfigValueType.NULL =>
                     HoconError.NotAcceptableValue(conf.origin(), "null", meta)
                   case els =>
-                    sys.error(s"Not implemented for array of ${els} reads.")
+                    am.element match {
+                      case Some(enumMeta: EnumMeta) =>
+                        // WARNING: value.atKey() erases original Hocon pathes.
+                        // TODO: recover and convert to the original path.
+                        r.read(value.atKey(alias), enumMeta)
+                      case els =>
+                        sys.error(s"Not implemented for array of STRING(meta(${els})) reads.")
+                    }
                 }
               }
             }
@@ -165,6 +172,7 @@ object HoconReads {
       case e: HoconError => e
     }
   })
+
 }
 
 object HoconReadsCompanion extends LabelledTypeClassCompanion[HoconReads] {

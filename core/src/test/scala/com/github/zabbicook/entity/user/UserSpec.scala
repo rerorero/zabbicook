@@ -1,16 +1,13 @@
-package com.github.zabbicook.entity
+package com.github.zabbicook.entity.user
 
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.prop.EnabledEnum
-import com.github.zabbicook.entity.user.{Theme, User, UserType}
 import com.github.zabbicook.hocon._
 import com.github.zabbicook.test.UnitSpec
+import HoconReadsCompanion._
+import HoconReads.option
 
 class UserSpec extends UnitSpec {
-
-  import com.github.zabbicook.hocon.HoconReadsCompanion._
-
-  import com.github.zabbicook.hocon.HoconReads.option
 
   "User" should "be parsed in Hocon format" in {
     val s =

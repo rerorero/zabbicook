@@ -5,7 +5,7 @@ import com.github.zabbicook.entity.media.{MediaType, MediaTypeType}
 import com.github.zabbicook.operation.MediaTypeOp
 
 trait TestMedia extends TestConfig { self: UnitSpec =>
-  protected[this] lazy val mediaTypeOp = new MediaTypeOp(cachedApi)
+  protected[this] lazy val testMediaTypeOp = new MediaTypeOp(cachedApi)
 
   /**
     * you can override to customize.
@@ -38,10 +38,10 @@ trait TestMedia extends TestConfig { self: UnitSpec =>
   )
 
   def presentTestMediaTypes(): Unit = {
-    await(mediaTypeOp.present(testMediaTypes))
+    await(testMediaTypeOp.present(testMediaTypes))
   }
 
   def cleanTestMediaTypes(): Unit = {
-    await(mediaTypeOp.absent(testMediaTypes.map(_.description)))
+    await(testMediaTypeOp.absent(testMediaTypes.map(_.description)))
   }
 }

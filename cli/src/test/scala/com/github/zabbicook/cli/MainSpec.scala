@@ -5,10 +5,11 @@ import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.graph._
 import com.github.zabbicook.entity.host._
 import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
-import com.github.zabbicook.entity.media.{MediaType, MediaTypeType}
+import com.github.zabbicook.entity.media.{Media, MediaType, MediaTypeType}
 import com.github.zabbicook.entity.prop.EnabledEnum
 import com.github.zabbicook.entity.template.{Template, TemplateSettings}
-import com.github.zabbicook.entity.user.{Theme, User, UserGroup, UserType}
+import com.github.zabbicook.entity.trigger.Severity
+import com.github.zabbicook.entity.user._
 import com.github.zabbicook.operation.{Ops, StoredHost}
 import com.github.zabbicook.test.{TestConfig, UnitSpec}
 
@@ -74,10 +75,16 @@ class MainSpec extends UnitSpec with TestConfig {
       UserGroup(name = "zabbicook-spec usergroup2")
     )
 
-    val users: Seq[(User[NotStored], Seq[UserGroup[NotStored]])] = Seq(
+    val users: Seq[(User[NotStored], Seq[UserGroup[NotStored]], Seq[Media[NotStored]])] = Seq(
       (User(alias = "Zabbicook-spec-Alice", autologin = Some(true), lang = Some("en"),
-        theme = Some(Theme.dark), `type` = Some(UserType.superAdmin)), Seq(userGroups(0))),
-      (User(alias = "Zabbicook-spec-Bob"), Seq(userGroups(1)))
+        theme = Some(Theme.dark), `type` = Some(UserType.superAdmin)),
+        Seq(userGroups(0)),
+        Seq(
+          Media(active = true, period="1-7,00:00-24:00", sendto = "dest", severity = MediaConfig.severitiesToBinary(Seq(Severity.information, Severity.warning))),
+          Media(active = false, period="1-2,10:00-20:00", sendto = "anyone", severity = MediaConfig.severitiesToBinary(Seq()))
+        )
+        ),
+      (User(alias = "Zabbicook-spec-Bob"), Seq(userGroups(1)), Seq())
     )
 
     val templates: Seq[TemplateSettings.NotStoredAll] = Seq(
@@ -279,6 +286,8 @@ class MainSpec extends UnitSpec with TestConfig {
       (actualUsers.sortBy(_._1.alias) zip users.sortBy(_._1.alias)) foreach { case (actual, expected) =>
         assert(false === actual._1.shouldBeUpdated(expected._1))
         assert(expected._2.map(_.name).toSet === actual._2.map(_.name).toSet)
+        val medias = await(op.user.findUserMedias(actual._1.getStoredId))
+        assert(expected._3.length === medias.length)
       }
       // templates
       val actualTemplates = await(op.template.findByHostnames(templates.map(_.template.host)))

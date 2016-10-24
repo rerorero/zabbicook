@@ -1,6 +1,7 @@
 package com.github.zabbicook.recipe
 
-import com.github.zabbicook.entity.user.{User, UserConfig}
+import com.github.zabbicook.entity.trigger.Severity
+import com.github.zabbicook.entity.user.{MediaConfig, User, UserConfig}
 import com.github.zabbicook.hocon.{HoconError, HoconReader, HoconSuccess}
 import com.github.zabbicook.test.UnitSpec
 
@@ -18,6 +19,19 @@ class RecipeSpec extends UnitSpec {
           |    }
           |    groups: ["zabbicook-spec usergroup2"]
           |    password: pass5678
+          |    initialPassword: true
+          |    media: [
+          |       {
+          |           enabled: true
+          |           type: "script"
+          |           period: "1-7,00:00-24:00"
+          |           sendTo: "dest"
+          |           severity: [
+          |              information,
+          |               warning
+          |           ]
+          |       }
+          |    ]
           |  }
           |]
           |""".stripMargin
@@ -25,7 +39,17 @@ class RecipeSpec extends UnitSpec {
     assert(r.users === Some(Seq(UserConfig(
       user = User(alias = "Zabbicook-spec-Bob"),
       groupNames = Seq("zabbicook-spec usergroup2"),
-      password = "pass5678"
+      password = "pass5678",
+      initialPassword = true,
+      media = Some(Seq(
+        MediaConfig(
+          active = true,
+          mediaType = "script",
+          period = "1-7,00:00-24:00",
+          sendto = "dest",
+          severity = Seq(Severity.information, Severity.warning)
+        )
+      ))
     ))))
   }
 

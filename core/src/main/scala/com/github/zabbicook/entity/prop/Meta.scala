@@ -43,7 +43,7 @@ case class ArrayMeta(
   name: String,
   aliases: Set[String],
   desc: Description,
-  elements: Option[Meta]
+  element: Option[Meta]
 ) extends Meta
 
 case class EntityMeta(

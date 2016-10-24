@@ -15,13 +15,7 @@ case class MediaConfig(
   severity: Seq[Severity]
 ) {
   def toMedia(mediaTypeId: StoredId): Media[NotStored] = {
-    Media(NotStoredId, active, mediaTypeId, period, sendto, severitiesToBinary(severity))
-  }
-
-  private[this] def severitiesToBinary(severities: Seq[Severity]): Int = {
-    severities.foldLeft(0) { (acc, s) =>
-      acc + (1 << (s.zabbixValue.value - 1))
-    }
+    Media(NotStoredId, active, mediaTypeId, period, sendto, MediaConfig.severitiesToBinary(severity))
   }
 }
 
@@ -29,7 +23,7 @@ object MediaConfig extends EntityCompanionMetaHelper {
 
   val meta = entity("The Media object")(
     EnabledEnumZeroPositive.metaWithDesc("active")("enabled")("(required)	Whether the media is enabled."),
-    value("mediatypeid")("type")("(required) The media type used by the media."),
+    value("mediaType")("type")("(required) The media type used by the media."),
     value("period")("whenActive","period")("""(required) Time when the notifications can be sent as a time period.
                                              |ex. "1-7,00:00-24:00" """.stripMargin),
     value("sendto")("sendTo")("(required) Address, user name or other identifier of the recipient."),
@@ -38,20 +32,26 @@ object MediaConfig extends EntityCompanionMetaHelper {
       """(required)	Trigger severities to send notifications about.
         |Notifications will be sent from triggers with severities as followed this setting.""".stripMargin))
   ) _
+
+  def severitiesToBinary(severities: Seq[Severity]): Int = {
+    severities.foldLeft(0) { (acc, s) =>
+      acc + (1 << (s.zabbixValue.value))
+    }
+  }
 }
 
 /**
   * @param user user object
   * @param groupNames names of groups to which the user belongs
   * @param password password
-  * @param isPasswordInitial If true, password is used only when the user is created.
+  * @param initialPassword If true, password is used only when the user is created.
   * @param media array of usermedia
   */
 case class UserConfig(
   user: User[NotStored],
   groupNames: Seq[String],
   password: String,
-  isPasswordInitial: Boolean,
+  initialPassword: Boolean,
   media: Option[Seq[MediaConfig]]
 )
 
@@ -60,7 +60,7 @@ object UserConfig extends EntityCompanionMetaHelper {
     User.required("user"),
     array("groupNames")("groups")("(required) User groups to add the user to."),
     value("password")("password")("(required) User's password."),
-    value("isPasswordInitial")("initialPassword")("""(required) Whether the password is used only when the user is created.
+    value("initialPassword")("initialPassword")("""(required) Whether the password is used only when the user is created.
                                                     |If set false, zabbicook always set the password.""".stripMargin),
     arrayOf("media")(MediaConfig.optional("media"))
   ) _
