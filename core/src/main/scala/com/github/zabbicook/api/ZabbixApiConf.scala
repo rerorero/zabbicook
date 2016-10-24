@@ -8,7 +8,6 @@ import scala.concurrent.ExecutionContext
 /**
   * @param apiPath zabbix API URL ex) http://company.com/zabbix/api_jsonrpc.php
   * @param jsonrpc jsonrpc version
-  * @param httpClientConfig HttpClientConfig
   * @param executionContext execution context
   */
 case class ZabbixApiConf(

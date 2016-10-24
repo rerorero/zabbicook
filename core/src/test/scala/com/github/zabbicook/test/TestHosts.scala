@@ -2,11 +2,9 @@ package com.github.zabbicook.test
 
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.host._
-import com.github.zabbicook.operation.HostOp
+import com.github.zabbicook.operation.Ops
 
 trait TestHosts extends TestTemplates { self: UnitSpec =>
-  protected[this] lazy val testHostOp = new HostOp(cachedApi, testHostGroupOp, templateOp)
-
   /**
     * you can override to customize.
     */
@@ -66,13 +64,13 @@ trait TestHosts extends TestTemplates { self: UnitSpec =>
     )
   )
 
-  def presentTestHosts(): Unit = {
-    presentTestTemplates()
-    await(testHostOp.present(testHosts))
+  def presentTestHosts(ops: Ops): Unit = {
+    presentTestTemplates(ops)
+    await(ops.host.present(testHosts))
   }
 
-  def cleanTestHosts(): Unit = {
-    await(testHostOp.absent(testHosts.map(_.host.host)))
-    cleanTestTemplates()
+  def cleanTestHosts(ops: Ops): Unit = {
+    await(ops.host.absent(testHosts.map(_.host.host)))
+    cleanTestTemplates(ops)
   }
 }

@@ -2,11 +2,9 @@ package com.github.zabbicook.test
 
 import com.github.zabbicook.entity.graph._
 import com.github.zabbicook.entity.template.TemplateSettings
-import com.github.zabbicook.operation.GraphOp
+import com.github.zabbicook.operation._
 
 trait TestGraphs extends TestItems { self: UnitSpec =>
-
-  protected[this] lazy val graphOp = new GraphOp(cachedApi, templateOp, itemOp)
 
   val graph1 =
     GraphSetting(
@@ -72,17 +70,17 @@ trait TestGraphs extends TestItems { self: UnitSpec =>
     testTemplates(1) -> Seq(graph3)
   )
 
-  def presentTestGraphs(): Unit = {
-    presentTestItems()
+  def presentTestGraphs(ops: Ops): Unit = {
+    presentTestItems(ops)
     testGraphs.foreach { case (t, graphs) =>
-      await(graphOp.present(t.template.host, graphs))
+      await(ops.graph.present(t.template.host, graphs))
     }
   }
 
-  def cleanTestGraphs(): Unit = {
+  def cleanTestGraphs(ops: Ops): Unit = {
     testGraphs.foreach { case (t, graphs) =>
-      await(graphOp.absent(t.template.host, graphs))
+      await(ops.graph.absent(t.template.host, graphs))
     }
-    cleanTestItems()
+    cleanTestItems(ops)
   }
 }

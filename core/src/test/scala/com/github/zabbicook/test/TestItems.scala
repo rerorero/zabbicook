@@ -3,11 +3,9 @@ package com.github.zabbicook.test
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
 import com.github.zabbicook.entity.prop.EnabledEnum
-import com.github.zabbicook.operation.ItemOp
+import com.github.zabbicook.operation.Ops
 
 trait TestItems extends TestTemplates { self: UnitSpec =>
-
-  protected[this] lazy val itemOp = new ItemOp(cachedApi, templateOp)
 
   protected[this] val item0: Item[NotStored] = Item(
     delay = 300,
@@ -48,13 +46,13 @@ trait TestItems extends TestTemplates { self: UnitSpec =>
     testTemplates(1).template.host -> Seq(item2)
   )
 
-  def presentTestItems(): Unit = {
-    presentTestTemplates()
-    await(itemOp.presentWithTemplate(testItems))
+  def presentTestItems(ops: Ops): Unit = {
+    presentTestTemplates(ops)
+    await(ops.item.presentWithTemplate(testItems))
   }
 
-  def cleanTestItems(): Unit = {
-    await(itemOp.absentWithTemplate(testItems.mapValues(_.map(_.name))))
-    cleanTestTemplates()
+  def cleanTestItems(ops: Ops): Unit = {
+    await(ops.item.absentWithTemplate(testItems.mapValues(_.map(_.name))))
+    cleanTestTemplates(ops)
   }
 }

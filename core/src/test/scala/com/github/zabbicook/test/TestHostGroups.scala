@@ -2,13 +2,11 @@ package com.github.zabbicook.test
 
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.host.HostGroup
-import com.github.zabbicook.operation.HostGroupOp
+import com.github.zabbicook.operation.Ops
 
 import scala.concurrent.Future
 
 trait TestHostGroups extends TestConfig { self: UnitSpec =>
-  protected[this] lazy val testHostGroupOp = new HostGroupOp(cachedApi)
-
   /**
     * you can override to customize.
     */
@@ -18,11 +16,11 @@ trait TestHostGroups extends TestConfig { self: UnitSpec =>
     HostGroup(name = specName("hostgroup3"))
   )
 
-  def presentTestHostGroups(): Unit = {
-    await(Future.traverse(testHostGroups)(g => testHostGroupOp.present(g)))
+  def presentTestHostGroups(ops: Ops): Unit = {
+    await(Future.traverse(testHostGroups)(g => ops.hostGroup.present(g)))
   }
 
-  def cleanTestHostGroups(): Unit = {
-    await(testHostGroupOp.absent(testHostGroups.map(_.name)))
+  def cleanTestHostGroups(ops: Ops): Unit = {
+    await(ops.hostGroup.absent(testHostGroups.map(_.name)))
   }
 }

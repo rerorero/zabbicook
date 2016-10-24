@@ -1,11 +1,9 @@
 package com.github.zabbicook.test
 
 import com.github.zabbicook.entity.template.{Template, TemplateSettings}
-import com.github.zabbicook.operation.{HostGroupOp, TemplateOp}
+import com.github.zabbicook.operation.Ops
 
 trait TestTemplates extends TestHostGroups { self: UnitSpec =>
-
-  protected[this] lazy val templateOp = new TemplateOp(cachedApi, new HostGroupOp(cachedApi))
 
   /**
     * you can override to customize generated users.
@@ -17,13 +15,13 @@ trait TestTemplates extends TestHostGroups { self: UnitSpec =>
     TemplateSettings(Template(host = specName("template3")), Seq(testHostGroups(0)), None)
   )
 
-  def presentTestTemplates(): Unit = {
-    presentTestHostGroups()
-    await(templateOp.present(testTemplates))
+  def presentTestTemplates(ops: Ops): Unit = {
+    presentTestHostGroups(ops)
+    await(ops.template.present(testTemplates))
   }
 
-  def cleanTestTemplates(): Unit = {
-    await(templateOp.absent(testTemplates.map(_.hostName)))
-    cleanTestHostGroups()
+  def cleanTestTemplates(ops: Ops): Unit = {
+    await(ops.template.absent(testTemplates.map(_.hostName)))
+    cleanTestHostGroups(ops)
   }
 }
