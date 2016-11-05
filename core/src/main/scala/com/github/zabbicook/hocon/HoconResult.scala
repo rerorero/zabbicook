@@ -65,7 +65,7 @@ object HoconError {
   }
 
   case class NotExist(origin: ConfigOrigin, meta: Meta)
-    extends HoconError(s"Required field ${meta.formatAliases} is not found", Some(origin), Some(meta))
+    extends HoconError(s"Required field ${meta.formatAliases} is not defined", Some(origin), Some(meta))
 
   case class TypeMismatched(detail: String, origin: ConfigOrigin, meta: Option[Meta], cause: Option[Exception] = None)
     extends HoconError(detail, Some(origin), meta, cause)

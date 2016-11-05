@@ -5,24 +5,37 @@ import com.github.zabbicook.operation.{Ops, Report}
 import com.github.zabbicook.recipe.Recipe
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 class Chef(api: Ops) {
   def present(recipe: Recipe): Future[Report] = {
     // TODO First, check the connectivity to zabbix api server via version api
     val templateSection = recipe.templates.getOrElse(Seq())
-    for {
-      rMediaTypes <- api.mediaType.present(recipe.mediaTypes.getOrElse(Seq()))
-      rHostGroup <- api.hostGroup.present(recipe.hostGroups.getOrElse(Seq()))
-      rUserGroup <- api.userGroup.present(recipe.userGroups.getOrElse(Seq()))
-      rUser <- api.user.present(recipe.users.getOrElse(Seq()))
-      rTemplate <- api.template.present(templateSection.map(_.toTemplateSettings))
-      rItems <- presentItems(templateSection)
-      rGraphs <- presentGraphs(templateSection)
-      rHost <- api.host.present(recipe.hosts.getOrElse(Seq()))
-    } yield {
-      rMediaTypes + rHostGroup + rUserGroup + rUser + rTemplate + rItems + rGraphs + rHost
+    Future {
+      val reports = Seq(
+        await(
+          api.mediaType.present(recipe.mediaTypes.getOrElse(Seq())),
+          api.hostGroup.present(recipe.hostGroups.getOrElse(Seq()))
+        ),
+        await(api.userGroup.present(recipe.userGroups.getOrElse(Seq()))),
+        await(api.user.present(recipe.users.getOrElse(Seq()))),
+        await(
+          api.action.present(recipe.actions.getOrElse(Seq())),
+          api.template.present(templateSection.map(_.toTemplateSettings))
+        ),
+        await(presentItems(templateSection)),
+        await(
+          presentGraphs(templateSection),
+          api.host.present(recipe.hosts.getOrElse(Seq()))
+        )
+      )
+      Report.flatten(reports)
     }
+  }
+
+  private[this] def await(futures: Future[Report]*): Report = {
+    Await.result(Future.sequence(futures).map(Report.flatten), 60 seconds)
   }
 
   private[this] def presentItems(section: Seq[TemplateSettingsConf]): Future[Report] = {

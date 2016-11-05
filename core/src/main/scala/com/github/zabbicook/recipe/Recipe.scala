@@ -1,6 +1,7 @@
 package com.github.zabbicook.recipe
 
 import com.github.zabbicook.entity.Entity.NotStored
+import com.github.zabbicook.entity.action.ActionConfig
 import com.github.zabbicook.entity.host.{HostConf, HostGroup}
 import com.github.zabbicook.entity.media.MediaType
 import com.github.zabbicook.entity.prop.EntityCompanionMetaHelper
@@ -14,6 +15,7 @@ case class Recipe(
   hosts: Option[Seq[HostConf]],
   userGroups: Option[Seq[UserGroupConfig]],
   users: Option[Seq[UserConfig]],
+  actions: Option[Seq[ActionConfig]],
   templates: Option[Seq[TemplateSettingsConf]]
 )
 
@@ -24,6 +26,7 @@ object Recipe extends EntityCompanionMetaHelper {
     arrayOf("hosts")(HostConf.optional("hosts")),
     arrayOf("userGroups")(UserGroupConfig.optional("userGroups")),
     arrayOf("users")(UserConfig.optional("users")),
+    arrayOf("actions")(ActionConfig.optional("actions")),
     arrayOf("templates")(TemplateSettingsConf.optional("templates"))
   ) _
 }

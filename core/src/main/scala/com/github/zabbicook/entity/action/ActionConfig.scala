@@ -1,17 +1,18 @@
 package com.github.zabbicook.entity.action
 
 import com.github.zabbicook.entity.Entity.NotStored
+import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.prop.{EnabledEnum, EnabledEnumZeroPositive, EntityCompanionMetaHelper, IntProp}
 
 case class OpMessageConfig(
-  default_msg: Option[EnabledEnumZeroPositive],
-  mediaType: Option[String],
-  message: Option[String],
-  subject: Option[String]
+  default_msg: Option[EnabledEnumZeroPositive]=None,
+  mediaType: Option[String]=None,
+  message: Option[String]=None,
+  subject: Option[String]=None
 ) {
-  def toNotStored: OperationMessage = {
-    OperationMessage(default_msg = default_msg, message = message, subject = subject)
+  def toNotStored(mediatypeId: Option[StoredId]): OperationMessage = {
+    OperationMessage(default_msg = default_msg, mediatypeid = mediatypeId, message = message, subject = subject)
   }
 }
 
@@ -45,22 +46,22 @@ trait ActionOperationConfigHelper {
 
 case class ActionOperationConfig(
   operationtype: OperationType,
-  esc_period: Option[IntProp],
-  esc_step_from: Option[IntProp],
-  esc_step_to: Option[IntProp],
-  evaltype: Option[OperationEvalType],
-  message: Option[OpMessageConfig],
-  opmessage_grp: Option[Seq[String]],
-  opMessageUser: Option[Seq[String]]
+  esc_period: Option[IntProp] = None,
+  esc_step_from: Option[IntProp] = None,    // TODO: validate: esc_step_from and esc_step_to must be set together.
+  esc_step_to: Option[IntProp] = None,
+  evaltype: Option[OperationEvalType] = None,
+  message: Option[OpMessageConfig] = None,
+  opmessage_grp: Option[Seq[String]] = None,
+  opmessage_usr: Option[Seq[String]] = None
 ) {
-  def toNotStored(messageGroups: Option[Seq[OpMessageGroup]], messageUsers: Option[Seq[OpMessageUser]]): ActionOperation[NotStored] = {
+  def toNotStored(messageGroups: Option[Seq[OpMessageGroup]], messageUsers: Option[Seq[OpMessageUser]], mediaTypeId: Option[StoredId]): ActionOperation[NotStored] = {
     ActionOperation[NotStored](
       operationtype = operationtype,
       esc_period = esc_period,
       esc_step_from = esc_step_from,
       esc_step_to = esc_step_to,
       evaltype = evaltype,
-      opmessage = message.map(_.toNotStored),
+      opmessage = message.map(_.toNotStored(mediaTypeId)),
       opmessage_grp = messageGroups,
       opmessage_usr = messageUsers
     )
@@ -82,14 +83,18 @@ object ActionOperationConfig extends EntityCompanionMetaHelper with ActionOperat
 
 case class RecoveryActionOperationConfig(
   operationtype: RecoveryOperationType,
-  message: Option[OpMessageConfig],
-  opmessage_grp: Option[Seq[String]],
-  opMessageUser: Option[Seq[String]]
+  message: Option[OpMessageConfig] = None,
+  opmessage_grp: Option[Seq[String]] = None,
+  opmessage_usr: Option[Seq[String]] = None
 ) {
-  def toNotStored(messageGroups: Option[Seq[OpMessageGroup]], messageUsers: Option[Seq[OpMessageUser]]): RecoveryActionOperation[NotStored] = {
+  def toNotStored(
+    messageGroups: Option[Seq[OpMessageGroup]],
+    messageUsers: Option[Seq[OpMessageUser]],
+    mediatypeId: Option[StoredId]
+  ): RecoveryActionOperation[NotStored] = {
     RecoveryActionOperation[NotStored](
       operationtype = operationtype,
-      opmessage = message.map(_.toNotStored),
+      opmessage = message.map(_.toNotStored(mediatypeId)),
       opmessage_grp = messageGroups,
       opmessage_usr = messageUsers
     )
@@ -105,19 +110,22 @@ object RecoveryActionOperationConfig extends EntityCompanionMetaHelper with Acti
   ) _
 }
 
+/**
+  * configurations of action + action filter + operations + recovery operations
+  */
 case class ActionConfig(
   name: String,
   esc_period: IntProp,
   eventsource: EventSource,
-  def_longdata: Option[String],
-  def_shortdata: Option[String],
-  r_longdata: Option[String],
-  r_shortdata: Option[String],
-  recovery_msg: Option[EnabledEnum], // ver <= 3.0.x
-  status: Option[EnabledEnum],
-  filter: Option[ActionFilter[NotStored]],
-  operations: Option[Seq[ActionOperationConfig]],
-  recoveryOperations: Option[Seq[RecoveryActionOperationConfig]] // Ver >= 3.2.x
+  def_longdata: Option[String] = None,
+  def_shortdata: Option[String] = None,
+  r_longdata: Option[String] = None,
+  r_shortdata: Option[String] = None,
+  recovery_msg: Option[EnabledEnum] = None, // ver <= 3.0.x
+  status: Option[EnabledEnum] = None,
+  filter: ActionFilter[NotStored],
+  operations: Seq[ActionOperationConfig],
+  recoveryOperations: Option[Seq[RecoveryActionOperationConfig]] = None // Ver >= 3.2.x
 ) {
   def toNotStoredAction: Action[NotStored] = {
     Action[NotStored](
@@ -135,19 +143,18 @@ case class ActionConfig(
 }
 
 object ActionConfig extends EntityCompanionMetaHelper {
-
   override val meta = entity("The action object.")(
     value("name")("name")("(required)	string	Name of the action."),
-    value("esc_period")("operationStep","duration")("(required)	integer	Default operation step duration. Must be greater than 60 seconds."),
-    EventSource.metaWithDesc("eventsource")("event")("(required) Type of events that the action will handle."),
+    value("esc_period")("defaultStepDuration","stepDuration")("(required)	integer	Default operation step duration. Must be greater than 60 seconds."),
+    EventSource.metaWithDesc("eventsource")("event")("(required)(constant) Type of events that the action will handle. This value is not changeable."),
     value("def_longdata")("message", "defaultMessage")("Problem message text."),
     value("def_shortdata")("subject", "defaultSubject")("Problem message subject."),
     value("r_longdata")("recoveryMessage")("Recovery message text."),
     value("r_shortdata")("recoverySubject")("Recovery message subject"),
     EnabledEnum.metaWithDesc("recovery_msg")("recoveryMessageEnabled")("Whether recovery messages are enabled. (Zabbix version <= 3.0.x)"), // TODO: validate with a version
     EnabledEnum.metaWithDesc("status")("enabled")("Whether the action is enabled or disabled."),
-    ActionFilter.optional("filter"),
-    arrayOf("operations")(ActionOperationConfig.optional("operations")),
+    ActionFilter.required("filter"),
+    arrayOf("operations")(ActionOperationConfig.required("operations")),
     arrayOf("recoveryOperations")(RecoveryActionOperationConfig.optional("recoveryOperations")) // TODO: validate with a version
   ) _
 }

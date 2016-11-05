@@ -54,7 +54,11 @@ object EntityId {
   case object NotStoredId extends NotStoredId
 
   implicit val format: Format[EntityId] = Format(
-    Reads.StringReads.map(StoredId),
+    Reads[EntityId] {
+      case JsNumber(n) => JsSuccess(StoredId(n.toString))
+      case JsString(s) => JsSuccess(StoredId(s))
+      case els => JsError(s"Invalid entity id format: ${els}")
+    },
     Writes[EntityId] {
       case _: NotStoredId => JsNull
       case StoredId(v) => JsString(v)
@@ -68,10 +72,26 @@ object EntityId {
     }
   }
 
-  implicit val readsStored: Reads[StoredId] = Reads.StringReads.map(StoredId)
+  implicit val readsStored: Reads[StoredId] =
+    Reads[StoredId] {
+      case JsNumber(n) => JsSuccess(StoredId(n.toString))
+      case JsString(s) => JsSuccess(StoredId(s))
+      case els => JsError(s"Invalid entity id format: ${els}")
+    }
 }
 
-abstract class Entity[S <: EntityState] { self =>
+trait PropCompare {
+  protected[this] def isSameProp[A](self: Option[A], constant: Option[A], defValue: A, compare: (A, A) => Boolean = (a:A, b:A) => a == b): Boolean = {
+    (self, constant) match {
+      case (Some(s), Some(c)) if compare(s, c) => true
+      case (Some(s), None) if compare(s, defValue) => true
+      case (None, None) => true
+      case _ => false
+    }
+  }
+}
+
+abstract class Entity[S <: EntityState] extends PropCompare { self =>
   protected[this] def id: EntityId
 
   def getStoredId[T >: S <: Stored]: StoredId = id.toStored

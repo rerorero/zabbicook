@@ -3,6 +3,7 @@ package com.github.zabbicook.cli
 import com.github.zabbicook.api.ZabbixApi
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.EntityId.StoredId
+import com.github.zabbicook.entity.action._
 import com.github.zabbicook.entity.graph._
 import com.github.zabbicook.entity.host._
 import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
@@ -101,6 +102,77 @@ class MainSpec extends UnitSpec with TestConfig {
           Template(host = "zabbicook-spec template 2"),
           Seq(HostGroup(name = "zabbicook-spec hostgroup1"), HostGroup(name = "zabbicook-spec hostgroup2")),
           None
+        )
+      )
+
+      val actions: Seq[ActionConfig] = Seq(
+        ActionConfig(
+          name = "zabbicook-spec action 1",
+          esc_period = 300,
+          eventsource = EventSource.trigger,
+          def_shortdata = Some("=== {TRIGGER.STATUS} === {HOST.NAME} - {TRIGGER.NAME}"),
+          def_longdata = Some("How many roads must a man walk down."),
+          filter = ActionFilter[NotStored](
+            conditions = Seq(
+              ActionFilterCondition(
+                conditiontype = ActionFilterConditionType.triggerName,
+                value = "notification",
+                formulaid = Some("A"),
+                operator = Some(FilterConditionOperator.equal)
+              ),
+              ActionFilterCondition(
+                conditiontype = ActionFilterConditionType.triggerSeverity,
+                value = "2",
+                formulaid = Some("B"),
+                operator = Some(FilterConditionOperator.greaterEqual)
+              )
+            ),
+            evaltype = ActionFilterEvalType.Or
+          ),
+          operations = Seq(
+            ActionOperationConfig(
+              operationtype = OperationType.sendMessage,
+              esc_period = Some(300),
+              esc_step_from = Some(2),
+              esc_step_to = Some(3),
+              evaltype = Some(OperationEvalType.Or),
+              message = Some(OpMessageConfig(
+                default_msg = Some(false),
+                mediaType = Some("zabbicook-spec-media1"),
+                subject = Some("custom subject"),
+                message = Some("custom message")
+              )),
+              opmessage_grp = Some(Seq(
+                "zabbicook-spec usergroup1",
+                "zabbicook-spec usergroup2" ))
+            ),
+            ActionOperationConfig(
+              operationtype = OperationType.sendMessage,
+              message = Some(OpMessageConfig(
+                mediaType = Some("zabbicook-spec-media2")
+              )),
+              opmessage_usr = Some(Seq("Zabbicook-spec-Alice"))
+            )
+          )
+        ),
+        ActionConfig(
+          name = "zabbicook-spec action 2",
+          esc_period = 400,
+          eventsource = EventSource.trigger,
+          status = Some(false),
+          filter = ActionFilter(
+            conditions = Seq(),
+            evaltype = ActionFilterEvalType.AndOr
+          ),
+          operations = Seq(
+            ActionOperationConfig(
+              operationtype = OperationType.sendMessage,
+              opmessage_usr = Some(Seq(
+                "Zabbicook-spec-Alice",
+                "Zabbicook-spec-Bob"
+              ))
+            )
+          )
         )
       )
 
@@ -256,6 +328,7 @@ class MainSpec extends UnitSpec with TestConfig {
         await(op.host.absent(hosts.map(_.host.host)))
         await(op.item.absentWithTemplate(items.mapValues(_.map(_.name))))
         await(op.template.absent(templates.map(_.template.host)))
+        await(op.action.absent(actions.map(_.name)))
         await(op.user.absent(users.map(_._1.alias)))
         await(op.userGroup.absent(userGroups.map(_.name)))
         await(op.hostGroup.absent(hostGroups.map(_.name)))
@@ -292,6 +365,13 @@ class MainSpec extends UnitSpec with TestConfig {
           assert(expected._2.map(_.name).toSet === actual._2.map(_.name).toSet)
           val medias = await(op.user.findUserMedias(actual._1.getStoredId))
           assert(expected._3.length === medias.length)
+        }
+        // actions
+        val actualActions = await(op.action.findByNames(actions.map(_.name)))
+        assert(actualActions.length === actions.length)
+        (actualActions.sortBy(_.action.name) zip actions.sortBy(_.name)) foreach { case (actual, expectedConf) =>
+          val expected = await(op.action.configToNotStored(expectedConf))
+          assert(false === actual.shouldBeUpdated(expected))
         }
         // templates
         val actualTemplates = await(op.template.findByHostnames(templates.map(_.template.host)))

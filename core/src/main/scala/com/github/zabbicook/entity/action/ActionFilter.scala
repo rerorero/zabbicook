@@ -3,7 +3,7 @@ package com.github.zabbicook.entity.action
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.prop._
-import com.github.zabbicook.entity.{Entity, EntityId, EntityState}
+import com.github.zabbicook.entity.{EntityState, PropCompare}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -92,14 +92,17 @@ object FilterConditionOperator extends IntEnumPropCompanion[FilterConditionOpera
 }
 
 case class ActionFilterCondition[S <: EntityState](
-  conditionid: EntityId,
   conditiontype: ActionFilterConditionType,
   value: String,
-  value2: Option[String],
-  formulaid: Option[String],
-  operator: Option[FilterConditionOperator]
-) extends Entity[S] {
-  override protected[this] def id: EntityId = conditionid
+  value2: Option[String] = None,
+  formulaid: Option[String] = None,
+  operator: Option[FilterConditionOperator] = None
+) extends PropCompare {
+  def isSame[T >: S <: Stored](constant: ActionFilterCondition[NotStored]): Boolean = {
+    val sameValue2 = isSameProp(value2, constant.value2, defValue = "")
+    val sameOperator = isSameProp(operator, constant.operator, FilterConditionOperator.equal)
+    (conditiontype == constant.conditiontype) && (value == constant.value) && sameValue2 && sameOperator
+  }
 }
 
 object ActionFilterCondition extends EntityCompanionMetaHelper {
@@ -107,10 +110,9 @@ object ActionFilterCondition extends EntityCompanionMetaHelper {
   implicit val format2: Format[ActionFilterCondition[NotStored]] = Json.format[ActionFilterCondition[NotStored]]
 
   override val meta = entity("Set of filter conditions to use for filtering results.")(
-    readOnly("conditionid"),
     ActionFilterConditionType.metaWithDesc("conditiontype")("type")("(required) " + ActionFilterConditionType.description),
     value("value")("value")("(required) Value to compare with."),
-    value("value2")("value")(s"Secondary value to compare with. Requried for trigger actions when condition type is '${ActionFilterConditionType.eventTagValue}'"),
+    value("value2")("value2")(s"Secondary value to compare with. Requried for trigger actions when condition type is '${ActionFilterConditionType.eventTagValue}'"),
     value("formulaid")("label","formulaid")(
       """Arbitrary unique ID that is used to reference the condition from a custom expression.
         |Can only contain capital-case letters.
@@ -124,7 +126,8 @@ sealed abstract class ActionFilterEvalType(val zabbixValue: IntProp, val desc: S
 
 object ActionFilterEvalType extends IntEnumPropCompanion[ActionFilterEvalType] {
   override val values: Set[ActionFilterEvalType] = Set(AndOr,And,Or,customExpression,unknown)
-  override val description: String = "Filter condition evaluation method."
+  override val description: String = s"""(required) Filter condition evaluation method.
+                                      |When conditions is empty array this does not affect but it should be set '$AndOr'.""".stripMargin
   case object AndOr extends ActionFilterEvalType(0, "(default) AND / OR")
   case object And extends ActionFilterEvalType(1, "AND")
   case object Or extends ActionFilterEvalType(2, "OR")
@@ -135,8 +138,22 @@ object ActionFilterEvalType extends IntEnumPropCompanion[ActionFilterEvalType] {
 case class ActionFilter[S <: EntityState] (
   conditions: Seq[ActionFilterCondition[S]],
   evaltype: ActionFilterEvalType,
-  formula: Option[String]
-)
+  formula: Option[String] = None
+) {
+  def shouldBeUpdated[T >: S <: Stored](constant: ActionFilter[NotStored]): Boolean = {
+    val sameForumula = (formula, constant.formula) match {
+      case (Some(s), Some(c)) if s == c => true
+      case (Some(""), None) => true
+      case (None, None) => true
+      case _ => false
+    }
+
+    !(conditions.length == constant.conditions.length &&
+      constant.conditions.forall(cond => conditions.exists(_.isSame[T](cond))) &&
+      evaltype == constant.evaltype &&
+      sameForumula)
+  }
+}
 
 object ActionFilter extends EntityCompanionMetaHelper {
   implicit val format: Format[ActionFilter[Stored]] = (
@@ -144,7 +161,6 @@ object ActionFilter extends EntityCompanionMetaHelper {
     (__ \ "evaltype").format[ActionFilterEvalType] and
     (__ \ "formula").formatNullable[String]
   )(ActionFilter.apply[Stored], unlift(unapply2[Stored]))
-
 
   def unapply2[S <: EntityState](arg: ActionFilter[S]): Option[(Seq[ActionFilterCondition[S]], ActionFilterEvalType, Option[String])] = {
     Option((arg.conditions, arg.evaltype, arg.formula))
@@ -167,4 +183,10 @@ object ActionFilter extends EntityCompanionMetaHelper {
         |Required for '${ActionFilterEvalType.customExpression}' filters.
       """.stripMargin)
   ) _
+
+  def empty[T <: EntityState]: ActionFilter[T] = ActionFilter[T](
+    conditions = Seq(),
+    evaltype = ActionFilterEvalType.AndOr,
+    formula = None
+  )
 }

@@ -67,7 +67,8 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
   def requestIds(method: String, param: JsValue, idsKey: String, auth: Boolean = true)(implicit reads: Reads[StoredId]): Future[Seq[StoredId]] = {
     requestAs[JsObject](method, param) map { js =>
       js.value.get(idsKey) match {
-        case Some(keys) => jsonTo[Seq[StoredId]](method, keys)
+        case Some(keys) =>
+          jsonTo[Seq[StoredId]](method, keys)
         case None =>
           logger.error(s"Failed to parse ${method} respond result: ${js}")
           sys.error(s"${method} response does not match ${reads.getClass.getName}")
