@@ -10,6 +10,7 @@ class Ops(api: ZabbixApi) {
   val action = new ActionOp(api, userGroup, user, mediaType)
   val template = new TemplateOp(api, hostGroup)
   val item = new ItemOp(api, template)
+  val trigger = new TriggerOp(api, template)
   val graph = new GraphOp(api, template, item)
   val host = new HostOp(api, hostGroup, template)
 

@@ -7,6 +7,7 @@ import com.github.zabbicook.entity.host.HostGroup
 import com.github.zabbicook.entity.item.Item
 import com.github.zabbicook.entity.prop.EntityCompanionMetaHelper
 import com.github.zabbicook.entity.prop.Meta._
+import com.github.zabbicook.entity.trigger.TriggerConf
 import com.github.zabbicook.util.TopologicalSortable
 
 case class TemplateSettings[TS <: EntityState, GS <: EntityState, LS <: EntityState](
@@ -35,7 +36,8 @@ case class TemplateSettingsConf(
   groupNames: Seq[String],
   linkedTemplateNames: Option[Seq[String]],
   items: Option[Seq[Item[NotStored]]],
-  graphs: Option[Seq[GraphSetting]]
+  graphs: Option[Seq[GraphSetting]],
+  triggers: Option[Seq[TriggerConf]]
 ) {
   def toTemplateSettings: TemplateSettings.NotStoredAll =
     TemplateSettings(
@@ -54,6 +56,7 @@ object TemplateSettingsConf extends EntityCompanionMetaHelper {
     array("groupNames")("groups")("(required) Names of host groups to add the template to."),
     array("linkedTemplateNames")("linkedTemplates")("Names of templates to be linked to the template."),
     arrayOf("items")(Item.optional("items")),
-    arrayOf("graphs")(GraphSetting.optional("graphs"))
+    arrayOf("graphs")(GraphSetting.optional("graphs")),
+    arrayOf("triggers")(TriggerConf.optional("triggers"))
   ) _
 }

@@ -9,9 +9,6 @@ import com.github.zabbicook.entity.action._
 import com.github.zabbicook.entity.prop.IntProp
 import com.github.zabbicook.test.{TestActions, UnitSpec}
 
-/**
-  * Created by ryo_natori on 2016/10/28.
-  */
 class ActionOpSpec extends UnitSpec with TestActions {
   "ActionOperation#isSame" should "return false if not same." in  {
     val a = ActionOperation[NotStored](NotStoredId,sendMessage,None,None,None,None,Some(OperationMessage(Some(true),Some(StoredId("174")),None,None)),None,Some(List(OpMessageUser(StoredId("174")))))

@@ -71,11 +71,11 @@ class ItemOp(api: ZabbixApi, templateOp: TemplateOp) extends OperationHelper wit
     def checkDup(inherits: Seq[Item[Stored]]): Unit = {
       val duplicated = items.groupBy(_.`key_`).find(_._2.length > 1)
       duplicated.foreach(dup => throw ItemKeyDuplicated(
-        s"Keys of items duplicated. key=${dup._2.headOption.map(_.`key_`).getOrElse("")} items=${dup._2.map(_.name).mkString(",")}"
+        s"Key of items has duplicate. key=${dup._2.headOption.map(_.`key_`).getOrElse("")} items=${dup._2.map(_.name).mkString(",")}"
       ))
       items.foreach { item =>
         inherits.find(_.`key_` == item.`key_`).foreach { i =>
-          throw ItemKeyDuplicated(s"the key '${i.`key_`}' of '${item.name}' is duplicated with the item '${i.name}' which belongs to parent templates")
+          throw ItemKeyDuplicated(s"Key '${i.`key_`}' of '${item.name}' are duplicated with the item '${i.name}' which belongs to parent templates")
         }
       }
     }

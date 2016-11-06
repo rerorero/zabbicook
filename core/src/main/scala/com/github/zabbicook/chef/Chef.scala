@@ -27,6 +27,7 @@ class Chef(api: Ops) {
         await(presentItems(templateSection)),
         await(
           presentGraphs(templateSection),
+          presentTriggers(templateSection),
           api.host.present(recipe.hosts.getOrElse(Seq()))
         )
       )
@@ -45,6 +46,11 @@ class Chef(api: Ops) {
 
   private[this] def presentGraphs(section: Seq[TemplateSettingsConf]): Future[Report] = {
     Future.traverse(section)(s => api.graph.present(s.template.host, s.graphs.getOrElse(Seq())))
+      .map(Report.flatten)
+  }
+
+  private[this] def presentTriggers(section: Seq[TemplateSettingsConf]): Future[Report] = {
+    Future.traverse(section)(s => api.trigger.presentWithTemplate(s.template.host, s.triggers.getOrElse(Seq())))
       .map(Report.flatten)
   }
 }
