@@ -17,7 +17,7 @@ docker run \
     monitoringartist/zabbix-db-mariadb
 
 echo 'wait 60 sec for db is up...'
-sleep 60s
+sleep 90s
 
 docker run \
     -d \
