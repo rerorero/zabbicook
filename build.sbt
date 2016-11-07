@@ -18,7 +18,7 @@ val commonSettings = Seq(
     "org.scalatest" % "scalatest_2.11" % "2.2.6" % "test",
     "org.mockito" % "mockito-all" % "1.10.19" % "test"
   ),
-  parallelExecution in Test := false, // due to use a single Zabbix stub server
+  parallelExecution in ThisBuild := false, // due to use a single Zabbix stub server
   test in assembly := {}
 )
 
