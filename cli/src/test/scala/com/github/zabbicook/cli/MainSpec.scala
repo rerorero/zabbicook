@@ -10,7 +10,7 @@ import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
 import com.github.zabbicook.entity.media.{Media, MediaType, MediaTypeType}
 import com.github.zabbicook.entity.prop.EnabledEnum
 import com.github.zabbicook.entity.template.{Template, TemplateSettings}
-import com.github.zabbicook.entity.trigger.Severity
+import com.github.zabbicook.entity.trigger._
 import com.github.zabbicook.entity.user._
 import com.github.zabbicook.operation.{Ops, StoredHost}
 import com.github.zabbicook.test.{TestConfig, UnitSpec}
@@ -268,6 +268,38 @@ class MainSpec extends UnitSpec with TestConfig {
         )
       )
 
+      val triggers: Map[String, Seq[TriggerConf]] = Map(
+        "zabbicook-spec template 1" -> Seq(
+          TriggerConf(
+            Trigger(
+              description = "zabbicook-spec trigger for item0",
+              expression = "{zabbicook-spec template 1:jmx[\"java.lang:type=Compilation\",Name].change(0)}<0",
+              comments = Some("test description"),
+              url = Some("http://example.com"),
+              `type` = Some(EventGenerationMode.single),
+              priority = Some(Severity.high)
+            )
+          )
+        ),
+        "zabbicook-spec template 2" -> Seq(
+          TriggerConf(
+            Trigger(
+              description = "zabbicook-spec trigger for item1",
+              expression = "{zabbicook-spec template 2:vfs.file.cksum[/var/log/messages].diff(0)}>0",
+              priority = Some(Severity.average)
+            )
+          ),
+          TriggerConf(
+            Trigger(
+              description = "zabbicook-spec trigger for item2",
+              expression = "{zabbicook-spec template 2:sysUpTime.diff(0)}>1",
+              status = Some(false)
+            )
+          )
+        )
+
+      )
+
       val hosts = Seq(
         HostConf(
           Host(
@@ -405,6 +437,17 @@ class MainSpec extends UnitSpec with TestConfig {
               (expected.items.sortBy(_.color) zip actualItems.sortBy(_.color)) foreach { case (expItem, actItem) =>
                 assert(actItem.shouldBeUpdated(expItem.toGraphItem(StoredId("dummy"))) === false)
               }
+          }
+        }
+
+        // triggers
+        triggers.foreach { case (templateName, triggerConfigs) =>
+          val template = actualTemplates.map(_.template).find(_.host == templateName).get
+          val actuals = await(op.trigger.getBelongingTriggers(template.getStoredId))
+          assert(triggerConfigs.length === actuals.length)
+          (triggerConfigs.sortBy(_.trigger.description) zip actuals.sortBy(_.trigger.description)) foreach { case (expectedConf, actual) =>
+            val expected = await(op.trigger.configToNotStored(template, expectedConf))
+            assert(false === actual.shouldBeUpdated(expected))
           }
         }
 
