@@ -1,5 +1,7 @@
 val playVersion = "2.5.7"
 
+parallelExecution in ThisBuild := false // due to use a single Zabbix stub server
+
 val commonSettings = Seq(
   version := "0.1.0",
   scalaVersion := "2.11.8",
@@ -18,7 +20,6 @@ val commonSettings = Seq(
     "org.scalatest" % "scalatest_2.11" % "2.2.6" % "test",
     "org.mockito" % "mockito-all" % "1.10.19" % "test"
   ),
-  parallelExecution in ThisBuild := false, // due to use a single Zabbix stub server
   test in assembly := {}
 )
 
