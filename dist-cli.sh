@@ -13,8 +13,8 @@ mkdir -p $WORK/$NAME
 
 sbt clean compile assembly
 
-cp cli/target/scala-2.11/*.jar $WORK/$NAME
-cp cli/src/scripts/$NAME $WORK/$NAME
+cp target/scala-2.11/*.jar $WORK/$NAME
+cp scripts/$NAME $WORK/$NAME
 zip -r $WORK/$NAME-$VERSION.zip $WORK/$NAME
 
 echo packaged $WORK/$NAME-$VERSION.zip

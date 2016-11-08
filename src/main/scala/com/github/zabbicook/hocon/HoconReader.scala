@@ -106,6 +106,8 @@ object HoconReads {
 
   implicit val doubleProp: HoconReads[DoubleProp] = double.map(DoubleProp.apply)
 
+  implicit def enumProp[V, T <: EnumProp[V]](implicit s2enum: StringToEnumProp[V, T]): HoconReads[T] = string.map(s2enum.convert)
+
   def checkUnrecognizedField(obj: ConfigObject, meta: Meta): HoconResult[Unit] = {
     meta match {
       case m: EntityMeta =>

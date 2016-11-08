@@ -7,6 +7,10 @@ trait EnumProp[V] {
   def desc: String
 }
 
+trait StringToEnumProp[V, T <: EnumProp[V]] {
+  def convert(s: String): T
+}
+
 trait EnumPropCompanion[V, T <: EnumProp[V]] {
   def values: Set[T]
 
@@ -21,6 +25,10 @@ trait EnumPropCompanion[V, T <: EnumProp[V]] {
 
   def metaWithDesc(name: String)(aliases: String*)(overrideDescription: String): EnumMeta =
     Meta.enum(name, possibleValues)(aliases:_*)(overrideDescription)
+
+  implicit val StringToEnumProp: StringToEnumProp[V, T] = new StringToEnumProp[V, T] {
+    override def convert(s: String): T = possibleValues.find(_.toString == s).getOrElse(unknown)
+  }
 }
 
 trait StringEnumPropCompanion[T <: EnumProp[String]] extends EnumPropCompanion[String, T] {

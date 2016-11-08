@@ -14,8 +14,6 @@ import play.api.libs.json.{Json, Writes}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.control.NonFatal
-import com.github.zabbicook.hocon.HoconReadsCompanion._
-import com.github.zabbicook.hocon.HoconReads.option
 
 private[cli] sealed trait RunResult {
   def asString: String
@@ -58,6 +56,10 @@ private[cli] object RunResult {
 }
 
 class Runner(conf: Arguments, printer: Printer) extends Logging {
+
+  import com.github.zabbicook.hocon.HoconReadsCompanion._
+
+  import com.github.zabbicook.hocon.HoconReads._
 
   val apiConf = new ZabbixApiConf(
     apiPath = conf.url.toString,

@@ -1,6 +1,7 @@
 package com.github.zabbicook.cli
 
 import com.github.zabbicook.cli.RunResult.RunSuccess
+import shapeless.BuildInfo
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
