@@ -11,7 +11,9 @@ WORK=./.dist-work
 rm -rf $WORK
 mkdir -p $WORK/$NAME
 
-sbt clean compile assembly
+sbt clean
+sbt compile
+sbt assembly
 
 cp target/scala-2.11/*.jar $WORK/$NAME
 cp scripts/$NAME $WORK/$NAME
