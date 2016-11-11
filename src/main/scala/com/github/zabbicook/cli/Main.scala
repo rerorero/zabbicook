@@ -44,14 +44,14 @@ class Main(printer: Printer) {
   }
 
   private[this] def outFormatted(res: RunResult, isJson: Boolean): Unit = {
-    def print(msg: String): Unit = res match {
-      case _: RunSuccess => printer.out(msg)
-      case _ => printer.error(msg)
-    }
     if (isJson) {
-      print(Json.prettyPrint(Json.toJson(res)))
+      printer.out(Json.prettyPrint(Json.toJson(res)))
     } else {
-      print(res.asString)
+      val msg = res.asString
+      res match {
+        case _: RunSuccess => printer.out(msg)
+        case _ => printer.error(msg)
+      }
     }
   }
 

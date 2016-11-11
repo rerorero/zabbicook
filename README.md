@@ -14,7 +14,7 @@ Unarchive to any location, then you can use zabbicook command line tool.
 zabbicook uses configuration files in Hocon format.   
 ```
 # When zabbix is running on localhost:8080 and default Admin password is set.
-zabbicook -f zabbicook.conf http://localhost:8080/ -u Admin -p zabbix
+zabbicook -f zabbicook.conf -i http://localhost:8080/ -u Admin -p zabbix
 ```
 
 TODO: write usages and hocon descriptions here..
