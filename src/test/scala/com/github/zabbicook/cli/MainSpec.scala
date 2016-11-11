@@ -17,29 +17,37 @@ import com.github.zabbicook.test.{TestConfig, UnitSpec}
 
 import scala.concurrent.Future
 
-class MainSpec extends UnitSpec with TestConfig {
+trait MainSpecRunner { _: UnitSpec =>
+  private[this] val _buf = scala.collection.mutable.ArrayBuffer.empty[String]
+  private[this] def mockedPrinter() = new Printer {
+    override def out(msg: String): Unit = _buf.append(msg)
+    override def error(msg: String): Unit = _buf.append(msg)
+  }
 
   def runMain(
     host: String,
-    filePath: Option[String],
+    filePath: Option[String] = None,
+    changePassOpts: Option[(String, String, String)] = None, // (user, pass, new-pass)
     debug: Boolean = false
   ): (Int, List[String]) = {
-    val buf = scala.collection.mutable.ArrayBuffer.empty[String]
-    def mockedPrinter() = new Printer {
-      override def out(msg: String): Unit = buf.append(msg)
-      override def error(msg: String): Unit = buf.append(msg)
-    }
-
+    _buf.clear()
     val i = Seq("-i", host)
     val f = filePath.map(s => Seq("-f", s)).getOrElse(Seq())
     val d = if (debug) Seq("-d") else Seq()
+    val changePass = changePassOpts.map { case (user, pass, newPass) =>
+      Seq("--change-pass", "--user",user,"--pass",pass,"--new-pass",newPass)
+    }.getOrElse(Seq())
+
     val printer = mockedPrinter()
     val code = await(new Main(printer).run(
-      (i ++ f ++ d).toArray
+      (i ++ f ++ d ++ changePass).toArray
     ))
 
-    (code, buf.toList)
+    (code, _buf.toList)
   }
+}
+
+class MainSpec extends UnitSpec with TestConfig with MainSpecRunner {
 
   withTestApiConf { (conf, version) =>
 
@@ -472,7 +480,7 @@ class MainSpec extends UnitSpec with TestConfig {
         check()
 
         // rerun does not affect
-        val (code2, output2) = runMain("http://localhost:8080/", Some(path))
+        val (code2, output2) = runMain(conf.apiPath, Some(path))
         assert(0 === code2)
         assert(1 === output2.length)
         check()

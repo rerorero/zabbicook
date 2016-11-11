@@ -228,4 +228,21 @@ class UserOp(api: ZabbixApi, userGroupOp: UserGroupOp, mediaTypeOp: MediaTypeOp)
       r <- delete(storedUsers.map(_._1))
     } yield r
   }
+
+  /**
+    * When this called, oldPass is set for Zabbixapi's password.
+    */
+  def changePassword(alias: String, newPass: String, oldPass: String): Future[Report] = {
+    val params = Json.obj()
+      .prop("user" -> alias)
+      .prop("password" -> newPass)
+    api.request("user.login", params, auth = false).map { _ =>
+      logger.debug(s"changePassword does nothing with: ${alias}")
+      Report.empty()
+    }.recoverWith {
+      case ErrorResponseException(_, response, _) if response.data.contains("incorrect") =>
+        logger.debug(s"presentPassword will change password for: ${alias}")
+        presentPassword(alias, newPass)
+    }
+  }
 }

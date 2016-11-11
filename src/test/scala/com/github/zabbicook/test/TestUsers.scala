@@ -9,13 +9,15 @@ trait TestUsers extends TestConfig with TestUserGroups with TestMedia { self: Un
     MediaConfig(active=true, testMediaTypes(0).description, period = "1-7,00:00-24:00", sendto = "dest", severity = Seq(Severity.information, Severity.warning))
   )
 
+  protected[this] val testUsersPassword = "password"
+
   /**
     * you can override to customize generated users.
     */
   protected[this] val testUsers: Seq[UserConfig] = Seq(
-    UserConfig(User(alias = specName("user1")), Seq(testUserGroups(0).userGroup.name), "password", initialPassword = false, None),
-    UserConfig(User(alias = specName("user2")), Seq(testUserGroups(0).userGroup.name), "password", initialPassword = true, Some(userMedias1)),
-    UserConfig(User(alias = specName("user3")), Seq(testUserGroups(1).userGroup.name), "password", initialPassword = false, None)
+    UserConfig(User(alias = specName("user1")), Seq(testUserGroups(0).userGroup.name), testUsersPassword, initialPassword = false, None),
+    UserConfig(User(alias = specName("user2")), Seq(testUserGroups(0).userGroup.name), testUsersPassword, initialPassword = true, Some(userMedias1)),
+    UserConfig(User(alias = specName("user3")), Seq(testUserGroups(1).userGroup.name), testUsersPassword, initialPassword = false, None)
   )
 
   def presentTestUsers(ops: Ops): Unit = {

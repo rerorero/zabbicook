@@ -63,8 +63,8 @@ class Runner(conf: Arguments, printer: Printer) extends Logging {
 
   val apiConf = new ZabbixApiConf(
     apiPath = conf.url.toString,
-    authUser = conf.adminUser,
-    authPass = conf.adminPass
+    authUser = conf.user,
+    authPass = conf.pass
   )
 
   def run(): Future[RunResult] = {
@@ -119,5 +119,14 @@ class Runner(conf: Arguments, printer: Printer) extends Logging {
     } else {
       print(result.asString)
     }
+  }
+
+  def changePassword(alias: String, newPassword: String, oldPassword: String): Future[RunResult] = {
+    val operationSet = Ops.create(apiConf)
+    configureLogging()
+    operationSet.user.changePassword(alias, newPassword, oldPassword)
+      .map(RunSuccess)
+      .recover { case NonFatal(e) => OtherError(e) }
+      .andThen { case _ => operationSet.close() }
   }
 }

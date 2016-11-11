@@ -10,22 +10,39 @@ class Main(printer: Printer) {
   def run(args: Array[String]): Future[Int] = {
     Arguments.parser.parse(args, Arguments()) match {
       case Some(conf) if conf.showVersion =>
-        Future {
-          printer.out(BuildInfo.version)
-          0
+        printer.out(BuildInfo.version)
+        succeed()
+
+      case Some(conf) if conf.setPassword =>
+        conf.newPassword match {
+          case Some(newPass) =>
+            val runner = new Runner(conf, printer)
+            runner.changePassword(conf.user, newPass, conf.pass).flatMap {
+              case _: RunSuccess => succeed()
+              case e => failed(3, "Failed.")
+            }
+          case None =>
+            failed(1, "Failed in parsing arguments. Changing password requires --user, --pass, and --new-pass options.")
         }
+
       case Some(conf) =>
+        // zabbicook main sequence.
         val runner = new Runner(conf, printer)
-        runner.run().map {
-          case _: RunSuccess => 0
-          case e =>
-            printer.error("Failed.")
-            1
+        runner.run().flatMap {
+          case _: RunSuccess => succeed()
+          case e => failed(1, "Failed.")
         }
+
       case None =>
-        printer.error("Failed in parsing arguments.")
-        Future.successful(1)
+        failed(2, "Failed in parsing arguments.")
     }
+  }
+
+  private[this] def succeed() = Future.successful(0)
+
+  private[this] def failed(code: Int, error: String): Future[Int] = {
+    printer.error(error)
+    Future.successful(code)
   }
 }
 
