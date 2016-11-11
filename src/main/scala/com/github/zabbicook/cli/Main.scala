@@ -1,6 +1,7 @@
 package com.github.zabbicook.cli
 
-import com.github.zabbicook.cli.RunResult.RunSuccess
+import com.github.zabbicook.cli.RunResult.{ArgumentError, RunSuccess}
+import play.api.libs.json.Json
 import shapeless.BuildInfo
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -11,39 +12,49 @@ class Main(printer: Printer) {
     Arguments.parser.parse(args, Arguments()) match {
       case Some(conf) if conf.showVersion =>
         printer.out(BuildInfo.version)
-        succeed()
+        Future(0)
 
       case Some(conf) if conf.setPassword =>
         conf.newPassword match {
           case Some(newPass) =>
-            val runner = new Runner(conf, printer)
-            runner.changePassword(conf.user, newPass, conf.pass).flatMap {
-              case _: RunSuccess => succeed()
-              case e => failed(3, "Failed.")
-            }
+            val runner = new Runner(conf)
+            runner.changePassword(conf.user, newPass, conf.pass).map(result(_, conf.isJson))
           case None =>
-            failed(1, "Failed in parsing arguments. Changing password requires --user, --pass, and --new-pass options.")
+            resultFuture(ArgumentError("Failed in parsing arguments. Changing password requires --user, --pass, and --new-pass options."), conf.isJson)
         }
 
       case Some(conf) =>
         // zabbicook main sequence.
-        val runner = new Runner(conf, printer)
-        runner.run().flatMap {
-          case _: RunSuccess => succeed()
-          case e => failed(1, "Failed.")
-        }
+        val runner = new Runner(conf)
+        runner.run().map(result(_, conf.isJson))
 
       case None =>
-        failed(2, "Failed in parsing arguments.")
+        resultFuture(ArgumentError("Failed in parsing arguments."), false)
     }
   }
 
-  private[this] def succeed() = Future.successful(0)
-
-  private[this] def failed(code: Int, error: String): Future[Int] = {
-    printer.error(error)
-    Future.successful(code)
+  private[this] def result(r: RunResult, isJson: Boolean): Int = {
+    outFormatted(r, isJson)
+    if (r.isSuccess) 0 else 1
   }
+
+  private[this] def resultFuture(r: RunResult, isJson: Boolean): Future[Int] = {
+    val code = result(r, isJson)
+    Future(code)
+  }
+
+  private[this] def outFormatted(res: RunResult, isJson: Boolean): Unit = {
+    def print(msg: String): Unit = res match {
+      case _: RunSuccess => printer.out(msg)
+      case _ => printer.error(msg)
+    }
+    if (isJson) {
+      print(Json.prettyPrint(Json.toJson(res)))
+    } else {
+      print(res.asString)
+    }
+  }
+
 }
 
 object Main {

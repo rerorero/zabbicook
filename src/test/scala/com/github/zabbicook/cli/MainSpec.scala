@@ -28,19 +28,21 @@ trait MainSpecRunner { _: UnitSpec =>
     host: String,
     filePath: Option[String] = None,
     changePassOpts: Option[(String, String, String)] = None, // (user, pass, new-pass)
-    debug: Boolean = false
+    debug: Boolean = false,
+    json: Boolean = false
   ): (Int, List[String]) = {
     _buf.clear()
     val i = Seq("-i", host)
     val f = filePath.map(s => Seq("-f", s)).getOrElse(Seq())
     val d = if (debug) Seq("-d") else Seq()
+    val j = if (json) Seq("-j") else Seq()
     val changePass = changePassOpts.map { case (user, pass, newPass) =>
       Seq("--change-pass", "--user",user,"--pass",pass,"--new-pass",newPass)
     }.getOrElse(Seq())
 
     val printer = mockedPrinter()
     val code = await(new Main(printer).run(
-      (i ++ f ++ d ++ changePass).toArray
+      (i ++ f ++ d ++ j ++ changePass).toArray
     ))
 
     (code, _buf.toList)
