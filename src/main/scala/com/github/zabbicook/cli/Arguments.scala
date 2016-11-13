@@ -11,7 +11,10 @@ case class Arguments(
   isDebug: Boolean = false,
   showVersion: Boolean = false,
   setPassword: Boolean = false,
-  newPassword: Option[String] = None
+  newPassword: Option[String] = None,
+  showDoc: Boolean = false,
+  docDepth: Int = Int.MaxValue,
+  docRoot: String = ""
 )
 
 object Arguments {
@@ -19,7 +22,7 @@ object Arguments {
     opt[File]('f', "file").optional()
       .valueName("<file>")
       .action((x, c) => c.copy(input = Some(x)))
-      .text("(required) Zabbicook configuration file in Hocon format.")
+      .text("(required) Path of Hocon format Zabbicook configuration file.")
 
     opt[String]('i', "uri").optional()
       .valueName("<uri>")
@@ -29,28 +32,43 @@ object Arguments {
     opt[String]('u', "user").optional()
       .valueName("<user>")
       .action((x, c) => c.copy(user = x))
-      .text("User name of zabbix administrator user. (default is 'Admin')")
+      .text("Zabbix administrator user's name (default is 'Admin').")
 
     opt[String]('p', "pass").optional()
       .valueName("<password>")
       .action((x, c) => c.copy(pass = x))
-      .text(s"""Password of the administrator user. (default is 'zabbix')
-               |When '--change-pass' option specified, it is used as a old password.""".stripMargin)
+      .text(s"Zabbix administrator user's password (default is 'zabbix'). " +
+        "The '--change-pass' option uses as the username of the user who changes the password.")
 
     opt[Unit]('j', "json").optional()
       .action((_, c) => c.copy(isJson = true))
-      .text("To outpu in JSON format.")
+      .text("Output in JSON format.")
 
     opt[Unit]("change-pass").optional()
       .action((_, c) => c.copy(setPassword = true))
-      .text(s"""Changes login password. Also required '--user', '--pass' and '--new-pass' options.
-               |This command is idempotent so when already set the 'pass'word, it will do nothing and success.
-               |ex. ${programName} --change-pass --user Admin --pass zabbix --new-pass NEWPASSWORD""".stripMargin)
+      .text(s"Change the login password. '--user', '--pass', '--new-pass' options are also required. " +
+        "Since this command is idempotent so if 'pass' word is already set, it does nothing.")
 
     opt[String]("new-pass").optional()
       .valueName("<new-password>")
       .action((x, c) => c.copy(newPassword = Some(x)))
-      .text("An new password. (required when '--change-pass' is specified.")
+      .text("New password. (required if '--change-pass' is specified.")
+
+    opt[Unit]('d', "doc").optional()
+      .action((_, c) => c.copy(showDoc = true))
+      .text("Show the configuration file schema in a tree. " +
+        "Other options that can be used together. " +
+        "'-L': specify the depth of the tree. '-r': The root of the tree.")
+
+    opt[Int]('L', "level").optional()
+      .valueName("<depth>")
+      .action((x, c) => c.copy(docDepth = x))
+      .text("The depth of the tree displayed by '--doc'.")
+
+    opt[String]('r', "root").optional()
+      .valueName("<root>")
+      .action((x, c) => c.copy(docRoot = x))
+      .text("The root of the tree displayed by '--doc'.")
 
     opt[Unit]('d', "debug").optional()
       .action((_, c) => c.copy(isDebug = true))
@@ -58,6 +76,6 @@ object Arguments {
 
     opt[Unit]('v', "version").optional()
       .action((_, c) => c.copy(showVersion = true))
-      .text("Shows version information.")
+      .text("Shows version.")
   }
 }

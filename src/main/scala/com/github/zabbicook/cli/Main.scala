@@ -1,11 +1,14 @@
 package com.github.zabbicook.cli
 
 import com.github.zabbicook.cli.RunResult.{ArgumentError, RunSuccess}
+import com.github.zabbicook.doc.MetaDocGen
+import com.github.zabbicook.recipe.Recipe
 import play.api.libs.json.Json
 import shapeless.BuildInfo
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 class Main(printer: Printer) {
   def run(args: Array[String]): Future[Int] = {
@@ -13,6 +16,16 @@ class Main(printer: Printer) {
       case Some(conf) if conf.showVersion =>
         printer.out(BuildInfo.version)
         Future(0)
+
+      case Some(conf) if conf.showDoc =>
+        MetaDocGen.pathOf(conf.docRoot, Recipe.required(""), conf.docDepth) match {
+          case Success(sb) =>
+            printer.out(sb.toString())
+            Future(0)
+          case Failure(e) =>
+            printer.error("Failed." + System.lineSeparator() + e.getMessage)
+            Future(1)
+        }
 
       case Some(conf) if conf.setPassword =>
         conf.newPassword match {

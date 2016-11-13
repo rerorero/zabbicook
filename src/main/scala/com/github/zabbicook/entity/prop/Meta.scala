@@ -13,6 +13,7 @@ sealed trait Meta{
   def name: String
   def aliases: Set[String]
   def desc: Description
+  val readOnly: Boolean = false
 
   def formatAliases: String = aliases.map(s => s"[$s]").mkString("")
   def description: String = {
@@ -29,7 +30,8 @@ sealed trait Meta{
 case class PropMeta(
   name: String,
   aliases: Set[String],
-  desc: Description
+  desc: Description,
+  override val readOnly: Boolean = false
 ) extends Meta
 
 case class EnumMeta(
@@ -64,7 +66,7 @@ object Meta {
     PropMeta(name, aliases.toSet, Description(desc))
 
   def readOnly(name: String): PropMeta =
-    PropMeta(name, Set(), Description("This is read only property."))
+    PropMeta(name, Set(), Description("This is read only property."), readOnly = true)
 
   def enum[T <: EnumProp[_]](name: String, values: Set[T])(aliases: String*)(desc: String): EnumMeta = {
     val possibles = values.map(v => s"'${v.toString}' - ${v.desc}")
@@ -75,7 +77,7 @@ object Meta {
     ArrayMeta(name, aliases.toSet, Description(desc), None)
 
   def arrayOf(name: String)(meta: Meta): ArrayMeta =
-    ArrayMeta(name, meta.aliases, Description(s"Array of entities: ${meta.aliases.headOption.getOrElse("")}"), Some(meta))
+    ArrayMeta(name, meta.aliases, meta.desc, Some(meta))
 
   def entity(desc: String)(elements: Meta*)(name: String, required: Boolean): EntityMeta =
     new EntityMeta(name, Set(name), Description(desc), elements, required)

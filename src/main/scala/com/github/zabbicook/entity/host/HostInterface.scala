@@ -79,7 +79,9 @@ object HostInterface extends EntityCompanionMetaHelper {
       """(required if IP used) IP address used by the interface.
         |Can be empty if the connection is made via DNS.
       """.stripMargin),
-    EnabledEnum.metaWithDesc("main")("default","main")("(required)	boolean	Whether the interface is used as default on the host. Only one interface of some type can be set as default on a host."),
+    EnabledEnum.metaWithDesc("main")("default","main")(
+      """(required)	boolean	Whether the interface is used as default on the host." +
+        |Only one interface of some type can be set as default on a host.""".stripMargin),
     value("port")("port")("""(required, String) Port number used by the interface. Can contain user macros."""),
     InterfaceType.meta("type")("type"),
     InterfaceUseIp.meta("useip")("connectTo","useIP"),

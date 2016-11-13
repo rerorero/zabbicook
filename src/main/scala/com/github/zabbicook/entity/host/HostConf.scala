@@ -16,6 +16,6 @@ object HostConf extends EntityCompanionMetaHelper {
     Host.required("host"),
     array("hostGroups")("groups","hostGroups")("(required) Host groups to add the host to."),
     arrayOf("interfaces")(HostInterface.required("interfaces")),
-    arrayOf("templates")(HostInterface.optional("templates"))
+    array("templates")("templates")("Linked template names.")
   ) _
 }

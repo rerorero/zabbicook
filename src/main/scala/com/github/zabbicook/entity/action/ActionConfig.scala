@@ -22,8 +22,9 @@ object OpMessageConfig extends EntityCompanionMetaHelper {
       |Required for message operations.""".stripMargin)(
     EnabledEnumZeroPositive.metaWithDesc("default_msg")("defaultMessage")(
       """Whether to use the default action message text and subject.
-        |true - (default) use the data from the operation;
-        |false - use the data from the action.""".stripMargin),
+        |When set 'true', use the data from the operation;
+        |When set 'false', use the data from the action.
+        |Default: false.""".stripMargin),
     value("mediaType")("mediaType")("Name of the media type that will be used to send the message."),
     value("message")("message")("Operation message text. It is used when defaultMessage is false."),
     value("subject")("subject")("Operation message subject. It is used when defaultMessage is false.")
@@ -143,7 +144,7 @@ case class ActionConfig(
 }
 
 object ActionConfig extends EntityCompanionMetaHelper {
-  override val meta = entity("The action object.")(
+  override val meta = entity("Action object.")(
     value("name")("name")("(required)	string	Name of the action."),
     value("esc_period")("defaultStepDuration","stepDuration")("(required)	integer	Default operation step duration. Must be greater than 60 seconds."),
     EventSource.metaWithDesc("eventsource")("event")("(required)(constant) Type of events that the action will handle. This value is not changeable."),

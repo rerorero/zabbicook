@@ -20,7 +20,7 @@ case class Recipe(
 )
 
 object Recipe extends EntityCompanionMetaHelper {
-  val meta = entity("root")(
+  val meta = entity("Root of the configuration.")(
     arrayOf("mediaTypes")(MediaType.optional("mediaTypes")),
     arrayOf("hostGroups")(HostGroup.optional("hostGroups")),
     arrayOf("hosts")(HostConf.optional("hosts")),
