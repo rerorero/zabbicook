@@ -6,7 +6,8 @@ import com.github.zabbicook.recipe.Recipe
 import play.api.libs.json.Json
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success}
 
 class Main(printer: Printer) {
@@ -74,7 +75,8 @@ object Main {
     if (args.length == 0) {
       Arguments.parser.showUsage()
     } else {
-      new Main(Printer.default).run(args).map(rc => sys.exit(rc))
+      val f = new Main(Printer.default).run(args).map(rc => sys.exit(rc))
+      Await.result(f, Duration.Inf)
     }
   }
 }
