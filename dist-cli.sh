@@ -9,14 +9,16 @@ fi
 NAME=zabbicook
 WORK=./.dist-work
 rm -rf $WORK
-mkdir -p $WORK/$NAME
+DEST=$WORK/$NAME-$VERSION
+mkdir -p $DEST
 
 sbt clean
 sbt compile
 sbt assembly
 
-cp target/scala-2.11/*.jar $WORK/$NAME
-cp scripts/$NAME $WORK/$NAME
-zip -r $WORK/$NAME-$VERSION.zip $WORK/$NAME
+cp target/scala-2.11/*.jar $DEST/
+cp scripts/$NAME $DEST
+cd $WORK
+zip -r $NAME-$VERSION.zip $NAME-$VERSION
 
 echo packaged $WORK/$NAME-$VERSION.zip

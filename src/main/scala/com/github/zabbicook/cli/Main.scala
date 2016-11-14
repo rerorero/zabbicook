@@ -4,7 +4,6 @@ import com.github.zabbicook.cli.RunResult.{ArgumentError, RunSuccess}
 import com.github.zabbicook.doc.MetaDocGen
 import com.github.zabbicook.recipe.Recipe
 import play.api.libs.json.Json
-import shapeless.BuildInfo
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

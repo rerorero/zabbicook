@@ -1,4 +1,4 @@
-version := "0.1.0"
+version := "0.1.1"
 
 name := "zabbicook"
 
@@ -30,11 +30,15 @@ libraryDependencies ++= Seq(
 )
 
 
-buildInfoKeys := Seq[BuildInfoKey](name, version)
-buildInfoPackage := "com.github.zabbicook.cli"
 mainClass in assembly := Some("com.github.zabbicook.cli.Main")
 assemblyJarName in assembly := { s"${name.value}-${version.value}.jar" }
 
 parallelExecution in Test := false // due to use a single Zabbix stub server
 test in assembly := {}
 
+lazy val root = (project in file(".")).
+  enablePlugins(BuildInfoPlugin).
+  settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version),
+    buildInfoPackage := "com.github.zabbicook.cli"
+  )
