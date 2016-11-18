@@ -87,7 +87,14 @@ class TriggerOp(api: ZabbixApi, templateOp: TemplateOp) extends OperationHelper 
   }
 
   def update(triggerId: StoredId, trigger: TriggerSet[NotStored]): Future[Report] = {
-    val param = Json.toJson(trigger.toStored(triggerId))
+    val param = Json.toJson(trigger.toStored(triggerId)).as[JsObject]
+    api.requestSingleId("trigger.update", param, "triggerids")
+      .map(id => Report.updated(trigger.trigger.toStored(id)))
+  }
+
+  def updateInherited(triggerId: StoredId, trigger: TriggerSet[NotStored]): Future[Report] = {
+    // In zabbix 3.2.0 and later, the inherited trigger description and expression can not be updated
+    val param = Json.toJson(trigger.toStored(triggerId)).as[JsObject] - "description" - "expression"
     api.requestSingleId("trigger.update", param, "triggerids")
       .map(id => Report.updated(trigger.trigger.toStored(id)))
   }
@@ -127,12 +134,22 @@ class TriggerOp(api: ZabbixApi, templateOp: TemplateOp) extends OperationHelper 
     )
   }
 
-  private[this] def createOrUpdate(hostId:  StoredId, constants: Seq[TriggerSet[NotStored]], belongings: Seq[TriggerSet[Stored]]): Future[Report] = {
+  private[this] def createOrUpdate(hostId:  StoredId, constants: Seq[TriggerSet[NotStored]], belongings: Seq[TriggerSet[Stored]], inherited: Seq[TriggerSet[Stored]]): Future[Report] = {
     traverseOperations(constants) { triggerSet =>
-      belongings.find(_.trigger.description == triggerSet.trigger.description) match {
+      (belongings ++ inherited).find(_.trigger.description == triggerSet.trigger.description) match {
         case Some(stored) =>
-          if (stored.shouldBeUpdated(triggerSet))
-            update(stored.trigger.getStoredId, triggerSet)
+          if (stored.shouldBeUpdated(triggerSet)) {
+            if (belongings.exists(_.trigger.getStoredId == stored.trigger.getStoredId)) {
+              update(stored.trigger.getStoredId, triggerSet)
+            } else {
+              // inherited trigger
+              // In zabbix 3.2.0 and later, the inherited trigger description and expression can not be updated
+              if (stored.trigger.expression != triggerSet.trigger.expression) {
+                throw new UnsupportedOperation(s"The inherited trigger expression can not be updated.: trigger=${stored.trigger.description} expression=${triggerSet.trigger.expression}")
+              }
+              updateInherited(stored.trigger.getStoredId, triggerSet)
+            }
+          }
           else
             Future.successful(Report.empty())
         case None =>
@@ -142,23 +159,18 @@ class TriggerOp(api: ZabbixApi, templateOp: TemplateOp) extends OperationHelper 
   }
 
   def presentWithTemplate(templateName: String, configs: Seq[TriggerConf]): Future[Report] = {
-    def checkDup(inherits: Seq[TriggerSet[Stored]]): Unit = {
-      val duplicated = configs.groupBy(_.trigger.description).find(_._2.length > 1)
-      duplicated.foreach(dup => throw ItemKeyDuplicated(s"Name of triggers has duplicate. name=${dup._2.headOption.map(_.trigger.description).getOrElse("")} template=$templateName"))
-      configs.foreach { item =>
-        inherits.find(_.trigger.description == item.trigger.description).foreach { i =>
-          throw ItemKeyDuplicated(s"Trigger name '${i.trigger.description}' of '${templateName}' has duplicates with the trigger which belongs to parent templates")
-        }
-      }
-    }
     for {
       Seq(template) <- templateOp.findByHostnamesAbsolutely(Seq(templateName))
       constants <- Future.traverse(configs)(conf => configToNotStored(template.template, conf))
-      inheritedItems <- getInheritedTriggers(template.template.getStoredId)
-      _ = checkDup(inheritedItems)
+      inheritedItems <- getInheritedTriggers(template.template.getStoredId).map { s =>
+        s.filter(i => configs.exists(_.trigger.description == i.trigger.description))
+      }
       belongings <- getBelongingTriggers(template.template.getStoredId)
-      updated <- createOrUpdate(template.template.getStoredId, constants, belongings)
-      deleted <- delete(belongings.filter(t => !configs.exists(_.trigger.description == t.trigger.description)).map(_.trigger))
+      updated <- createOrUpdate(template.template.getStoredId, constants, belongings, inheritedItems)
+      deleted <- delete(belongings
+        .filter(t => !configs.exists(_.trigger.description == t.trigger.description))
+        .filter(t => !inheritedItems.contains(t.trigger.description))
+        .map(_.trigger))
     } yield updated + deleted
   }
 

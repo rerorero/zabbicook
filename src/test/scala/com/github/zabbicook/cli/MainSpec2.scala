@@ -52,5 +52,11 @@ class MainSpec2 extends UnitSpec with MainSpecRunner with TestConfig with TestUs
         }
       }
     }
+
+    version + "CLI Main" should "report empty" in {
+      val path = getClass.getResource("/empty/empty.conf").getPath()
+      val (code, _) = runMain(conf.apiPath, Some(path), json = true)
+      assert(0 === code)
+    }
   }
 }

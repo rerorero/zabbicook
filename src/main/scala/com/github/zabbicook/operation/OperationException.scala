@@ -9,3 +9,5 @@ case class BadReferenceException(msg: String, cause: Throwable = null) extends O
 case class ItemKeyDuplicated(msg: String, cause: Throwable = null) extends OperationException(msg, cause)
 
 case class NoAvailableEntities(msg: String, cause: Throwable = null) extends OperationException(msg, cause)
+
+case class UnsupportedOperation(msg: String, cause: Throwable = null) extends OperationException(msg, cause)
