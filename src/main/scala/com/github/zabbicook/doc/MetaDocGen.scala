@@ -3,7 +3,7 @@ package com.github.zabbicook.doc
 import com.github.zabbicook.entity.prop._
 
 import scala.annotation.tailrec
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 case class MetaDocGenError(msg: String) extends Exception(msg)
 
@@ -25,9 +25,9 @@ object MetaDocGen {
           case Some(propMeta) if remains.nonEmpty =>
             pathOf(remains.mkString("."), propMeta, maxDepth)
           case None =>
-            throw MetaDocGenError(
+            Failure(MetaDocGenError(
               s"""Invalid path, '$prop' no such property.
-                 |Available properties: ${e.entity.map(_.aliases).flatten.mkString(", ")}""".stripMargin)
+                 |Available properties: ${e.entity.map(_.aliases).flatten.mkString(", ")}""".stripMargin))
         }
 
       case (e: ArrayMeta, Some(prop), remains) =>
@@ -37,11 +37,11 @@ object MetaDocGen {
           case None if remains.isEmpty =>
             Try(genBuilder(e, maxDepth = maxDepth))
           case None if remains.nonEmpty =>
-            throw MetaDocGenError(s"Invalid path, '${remains.head}' no such property.")
+            Failure(MetaDocGenError(s"Invalid path, '${remains.head}' no such property."))
         }
 
       case (e, Some(prop), _)  =>
-        throw MetaDocGenError(s"Invalid path, '$prop' no such property.")
+        Failure(MetaDocGenError(s"Invalid path, '$prop' no such property."))
 
       case (e, None, _) =>
         Try(genBuilder(e, maxDepth = maxDepth))
