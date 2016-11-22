@@ -34,7 +34,7 @@ case class Template[S <: EntityState] (
   def shouldBeUpdated[T >: S <: Stored](constant: Template[NotStored]): Boolean = {
     require(host == constant.host)
 
-    shouldBeUpdated(description, constant.description)
+    shouldBeUpdated(description, constant.description) ||
     shouldBeUpdated(name, constant.name)
   }
 }
