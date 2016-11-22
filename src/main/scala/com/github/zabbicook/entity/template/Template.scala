@@ -51,6 +51,7 @@ object Template extends EntityCompanionMetaHelper {
     value("host")("name")("(required) Technical name of the template."),
     value("description")("description")("Description of the template."),
     value("name")("visibleName")("""Visible name of the host.
-                                   |Default: name property value.""".stripMargin)
+                                   |Default: name property value.
+                                   |CAUTION: It seems that it can often not be changed due to problems with zabbix.""".stripMargin)
   ) _
 }
