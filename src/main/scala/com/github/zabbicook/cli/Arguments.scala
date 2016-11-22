@@ -54,7 +54,7 @@ object Arguments {
       .action((x, c) => c.copy(newPassword = Some(x)))
       .text("New password. (required if '--change-pass' is specified.")
 
-    opt[Unit]('d', "doc").optional()
+    opt[Unit]("doc").optional()
       .action((_, c) => c.copy(showDoc = true))
       .text("Show the configuration file schema in a tree. " +
         "Other options that can be used together. " +
