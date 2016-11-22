@@ -15,7 +15,9 @@ scalacOptions ++= Seq(
 )
 
 resolvers += Resolver.sonatypeRepo("public")
+
 val playVersion = "2.5.7"
+
 libraryDependencies ++= Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
   "ch.qos.logback" % "logback-classic" % "1.1.7",
@@ -31,9 +33,11 @@ libraryDependencies ++= Seq(
 
 
 mainClass in assembly := Some("com.github.zabbicook.cli.Main")
+
 assemblyJarName in assembly := { s"${name.value}-${version.value}.jar" }
 
-parallelExecution in Test := false // due to use a single Zabbix stub server
+parallelExecution in Test := false
+
 test in assembly := {}
 
 lazy val root = (project in file(".")).
