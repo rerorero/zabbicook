@@ -8,6 +8,7 @@ trait EnumProp[V] {
 }
 
 trait StringToEnumProp[V, T <: EnumProp[V]] {
+  def acceptable(s: String): Boolean
   def convert(s: String): T
 }
 
@@ -27,6 +28,7 @@ trait EnumPropCompanion[V, T <: EnumProp[V]] {
     Meta.enum(name, possibleValues)(aliases:_*)(overrideDescription)
 
   implicit val StringToEnumProp: StringToEnumProp[V, T] = new StringToEnumProp[V, T] {
+    override def acceptable(s: String): Boolean = possibleValues.exists(_.toString == s)
     override def convert(s: String): T = possibleValues.find(_.toString == s).getOrElse(unknown)
   }
 }
