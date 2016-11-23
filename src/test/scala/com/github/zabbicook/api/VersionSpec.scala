@@ -1,4 +1,4 @@
-package com.github.zabbicook.entity
+package com.github.zabbicook.api
 
 import com.github.zabbicook.test.UnitSpec
 

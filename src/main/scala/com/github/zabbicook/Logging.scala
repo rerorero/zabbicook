@@ -20,7 +20,11 @@ object Logging {
   def info(): Unit = setLogLevel(Level.INFO)
 
   private[this] def setLogLevel(level: Level): Unit = {
-    val root = LoggerFactory.getLogger(SlfLogger.ROOT_LOGGER_NAME).asInstanceOf[LogbackLogger]
-    root.setLevel(level)
+    LoggerFactory.getLogger(SlfLogger.ROOT_LOGGER_NAME) match {
+      case root: LogbackLogger =>
+        root.setLevel(level)
+      case els =>
+        els.warn(s"Ignored changing the log level to $level. It might be running in unit testing.")
+    }
   }
 }

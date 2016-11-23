@@ -1,6 +1,6 @@
 package com.github.zabbicook.operations
 
-import com.github.zabbicook.entity.Version
+import com.github.zabbicook.api.Version
 import com.github.zabbicook.entity.trigger._
 import com.github.zabbicook.test.{TestTriggers, UnitSpec}
 

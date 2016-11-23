@@ -1,4 +1,6 @@
-package com.github.zabbicook.entity
+package com.github.zabbicook.api
+
+import com.github.zabbicook.entity.EntityException
 
 case class Version (
   major1: Int,

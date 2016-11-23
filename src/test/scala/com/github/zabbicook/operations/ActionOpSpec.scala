@@ -1,8 +1,8 @@
 package com.github.zabbicook.operations
 
+import com.github.zabbicook.api.Version
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.EntityId.{NotStoredId, StoredId}
-import com.github.zabbicook.entity.Version
 import com.github.zabbicook.entity.action.OperationEvalType.AndOr
 import com.github.zabbicook.entity.action.OperationType.sendMessage
 import com.github.zabbicook.entity.action._

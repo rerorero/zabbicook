@@ -1,7 +1,6 @@
 package com.github.zabbicook.test
 
-import com.github.zabbicook.api.{ZabbixApi, ZabbixApiConf}
-import com.github.zabbicook.entity.Version
+import com.github.zabbicook.api.{Version, ZabbixApi, ZabbixApiConf}
 import com.github.zabbicook.operation.Ops
 
 trait TestConfig {

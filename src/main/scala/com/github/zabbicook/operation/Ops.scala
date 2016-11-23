@@ -1,6 +1,8 @@
 package com.github.zabbicook.operation
 
-import com.github.zabbicook.api.{ZabbixApi, ZabbixApiConf}
+import com.github.zabbicook.api.{Version, ZabbixApi, ZabbixApiConf}
+
+import scala.concurrent.Future
 
 class Ops(api: ZabbixApi) {
   val mediaType = new MediaTypeOp(api)
@@ -15,6 +17,8 @@ class Ops(api: ZabbixApi) {
   val host = new HostOp(api, hostGroup, template)
 
   def close(): Unit = api.close()
+
+  def getVersion(): Future[Version] = api.getVersion()
 }
 
 object Ops {

@@ -171,4 +171,13 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
       }
     }
   }
+
+  def getVersion(): Future[Version] = {
+    request("apiinfo.version", JsArray(), auth = false).map {
+      case JsString(value) =>
+        Version.of(value)
+      case els =>
+        sys.error(s"apiinfo.version returns unexpected json.: ${els.toString}")
+    }
+  }
 }

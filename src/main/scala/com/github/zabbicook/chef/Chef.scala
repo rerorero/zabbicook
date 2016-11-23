@@ -10,7 +10,14 @@ import scala.concurrent.{Await, Future}
 
 class Chef(api: Ops) {
   def present(recipe: Recipe): Future[Report] = {
-    // TODO First, check the connectivity to zabbix api server via version api
+    for {
+      // First, check the connectivity to zabbix api server via version api
+      _ <- api.getVersion()
+      report <- presentAll(recipe)
+    } yield report
+  }
+
+  private[this] def presentAll(recipe: Recipe): Future[Report] = {
     val templateSection = recipe.templates.getOrElse(Seq())
     Future {
       val reports = Seq(

@@ -489,4 +489,11 @@ class MainSpec extends UnitSpec with TestConfig with MainSpecRunner {
       }
     }
   }
+
+  "run main" should "fail when zabbix server is down" in {
+    val path = getClass.getResource("/mainspec/zabbicook.conf").getPath()
+    val (code, out) = runMain("http://localhost:59595", Some(path))
+    assert(0 != code)
+    assert(out(0).contains("Connection refused"))
+  }
 }
