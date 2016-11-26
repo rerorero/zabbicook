@@ -6,7 +6,7 @@ import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.prop.{EnabledEnum, EnabledEnumZeroPositive, EntityCompanionMetaHelper, IntProp}
 
 case class OpMessageConfig(
-  default_msg: Option[EnabledEnumZeroPositive]=None,
+  default_msg: Option[EnabledEnum]=None,
   mediaType: Option[String]=None,
   message: Option[String]=None,
   subject: Option[String]=None
@@ -20,11 +20,11 @@ object OpMessageConfig extends EntityCompanionMetaHelper {
   override def meta = entity(
     """Object containing the data about the message sent by the operation.
       |Required for message operations.""".stripMargin)(
-    EnabledEnumZeroPositive.metaWithDesc("default_msg")("defaultMessage")(
+    EnabledEnum.metaWithDesc("default_msg")("defaultMessage")(
       """Whether to use the default action message text and subject.
         |When set 'true', use the data from the operation;
         |When set 'false', use the data from the action.
-        |Default: false.""".stripMargin),
+        |Default: true.""".stripMargin),
     value("mediaType")("mediaType")("Name of the media type that will be used to send the message."),
     value("message")("message")("Operation message text. It is used when defaultMessage is false."),
     value("subject")("subject")("Operation message subject. It is used when defaultMessage is false.")
