@@ -24,7 +24,7 @@ object OpMessageConfig extends EntityCompanionMetaHelper {
       """Whether to use the default action message text and subject.
         |When set 'true', use the data from the operation;
         |When set 'false', use the data from the action.
-        |Default: true.""".stripMargin),
+        |Default: false.""".stripMargin),
     value("mediaType")("mediaType")("Name of the media type that will be used to send the message."),
     value("message")("message")("Operation message text. It is used when defaultMessage is false."),
     value("subject")("subject")("Operation message subject. It is used when defaultMessage is false.")

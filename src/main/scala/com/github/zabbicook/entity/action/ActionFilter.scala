@@ -11,7 +11,7 @@ import play.api.libs.json._
 sealed abstract class ActionFilterConditionType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object ActionFilterConditionType extends IntEnumPropCompanion[ActionFilterConditionType] {
-  override val values: Set[ActionFilterConditionType] = Set(
+  override val values: Seq[ActionFilterConditionType] = Seq(
     hostGroup,
     host,
     trigger,
@@ -71,7 +71,7 @@ object ActionFilterConditionType extends IntEnumPropCompanion[ActionFilterCondit
 sealed abstract class FilterConditionOperator(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object FilterConditionOperator extends IntEnumPropCompanion[FilterConditionOperator] {
-  override val values: Set[FilterConditionOperator] = Set(
+  override val values: Seq[FilterConditionOperator] = Seq(
     equal,
     notEqual,
     like,
@@ -127,7 +127,7 @@ object ActionFilterCondition extends EntityCompanionMetaHelper {
 sealed abstract class ActionFilterEvalType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object ActionFilterEvalType extends IntEnumPropCompanion[ActionFilterEvalType] {
-  override val values: Set[ActionFilterEvalType] = Set(AndOr,And,Or,customExpression,unknown)
+  override val values: Seq[ActionFilterEvalType] = Seq(AndOr,And,Or,customExpression,unknown)
   override val description: String = s"""(required) Filter condition evaluation method.
                                       |When conditions is empty array this does not affect but it should be set '$AndOr'.""".stripMargin
   case object AndOr extends ActionFilterEvalType(0, "(default) AND / OR")

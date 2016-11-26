@@ -5,7 +5,7 @@ import com.github.zabbicook.entity.prop._
 sealed abstract class ValueType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object ValueType extends IntEnumPropCompanion[ValueType] {
-  override val values: Set[ValueType] = Set(
+  override val values: Seq[ValueType] = Seq(
     float,character,log,unsigned,text,unknown
   )
   override val description: String = "Type of information of the item."

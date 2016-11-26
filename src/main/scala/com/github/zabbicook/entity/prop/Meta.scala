@@ -2,7 +2,7 @@ package com.github.zabbicook.entity.prop
 
 case class Description(
   desc: String,
-  possibles: Option[Set[String]] = None
+  possibles: Option[Seq[String]] = None
 )
 
 /**
@@ -38,7 +38,7 @@ case class EnumMeta(
   name: String,
   aliases: Set[String],
   desc: Description,
-  values: Set[String]
+  values: Seq[String]
 ) extends Meta
 
 case class ArrayMeta(
@@ -68,7 +68,7 @@ object Meta {
   def readOnly(name: String): PropMeta =
     PropMeta(name, Set(), Description("This is read only property."), readOnly = true)
 
-  def enum[T <: EnumProp[_]](name: String, values: Set[T])(aliases: String*)(desc: String): EnumMeta = {
+  def enum[T <: EnumProp[_]](name: String, values: Seq[T])(aliases: String*)(desc: String): EnumMeta = {
     val possibles = values.map(v => s"'${v.toString}' - ${v.desc}")
     EnumMeta(name, aliases.toSet, Description(desc, Some(possibles)), values.map(_.toString))
   }

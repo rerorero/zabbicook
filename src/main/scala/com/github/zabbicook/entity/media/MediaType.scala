@@ -10,7 +10,7 @@ import play.api.libs.json.{Format, JsObject, Json}
 sealed abstract class MediaTypeType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object MediaTypeType extends IntEnumPropCompanion[MediaTypeType] {
-  override val values: Set[MediaTypeType] = Set(email,script,SMS,Jabber,EzTexting,unknown)
+  override val values: Seq[MediaTypeType] = Seq(email,script,SMS,Jabber,EzTexting,unknown)
   override val description: String = "(required) Transport used by the media type."
   case object email extends MediaTypeType(0, "email")
   case object script extends MediaTypeType(1, "script")

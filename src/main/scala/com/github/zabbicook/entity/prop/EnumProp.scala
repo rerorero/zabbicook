@@ -13,13 +13,13 @@ trait StringToEnumProp[V, T <: EnumProp[V]] {
 }
 
 trait EnumPropCompanion[V, T <: EnumProp[V]] {
-  def values: Set[T]
+  def values: Seq[T]
 
   def description: String
 
   def unknown: T
 
-  def possibleValues: Set[T] = values - unknown
+  def possibleValues: Seq[T] = values.filter(_ != unknown)
 
   def meta(name: String)(aliases: String*): EnumMeta =
     Meta.enum(name, possibleValues)(aliases:_*)(description)
@@ -53,7 +53,7 @@ trait IntEnumPropCompanion[T <: EnumProp[IntProp]] extends EnumPropCompanion[Int
 sealed abstract class EnabledEnum(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object EnabledEnum extends IntEnumPropCompanion[EnabledEnum] {
-  override val values: Set[EnabledEnum] = Set(`false`, `true`, unknown)
+  override val values: Seq[EnabledEnum] = Seq(`false`, `true`, unknown)
   override val description: String = "Enabled status"
   case object `false` extends EnabledEnum(0, "Disable")
   case object `true` extends EnabledEnum(1, "Enable")
@@ -68,7 +68,7 @@ object EnabledEnum extends IntEnumPropCompanion[EnabledEnum] {
 sealed abstract class EnabledEnumZeroPositive(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object EnabledEnumZeroPositive extends IntEnumPropCompanion[EnabledEnumZeroPositive] {
-  override val values: Set[EnabledEnumZeroPositive] = Set(`true`, `false`, unknown)
+  override val values: Seq[EnabledEnumZeroPositive] = Seq(`true`, `false`, unknown)
   override val description: String = "Enabled status"
   case object `true` extends EnabledEnumZeroPositive(0, "Enabled")
   case object `false` extends EnabledEnumZeroPositive(1, "Disabled")

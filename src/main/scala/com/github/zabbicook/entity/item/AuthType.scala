@@ -5,7 +5,7 @@ import com.github.zabbicook.entity.prop._
 sealed abstract class AuthType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object AuthType extends IntEnumPropCompanion[AuthType] {
-  override val values: Set[AuthType] = Set(
+  override val values: Seq[AuthType] = Seq(
     password,publicKey,unknown
   )
   override val description: String = "SSH authentication method. Used only by SSH agent items."

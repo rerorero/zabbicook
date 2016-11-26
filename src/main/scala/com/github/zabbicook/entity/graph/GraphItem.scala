@@ -9,7 +9,7 @@ import play.api.libs.json.{Format, JsObject, Json}
 sealed abstract class CalcFunction(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object CalcFunction extends IntEnumPropCompanion[CalcFunction] {
-  override val values: Set[CalcFunction] = Set(minimum,average,maximum,all,last,unknown)
+  override val values: Seq[CalcFunction] = Seq(minimum,average,maximum,all,last,unknown)
   override val description: String = "Value of the item that will be displayed."
   case object minimum extends CalcFunction(1, "minimum value")
   case object average extends CalcFunction(2, "(default) average value")
@@ -22,7 +22,7 @@ object CalcFunction extends IntEnumPropCompanion[CalcFunction] {
 sealed abstract class DrawType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object DrawType extends IntEnumPropCompanion[DrawType] {
-  override val values: Set[DrawType] = Set(default,region,bold,dot,dashed,gradient,unknown)
+  override val values: Seq[DrawType] = Seq(default,region,bold,dot,dashed,gradient,unknown)
   override val description: String = "Draw style of the graph item."
   case object default extends DrawType(0, "(defualt) line")
   case object region extends DrawType(1, "filled region")
@@ -36,7 +36,7 @@ object DrawType extends IntEnumPropCompanion[DrawType] {
 sealed abstract class GraphItemType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object GraphItemType extends IntEnumPropCompanion[GraphItemType] {
-  override val values: Set[GraphItemType] = Set(simple,sum,unknown)
+  override val values: Seq[GraphItemType] = Seq(simple,sum,unknown)
   override val description: String = "Type of graph item."
   case object simple extends GraphItemType(0, "(default) simple")
   case object sum extends GraphItemType(2, "graph sum, used only by pie and exploded graphs.")
@@ -46,7 +46,7 @@ object GraphItemType extends IntEnumPropCompanion[GraphItemType] {
 sealed abstract class YAxisSide(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object YAxisSide extends IntEnumPropCompanion[YAxisSide] {
-  override val values: Set[YAxisSide] = Set(left,right,unknown)
+  override val values: Seq[YAxisSide] = Seq(left,right,unknown)
   override val description: String = "Side of the graph where the graph item's Y scale will be drawn."
   case object left extends YAxisSide(0, "(default) left side")
   case object right extends YAxisSide(1, "right side")

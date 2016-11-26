@@ -9,7 +9,7 @@ import play.api.libs.json.{Format, Json}
 sealed abstract class OperationCommandType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object OperationCommandType extends IntEnumPropCompanion[OperationCommandType] {
-  override val values: Set[OperationCommandType] = Set(customScript,IPMI,SSH,Telnet,unknown)
+  override val values: Seq[OperationCommandType] = Seq(customScript,IPMI,SSH,Telnet,unknown)
   override val description: String = "Type of operation command."
   case object customScript extends OperationCommandType(0, "custom script")
   case object IPMI extends OperationCommandType(1,"IPMI")
@@ -22,7 +22,7 @@ object OperationCommandType extends IntEnumPropCompanion[OperationCommandType] {
 sealed abstract class OperationAuthType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object OperationAuthType extends IntEnumPropCompanion[OperationAuthType] {
-  override val values: Set[OperationAuthType] = Set(password,publicKey,unknown)
+  override val values: Seq[OperationAuthType] = Seq(password,publicKey,unknown)
   override val description: String = "Authentication method used for SSH commands."
   case object password extends OperationAuthType(0, "password")
   case object publicKey extends OperationAuthType(1,"public key")
@@ -32,7 +32,7 @@ object OperationAuthType extends IntEnumPropCompanion[OperationAuthType] {
 sealed abstract class ExecuteOn(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object ExecuteOn extends IntEnumPropCompanion[ExecuteOn] {
-  override val values: Set[ExecuteOn] = Set(agent,server,unknown)
+  override val values: Seq[ExecuteOn] = Seq(agent,server,unknown)
   override val description: String = "Target on which the custom script operation command will be executed."
   case object agent extends ExecuteOn(0, "Zabbix agent")
   case object server extends ExecuteOn(1,"Zabbix server")

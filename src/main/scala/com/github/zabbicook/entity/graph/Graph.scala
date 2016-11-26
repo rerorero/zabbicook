@@ -10,7 +10,7 @@ import play.api.libs.json.{Format, JsObject, Json}
 sealed abstract class GraphType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object GraphType extends IntEnumPropCompanion[GraphType] {
-  override val values: Set[GraphType] = Set(normal,stacked,pie,exploded,unknown)
+  override val values: Seq[GraphType] = Seq(normal,stacked,pie,exploded,unknown)
   override val description: String = "Graph's layout type."
   case object normal extends GraphType(0,"(default) normal")
   case object stacked extends GraphType(1,("stacked"))
@@ -22,7 +22,7 @@ object GraphType extends IntEnumPropCompanion[GraphType] {
 sealed abstract class GraphMinMaxType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object GraphMinMaxType extends IntEnumPropCompanion[GraphMinMaxType] {
-  override val values: Set[GraphMinMaxType] = Set(calculated,fixed,unknown)
+  override val values: Seq[GraphMinMaxType] = Seq(calculated,fixed,unknown)
   override val description: String = "Maximum/Minimum value calculation method for the Y axis."
   case object calculated extends GraphMinMaxType(0, "(default) calculated")
   case object fixed extends GraphMinMaxType(1, "fixed")

@@ -28,7 +28,7 @@ case class OperationMessage(
   }
 
   def isSame(constant: OperationMessage): Boolean = {
-    isSameProp(default_msg, constant.default_msg, EnabledEnumZeroPositive.enabled) &&
+    isSameProp(default_msg, constant.default_msg, EnabledEnum.disabled) &&
     mediatypeid == constant.mediatypeid &&
     isSameProp(message, constant.message, "") &&
     isSameProp(subject, constant.subject, "")

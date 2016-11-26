@@ -13,7 +13,7 @@ class HoconReaderSpec extends UnitSpec {
   sealed abstract class Address(val zabbixValue: String, val desc: String) extends EnumProp[String]
 
   object Address extends StringEnumPropCompanion[Address] {
-    override val values: Set[Address] = Set(earth,other)
+    override val values: Seq[Address] = Seq(earth,other)
     override val description: String = "Address"
     case object earth extends Address("earth", "it is an earth")
     case object other extends Address("universe", "an universe")
@@ -23,7 +23,7 @@ class HoconReaderSpec extends UnitSpec {
   sealed abstract class Income(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
   object Income extends IntEnumPropCompanion[Income] {
-    override val values: Set[Income] = Set(millionaire, poor)
+    override val values: Seq[Income] = Seq(millionaire, poor)
     override val description: String = "Incomes"
     case object millionaire extends Income(0, "who is a millionaire")
     case object poor extends Income(1, "poooor")

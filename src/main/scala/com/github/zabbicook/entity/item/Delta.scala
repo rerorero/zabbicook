@@ -5,7 +5,7 @@ import com.github.zabbicook.entity.prop._
 sealed abstract class Delta(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object Delta extends IntEnumPropCompanion[Delta] {
-  override val values: Set[Delta] = Set(
+  override val values: Seq[Delta] = Seq(
     AsIs,SpeedPerSec,SimpleChange,unknown
   )
   override val description = "Value that will be stored."

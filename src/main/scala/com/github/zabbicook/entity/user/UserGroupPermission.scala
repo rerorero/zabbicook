@@ -10,7 +10,7 @@ import play.api.libs.json.{Format, Json}
 sealed abstract class Permission(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object Permission extends IntEnumPropCompanion[Permission] {
-  override val values: Set[Permission] = Set(denied,readOnly,readWrite,unknown)
+  override val values: Seq[Permission] = Seq(denied,readOnly,readWrite,unknown)
   override val description: String = "Access level to the host group."
   case object denied extends Permission(0, "access denied")
   case object readOnly extends Permission(2, "read-only access")

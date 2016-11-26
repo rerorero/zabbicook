@@ -9,7 +9,7 @@ import play.api.libs.json.{Format, Json}
 sealed abstract class InventoryMode(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object InventoryMode extends IntEnumPropCompanion[InventoryMode] {
-  override val values: Set[InventoryMode] = Set(disabled,manual,automatic,unknown)
+  override val values: Seq[InventoryMode] = Seq(disabled,manual,automatic,unknown)
   override val description: String = "Host inventory population mode."
   case object disabled extends InventoryMode(-1, "disabled")
   case object manual extends InventoryMode(0, "(default) manual")
@@ -20,7 +20,7 @@ object InventoryMode extends IntEnumPropCompanion[InventoryMode] {
 sealed abstract class IpmiAuthAlgo(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object IpmiAuthAlgo extends IntEnumPropCompanion[IpmiAuthAlgo] {
-  override val values: Set[IpmiAuthAlgo] = Set(default,none,MD2,MD5,straight,OEM,RMCPPlus,unknown)
+  override val values: Seq[IpmiAuthAlgo] = Seq(default,none,MD2,MD5,straight,OEM,RMCPPlus,unknown)
   override val description: String = "IPMI authentication algorithm."
   case object default extends IpmiAuthAlgo(-1,"default")
   case object none extends IpmiAuthAlgo(0,"none")
@@ -35,7 +35,7 @@ object IpmiAuthAlgo extends IntEnumPropCompanion[IpmiAuthAlgo] {
 sealed abstract class IpmiPrivilege(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object IpmiPrivilege extends IntEnumPropCompanion[IpmiPrivilege] {
-  override val values: Set[IpmiPrivilege] = Set(callback,user,operator,admin,OEM,unknown)
+  override val values: Seq[IpmiPrivilege] = Seq(callback,user,operator,admin,OEM,unknown)
   override val description: String = "IPMI privilege level."
   case object callback extends IpmiPrivilege(1,"callback")
   case object user extends IpmiPrivilege(2,"(default)user")

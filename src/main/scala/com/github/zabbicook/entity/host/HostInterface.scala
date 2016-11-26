@@ -10,7 +10,7 @@ import com.github.zabbicook.entity.EntityId.NotStoredId
 sealed abstract class InterfaceType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object InterfaceType extends IntEnumPropCompanion[InterfaceType] {
-  override val values: Set[InterfaceType] = Set(agent,SNMP,IPMI,JMX,unknown)
+  override val values: Seq[InterfaceType] = Seq(agent,SNMP,IPMI,JMX,unknown)
   override val description: String = "(required) Interface type."
   case object agent extends InterfaceType(1, "agent")
   case object SNMP extends InterfaceType(2, "SNMP")
@@ -22,7 +22,7 @@ object InterfaceType extends IntEnumPropCompanion[InterfaceType] {
 sealed abstract class InterfaceUseIp(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object InterfaceUseIp extends IntEnumPropCompanion[InterfaceUseIp] {
-  override val values: Set[InterfaceUseIp] = Set(dns,ip,unknown)
+  override val values: Seq[InterfaceUseIp] = Seq(dns,ip,unknown)
   override val description: String = "(required) Whether the connection should be made via IP."
   case object dns extends InterfaceUseIp(0, "connect using host DNS name")
   case object ip extends InterfaceUseIp(1, "connect using host IP address for this host interface.")

@@ -5,7 +5,7 @@ import com.github.zabbicook.entity.prop.{EnumProp, IntEnumPropCompanion, IntProp
 sealed abstract class OperationType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object OperationType extends IntEnumPropCompanion[OperationType] {
-  override val values: Set[OperationType] = Set(sendMessage,
+  override val values: Seq[OperationType] = Seq(sendMessage,
     /*
     remoteCommand,addHost,removeHost,
     addToHostGroup,removeFromHostGroup,linkToTemplate, unlinkFromTemplate,
@@ -31,7 +31,7 @@ object OperationType extends IntEnumPropCompanion[OperationType] {
 sealed abstract class RecoveryOperationType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object RecoveryOperationType extends IntEnumPropCompanion[RecoveryOperationType] {
-  override val values: Set[RecoveryOperationType] = Set(sendMessage,/*remoteCommand,*/sendRecoveryMessage,unknown)
+  override val values: Seq[RecoveryOperationType] = Seq(sendMessage,/*remoteCommand,*/sendRecoveryMessage,unknown)
   override val description: String = "Type of recovery operation."
   case object sendMessage extends RecoveryOperationType(0, "send message")
   // TODO: support the followings

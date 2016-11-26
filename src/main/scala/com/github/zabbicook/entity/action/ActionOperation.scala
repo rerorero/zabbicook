@@ -6,9 +6,6 @@ import com.github.zabbicook.entity.prop.IntProp
 import com.github.zabbicook.entity.{Entity, EntityId, EntityState}
 import play.api.libs.json._
 
-trait ActionOperationHelper {
-}
-
 case class ActionOperation[S <: EntityState] (
   operationid: EntityId = NotStoredId,
   operationtype: OperationType,

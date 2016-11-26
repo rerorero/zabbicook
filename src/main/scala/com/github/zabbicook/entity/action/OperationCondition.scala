@@ -9,7 +9,7 @@ import play.api.libs.json.{Format, Json}
 sealed abstract class OperationConditionType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object OperationConditionType extends IntEnumPropCompanion[OperationConditionType] {
-  override val values: Set[OperationConditionType] = Set(eventAck,unknown)
+  override val values: Seq[OperationConditionType] = Seq(eventAck,unknown)
   override val description: String = "Type of condition."
   case object eventAck extends OperationConditionType(14, "Event acknowledged")
   case object unknown extends OperationConditionType(-1, "unknown")
@@ -18,7 +18,7 @@ object OperationConditionType extends IntEnumPropCompanion[OperationConditionTyp
 sealed abstract class OperationConditionOperator(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object OperationConditionOperator extends IntEnumPropCompanion[OperationConditionOperator] {
-  override val values: Set[OperationConditionOperator] = Set(equal,unknown)
+  override val values: Seq[OperationConditionOperator] = Seq(equal,unknown)
   override val description: String = "Condition operator."
   case object equal extends OperationConditionOperator(0, "(default) =")
   case object unknown extends OperationConditionOperator(-1, "unknown")

@@ -5,7 +5,7 @@ import com.github.zabbicook.entity.prop._
 sealed abstract class ItemType(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object ItemType extends IntEnumPropCompanion[ItemType] {
-  override val values: Set[ItemType] = Set(
+  override val values: Seq[ItemType] = Seq(
     ZabbixAgent,
     SNMPv1agent,
     ZabbixTrapper ,

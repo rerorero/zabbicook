@@ -5,7 +5,7 @@ import com.github.zabbicook.entity.prop.{EnumProp, IntEnumPropCompanion, IntProp
 sealed abstract class Severity(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object Severity extends IntEnumPropCompanion[Severity] {
-  override val values: Set[Severity] = Set(classified,information,warning,average,high,disaster,unknown)
+  override val values: Seq[Severity] = Seq(classified,information,warning,average,high,disaster,unknown)
   override val description: String = "Severity of the trigger."
   case object classified extends Severity(0, "(default) not classified")
   case object information extends Severity(1, "information")

@@ -10,7 +10,7 @@ import play.api.libs.json.{Format, JsObject, Json}
 sealed abstract class GuiAccess(val zabbixValue: IntProp, val desc: String) extends EnumProp[IntProp]
 
 object GuiAccess extends IntEnumPropCompanion[GuiAccess] {
-  override val values: Set[GuiAccess] = Set(default,internal,disable,unknown)
+  override val values: Seq[GuiAccess] = Seq(default,internal,disable,unknown)
   override val description: String = "Frontend authentication method of the users in the group."
   case object default extends GuiAccess(0, "(default) use the system default authentication method")
   case object internal extends GuiAccess(1, "use internal authentication")
