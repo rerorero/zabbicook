@@ -67,8 +67,9 @@ object MediaType extends EntityCompanionMetaHelper {
     value("description")("name")("(required)	Name of the media type."),
     MediaTypeType.meta("type")("type"),
     value("exec_path")("scriptName","textLimit")(
-      """For script media types exec_path contains the name of the executed script.
-        |For Ez Texting exec_path contains the message text limit.
+      """Script name or text limit.
+        |For script media types scriptName contains the name of the executed script.
+        |For Ez Texting textLimit contains the message text limit.
         |  Possible text limit values:
         |  0 - USA (160 characters);
         |  1 - Canada (136 characters).

@@ -29,7 +29,7 @@ object MediaConfig extends EntityCompanionMetaHelper {
     value("sendto")("sendTo")("(required) Address, user name or other identifier of the recipient."),
     arrayOf("severity")(
       Severity.metaWithDesc("severity")("severity")(
-      """(required)	Trigger severities to send notifications about.
+      """(required)	Array of trigger severities to send notifications about.
         |Notifications will be sent from triggers with severities as followed this setting.""".stripMargin))
   ) _
 
