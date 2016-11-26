@@ -3,6 +3,7 @@ package com.github.zabbicook.entity.action
 import com.github.zabbicook.entity.Entity.{NotStored, Stored}
 import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.prop._
+import com.github.zabbicook.entity.trigger.Severity
 import com.github.zabbicook.entity.{EntityState, PropCompare}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -42,7 +43,8 @@ object ActionFilterConditionType extends IntEnumPropCompanion[ActionFilterCondit
   case object host extends ActionFilterConditionType(1 , "host (possible for trigger and internal actions)")
   case object trigger extends ActionFilterConditionType(2 , "trigger (possible for trigger actions)")
   case object triggerName extends ActionFilterConditionType(3 , "trigger name (possible for trigger actions)")
-  case object triggerSeverity extends ActionFilterConditionType(4 , "trigger severity (possible for trigger actions)")
+  case object triggerSeverity extends ActionFilterConditionType(4 , "trigger severity (possible for trigger actions). " +
+    "For this type, set a number according to the level at the 'value'." + Severity.possibleValues.map(s => s"${s.zabbixValue.value} - ${s.toString}").mkString(", "))
   case object triggerValue extends ActionFilterConditionType(5 , "trigger value (possible for trigger actions) (Zabbix Ver <= 3.0.x)")
   case object timePeriod extends ActionFilterConditionType(6 , "time period (possible for trigger actions)")
   case object hostIP extends ActionFilterConditionType(7 , "host IP (possible for discovery actions)")
@@ -80,7 +82,7 @@ object FilterConditionOperator extends IntEnumPropCompanion[FilterConditionOpera
     notIn,
     unknown)
   override val description: String = "Filter condition operator."
-  case object equal extends FilterConditionOperator(0 , "(default) =")
+  case object equal extends FilterConditionOperator(0 , "= (default)")
   case object notEqual extends FilterConditionOperator(1 , "<>")
   case object like extends FilterConditionOperator(2 , "like")
   case object notLike extends FilterConditionOperator(3 , "not like")

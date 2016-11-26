@@ -6,7 +6,7 @@ import com.github.zabbicook.entity.{EntityId, PropCompare}
 import play.api.libs.json.{Format, Json}
 
 case class OperationMessage(
-  default_msg: Option[EnabledEnumZeroPositive],
+  default_msg: Option[EnabledEnum],
   mediatypeid: Option[EntityId] = None,
   message: Option[String],
   subject: Option[String]

@@ -3,7 +3,7 @@ package com.github.zabbicook.entity.action
 import com.github.zabbicook.entity.Entity.NotStored
 import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.prop.Meta._
-import com.github.zabbicook.entity.prop.{EnabledEnum, EnabledEnumZeroPositive, EntityCompanionMetaHelper, IntProp}
+import com.github.zabbicook.entity.prop.{EnabledEnum, EntityCompanionMetaHelper, IntProp}
 
 case class OpMessageConfig(
   default_msg: Option[EnabledEnum]=None,
