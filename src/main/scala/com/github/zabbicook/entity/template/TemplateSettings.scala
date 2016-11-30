@@ -52,7 +52,6 @@ object TemplateSettingsConf extends EntityCompanionMetaHelper {
 
   val meta = entity("Template settings and information that belongs to the template")(
     Template.required("template"),
-    arrayOf("groupNames")(Template.required("groups")),
     array("groupNames")("groups")("(required) Names of host groups to add the template to."),
     array("linkedTemplateNames")("linkedTemplates")("Names of templates to be linked to the template."),
     arrayOf("items")(Item.optional("items")),

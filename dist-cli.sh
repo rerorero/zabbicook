@@ -6,6 +6,9 @@ if [ "$#" -ne 1 ]; then
   exit 1
 fi
 
+echo ----------------
+echo build package
+echo ----------------
 NAME=zabbicook
 WORK=./.dist-work
 rm -rf $WORK
@@ -23,3 +26,9 @@ cd $WORK
 zip -r $NAME-$VERSION.zip $NAME-$VERSION
 
 echo packaged $WORK/$NAME-$VERSION.zip
+
+echo ----------------
+echo publish documents
+echo ----------------
+sbt "run-main com.github.zabbicook.doc.HtmlDoc"
+sbt ghpagesPushSite

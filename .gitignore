@@ -4,3 +4,4 @@ project/target/
 project/project/target/
 .dist-work/
 .DS_Store
+src/site/*.html

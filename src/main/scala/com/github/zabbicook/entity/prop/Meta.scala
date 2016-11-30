@@ -55,7 +55,6 @@ case class EntityMeta(
   entity: Seq[Meta],
   required: Boolean
 ) extends Meta {
-  val alias = name
   def findByName(name: String): Option[Meta] = entity.find(_.name == name)
   val entityAliases: Set[String] = entity.map(_.aliases).flatten.toSet
 }

@@ -31,7 +31,6 @@ libraryDependencies ++= Seq(
   "com.github.scopt" %% "scopt" % "3.5.0"
 )
 
-
 mainClass in assembly := Some("com.github.zabbicook.cli.Main")
 
 assemblyJarName in assembly := { s"${name.value}-${version.value}.jar" }
@@ -41,8 +40,12 @@ parallelExecution in Test := false
 test in assembly := {}
 
 lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
-  settings(
+  enablePlugins(BuildInfoPlugin)
+  .enablePlugins(SbtTwirl)
+  .settings(
     buildInfoKeys := Seq[BuildInfoKey](name, version),
     buildInfoPackage := "com.github.zabbicook.cli"
   )
+
+ghpages.settings
+git.remoteRepo := "git@github.com:rerorero/zabbicook.git"

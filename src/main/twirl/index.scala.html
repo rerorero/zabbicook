@@ -1,0 +1,127 @@
+@import com.github.zabbicook.doc.HtmlMeta
+@(rootEntities: Seq[HtmlMeta])
+
+@menuParent(tree: HtmlMeta) = {
+    @if(tree.children.isEmpty) {
+        <a href="#@tree.contentId" class="list-group-item" data-parent="#@tree.parentId">@tree.name()</a>
+    } else {
+        <a href="#@tree.menuId" class="list-group-item" data-parent="#@tree.parentId" data-toggle="collapse">@tree.name()</a>
+        @menuChildren(tree)
+    }
+}
+
+@menuChildren(parent: HtmlMeta) = {
+    <div class="collapse list-group-submenu list-group-submenu-1" id="@parent.menuId">
+        @for(child <- parent.children) {
+            @menuParent(child)
+        }
+    </div>
+}
+
+@contentParent(tree: HtmlMeta) = {
+    <div class="col-xs-offset-@tree.offset">
+    <h@tree.heading() id="@tree.contentId">@tree.fullName()</h2>
+    @for(desc <- tree.description) {
+        <p>@desc</p>
+    }
+    @if(!tree.children.isEmpty) {
+        <hr class="col-md-12">
+        @contentChildren(tree)
+    }
+    </div>
+}
+
+@contentChildren(parent: HtmlMeta) = {
+    @for(child <- parent.children) {
+        @contentParent(child)
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Zabbicook Configurations</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+    <!--
+    #sidebar.affix-top {
+      position: static;
+      margin-top:10px;
+      width:228px;
+    }
+
+    #sidebar.affix {
+      position: fixed;
+      top:10px;
+      width:228px;
+    }
+    .list-group-item {
+      padding: 4px 4px;
+    }
+    .list-group.panel > .list-group-item {
+      border-bottom-right-radius: 4px;
+      border-bottom-left-radius: 4px;
+      padding: 4px 4px;
+    }
+    .list-group-submenu {
+      margin-left:10px;
+    }
+    .scrollable {
+      height: 100%;
+      overflow: auto;
+    }
+    .max-height {
+      height: 100%;
+    }
+    -->
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="col-md-3" id="left-col">
+        <div class="list-group panel scrollable max-height" id="sidebar">
+            @for(e <- rootEntities) {
+                @menuParent(e)
+            }
+        </div>
+    </div>
+
+    <div class="col-md-9" id="mainCol">
+        @for(e <- rootEntities) {
+            @contentParent(e)
+        }
+    </div>
+</hr>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+    <!--
+    $('#sidebar').affix({
+      offset: {
+        top: 10
+      }
+    });
+    -->
+    </script>
+</body>
+</html>
