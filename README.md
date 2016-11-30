@@ -17,6 +17,11 @@ cd zabbicook-x.x.x
 zabbicook
 # displays help
 ```
+For Windows users, replace `zabbicook` with `zabbicook.cmd`.
+```
+# for windows
+zabbicook.cmd
+```
 
 Let's add a new host group.  
 Suppose the zabbix server is running with localhost:8080.  
