@@ -91,7 +91,7 @@ class UserOp(api: ZabbixApi, userGroupOp: UserGroupOp, mediaTypeOp: MediaTypeOp)
             Report.empty()
           }
           .recoverWith {
-            case ErrorResponseException(_, response, _) if response.data.contains("incorrect") =>
+            case ErrorResponseException(_, response, _, _) if response.data.contains("incorrect") =>
               logger.debug(s"presentPassword will change password for: ${alias}")
               updatePassword(user, presentedPass)
           }
@@ -240,7 +240,7 @@ class UserOp(api: ZabbixApi, userGroupOp: UserGroupOp, mediaTypeOp: MediaTypeOp)
       logger.debug(s"changePassword does nothing with: ${alias}")
       Report.empty()
     }.recoverWith {
-      case ErrorResponseException(_, response, _) if response.data.contains("incorrect") =>
+      case ErrorResponseException(_, response, _, _) if response.data.contains("incorrect") =>
         logger.debug(s"presentPassword will change password for: ${alias}")
         presentPassword(alias, newPass)
     }

@@ -115,7 +115,8 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
     }
   }
 
-  def requestWithAuth(method: String, param: JsValue, auth: JsValue): Future[JsValue] = {
+  private val RETRY_MAX = 5
+  def requestWithAuth(method: String, param: JsValue, auth: JsValue, retries: Int = 0): Future[JsValue] = {
     val id = sequence.nextInt()
     val paramJson = Json.obj(
       "jsonrpc" -> JsString(conf.jsonrpc),
@@ -139,7 +140,7 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
     logger.debug(s">>> API POST ($id)")
     logger.debug(Json.prettyPrint(paramJson))
 
-    promise.future.map { r =>
+    promise.future.flatMap { r =>
       logger.debug(s"<<< API RESPONSE ($id)")
       logger.debug(s"status = ${r.getStatusCode}")
       logger.debug(s"body = ${r.getResponseBody}")
@@ -148,11 +149,16 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
         case code if (code / 100) == 2 =>
           Json.parse(r.getResponseBody()) match {
             case JsObject(m) if m.contains("result") =>
-              m.get("result").get
+              Future.successful(m.get("result").get)
             case JsObject(m) if m.contains("error") =>
               Json.fromJson[ZabbixErrorResponse](m.get("error").get) match {
+                case JsSuccess(err, _) if err.data.contains("DBEXECUTE_ERROR") && RETRY_MAX > retries =>
+                  val sleep = retries * 200
+                  logger.warn(s"${method} request failed(DBEXECUTE_ERROR). retry after $sleep msec. (${retries + 1} times)")
+                  Thread.sleep(sleep)
+                  requestWithAuth(method, param, auth, retries + 1)
                 case JsSuccess(err, _) =>
-                  throw ErrorResponseException(method, err)
+                  Future.failed(ErrorResponseException(method, err, s"(retried $retries times)"))
                 case JsError(errors) =>
                   logger.error(s"Request parameter: ${Json.prettyPrint(paramJson)}")
                   logger.error(s"${method} respond ${r.getResponseBody()}")
@@ -167,7 +173,7 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
         case code =>
           logger.error(s"Request parameter: ${Json.prettyPrint(paramJson)}")
           logger.error(s"${method} respond ${r.getResponseBody()}")
-          throw new ApiException(s"Unkown status($code) respond")
+          Future.failed(new ApiException(s"Unkown status($code) respond"))
       }
     }
   }
