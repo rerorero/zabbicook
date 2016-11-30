@@ -153,6 +153,11 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
             case JsObject(m) if m.contains("error") =>
               Json.fromJson[ZabbixErrorResponse](m.get("error").get) match {
                 case JsSuccess(err, _) if err.data.contains("DBEXECUTE_ERROR") && RETRY_MAX > retries =>
+                  // This is a workaround.
+                  // Although I do not know the cause, DBEXECUTE_ERROR will occur
+                  // in the first POST API call after the zabbix server is started for the first time.
+                  // I know it will happen on docker and vagrant, but it may happen in other environments as well.
+                  // To avoid this, retry will only be done at DBEXECUTE_ERROR.
                   val sleep = retries * 200
                   logger.warn(s"${method} request failed(DBEXECUTE_ERROR). retry after $sleep msec. (${retries + 1} times)")
                   Thread.sleep(sleep)
