@@ -46,4 +46,3 @@ docker run \
     --env="XXL_zapix=true" \
     --env="XXL_grapher=true" \
     monitoringartist/zabbix-xxl:3.2.1
-

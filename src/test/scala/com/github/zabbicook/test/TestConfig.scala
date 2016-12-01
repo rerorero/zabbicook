@@ -1,5 +1,7 @@
 package com.github.zabbicook.test
 
+import java.time.Duration
+
 import com.github.zabbicook.api.{Version, ZabbixApi, ZabbixApiConf}
 import com.github.zabbicook.operation.Ops
 
@@ -20,16 +22,22 @@ trait TestConfig {
 }
 
 object TestConfig {
+  // to avoid 'DBEXECUTE_ERROR' on travis.ci (experimental)
+  val sleep: Duration = Duration.ofMillis(System.getProperty("sleep", "100").toInt)
+  println(s"sleep: ${sleep.toMillis} msec")
+
   val apiConfs: Map[Version, ZabbixApiConf] = Map(
     Version(3,0,5) -> ZabbixApiConf(
       apiPath = "http://localhost:8080/api_jsonrpc.php",
       authUser = "Admin",
-      authPass = "zabbix"
+      authPass = "zabbix",
+      interval = sleep
     ),
     Version(3,2,1) -> ZabbixApiConf(
       apiPath = "http://localhost:8081/api_jsonrpc.php",
       authUser = "Admin",
-      authPass = "zabbix"
+      authPass = "zabbix",
+      interval = sleep
     )
   )
 }

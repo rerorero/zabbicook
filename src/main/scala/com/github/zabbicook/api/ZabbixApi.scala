@@ -22,6 +22,18 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
 
   private[this] val sequence = new Random
 
+  private[this] val throttle: Throttle = {
+    if (conf.interval.isZero) {
+      NonStrictThrottle
+    } else {
+      new StrictThrottle(
+        concurrency = 1,
+        timeout = conf.timeout.multipliedBy(3),
+        startInterval = conf.interval
+      )
+    }
+  }
+
   /**
     * close resource handles
     */
@@ -117,7 +129,7 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
   }
 
   private val DBEXECUTE_ERR_RETRY_MAX = 3
-  private val TIMEOUT_RETRY_MAX = 1
+  private val TIMEOUT_RETRY_MAX = 2
   def requestWithAuth(method: String, param: JsValue, auth: JsValue, retries: Int = 0): Future[JsValue] = {
     val id = sequence.nextInt()
     val paramJson = Json.obj(
@@ -130,10 +142,17 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
 
     val promise = Promise[Response]
     val handler = new AsyncCompletionHandler[Unit] {
-      override def onCompleted(response: Response): Unit = promise.success(response)
-      override def onThrowable(t: Throwable): Unit = promise.failure(t)
+      override def onCompleted(response: Response): Unit = {
+        throttle.end()
+        promise.success(response)
+      }
+      override def onThrowable(t: Throwable): Unit = {
+        throttle.end()
+        promise.failure(t)
+      }
     }
 
+    throttle.start()
     client.preparePost(conf.jsonRpcUrl)
       .setHeader("Content-Type", s"application/json-rpc")
       .setBody(paramJson.toString)
@@ -143,11 +162,10 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
     logger.debug(Json.prettyPrint(paramJson))
 
     def retry(): Future[JsValue] = {
-      val randomBackoff = 300 + (Random.nextInt(50) * 50 * (retries + 1))
-      Thread.sleep(randomBackoff)
+      val sleep = retries * 100
+      Thread.sleep(sleep)
       requestWithAuth(method, param, auth, retries + 1)
     }
-
 
     promise.future.flatMap { r =>
       logger.debug(s"<<< API RESPONSE ($id)")

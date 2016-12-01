@@ -21,7 +21,8 @@ class Runner(conf: Arguments) extends Logging {
   val apiConf = new ZabbixApiConf(
     apiPath = conf.url.toString,
     authUser = conf.user,
-    authPass = conf.pass
+    authPass = conf.pass,
+    interval = conf.apiInterval
   )
 
   def run(): Future[RunResult] = {

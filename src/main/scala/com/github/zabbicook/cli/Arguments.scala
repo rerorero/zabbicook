@@ -1,6 +1,7 @@
 package com.github.zabbicook.cli
 
 import java.io.File
+import java.time.Duration
 
 case class Arguments(
   input: Option[File] = None,
@@ -14,7 +15,8 @@ case class Arguments(
   newPassword: Option[String] = None,
   showDoc: Boolean = false,
   docDepth: Int = Int.MaxValue,
-  docRoot: String = ""
+  docRoot: String = "",
+  apiInterval: Duration = Duration.ZERO
 )
 
 object Arguments {
@@ -69,6 +71,12 @@ object Arguments {
       .valueName("<root>")
       .action((x, c) => c.copy(docRoot = x))
       .text("The root of the tree displayed by '--doc'.")
+
+    opt[Int]('s', "sleep").optional()
+      .valueName("<interval msec>")
+      .action((x, c) => c.copy(apiInterval = Duration.ofMillis(Math.min(Math.max(x, 0), 1000))))
+      .text("Specify the interval of calling zabbix api in milliseconds. The default is 0 and maximum value is 1000" + "" +
+        " If you do not want to load the zabbix server and database, set the interval.")
 
     opt[Unit]('d', "debug").optional()
       .action((_, c) => c.copy(isDebug = true))

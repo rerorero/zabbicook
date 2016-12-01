@@ -1,13 +1,17 @@
 package com.github.zabbicook.api
 
+import java.time.Duration
+
 import com.ning.http.client.AsyncHttpClientConfig
-import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContext
 
 /**
   * @param apiPath zabbix API URL ex) http://company.com/zabbix/api_jsonrpc.php
   * @param jsonrpc jsonrpc version
+  * @param authUser admin user
+  * @param authPass admin password
+  * @param interval interval of calling api
   * @param executionContext execution context
   */
 case class ZabbixApiConf(
@@ -15,7 +19,9 @@ case class ZabbixApiConf(
   jsonrpc: String = "2.0",
   authUser: String,
   authPass: String,
-  executionContext: ExecutionContext = ExecutionContext.global
+  interval: Duration,
+  executionContext: ExecutionContext = ExecutionContext.global,
+  timeout: Duration = Duration.ofSeconds(20)
 ) {
   val jsonRpcUrl = {
     val php = "api_jsonrpc.php"
@@ -30,17 +36,7 @@ case class ZabbixApiConf(
   def httpClientConfig: AsyncHttpClientConfig = {
     new AsyncHttpClientConfig.Builder()
       .setAcceptAnyCertificate(true)
-      .setRequestTimeout(20000)
+      .setRequestTimeout(timeout.toMillis.toInt)
       .build()
-  }
-}
-
-object ZabbixApiConf {
-  def load(config: Config): ZabbixApiConf = {
-    ZabbixApiConf(
-      apiPath = config.getString("endpoint.url"),
-      authUser = config.getString("endpoint.auth.user"),
-      authPass = config.getString("endpoint.auth.password")
-    )
   }
 }

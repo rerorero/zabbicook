@@ -18,7 +18,6 @@ abstract class UnitSpec extends FlatSpec with ScalaFutures {
   implicit val defaultPatience =
     PatienceConfig(timeout = Span(3, Seconds), interval = Span(300, Millis))
 
-
   def cleanRun(clean: => Unit)(f: => Unit): Unit = {
     try {
       clean
