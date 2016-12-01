@@ -17,6 +17,11 @@ cd zabbicook-x.x.x
 zabbicook
 # helpを表示
 ```
+Windowsユーザーの方は `zabbicook` を `zabbicook.cmd` に置き換えてください。
+```
+# for windows
+zabbicook.cmd
+```
 
 ホストグループを追加してみましょう。  
 zabbixサーバーが localhost:8080 で起動しているとします。  

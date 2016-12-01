@@ -18,6 +18,7 @@ sbt assembly
 
 cp target/scala-2.11/*.jar $DEST/
 cp scripts/$NAME $DEST
+cp scripts/$NAME.cmd $DEST
 cd $WORK
 zip -r $NAME-$VERSION.zip $NAME-$VERSION
 
