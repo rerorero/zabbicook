@@ -16,7 +16,7 @@ docker run \
     --env="MARIADB_PASS=$pass" \
     monitoringartist/zabbix-db-mariadb
 
-echo 'wait 60 sec for db is up...'
+echo 'wait 90 sec for db is up...'
 sleep 90s
 
 docker run \

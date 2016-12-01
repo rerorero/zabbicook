@@ -36,8 +36,7 @@ abstract class UnitSpec extends FlatSpec with ScalaFutures {
           throw new Exception("An exception is thrown from an expression which returns a Future", e)
       }
     try {
-      // it times out in 10 seconds on Travis CI
-      Await.result(fut, 30 second)
+      Await.result(fut, 60 second)
     } catch {
       case e: NullPointerException if !withNullPointerException =>
         e.printStackTrace()

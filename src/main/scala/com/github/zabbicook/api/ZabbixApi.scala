@@ -134,7 +134,6 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
       override def onThrowable(t: Throwable): Unit = promise.failure(t)
     }
 
-    Thread.sleep(300)
     client.preparePost(conf.jsonRpcUrl)
       .setHeader("Content-Type", s"application/json-rpc")
       .setBody(paramJson.toString)
@@ -144,8 +143,8 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
     logger.debug(Json.prettyPrint(paramJson))
 
     def retry(): Future[JsValue] = {
-      val sleep = retries * 2000
-      Thread.sleep(sleep)
+      val randomBackoff = 300 + (Random.nextInt(50) * 50 * (retries + 1))
+      Thread.sleep(randomBackoff)
       requestWithAuth(method, param, auth, retries + 1)
     }
 
