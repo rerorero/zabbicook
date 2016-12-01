@@ -1,5 +1,6 @@
 package com.github.zabbicook.api
 
+import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicReference
 
 import com.github.zabbicook.Logging
@@ -115,7 +116,8 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
     }
   }
 
-  private val RETRY_MAX = 5
+  private val DBEXECUTE_ERR_RETRY_MAX = 3
+  private val TIMEOUT_RETRY_MAX = 1
   def requestWithAuth(method: String, param: JsValue, auth: JsValue, retries: Int = 0): Future[JsValue] = {
     val id = sequence.nextInt()
     val paramJson = Json.obj(
@@ -132,6 +134,7 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
       override def onThrowable(t: Throwable): Unit = promise.failure(t)
     }
 
+    Thread.sleep(300)
     client.preparePost(conf.jsonRpcUrl)
       .setHeader("Content-Type", s"application/json-rpc")
       .setBody(paramJson.toString)
@@ -139,6 +142,13 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
 
     logger.debug(s">>> API POST ($id)")
     logger.debug(Json.prettyPrint(paramJson))
+
+    def retry(): Future[JsValue] = {
+      val sleep = retries * 2000
+      Thread.sleep(sleep)
+      requestWithAuth(method, param, auth, retries + 1)
+    }
+
 
     promise.future.flatMap { r =>
       logger.debug(s"<<< API RESPONSE ($id)")
@@ -152,16 +162,14 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
               Future.successful(m.get("result").get)
             case JsObject(m) if m.contains("error") =>
               Json.fromJson[ZabbixErrorResponse](m.get("error").get) match {
-                case JsSuccess(err, _) if err.data.contains("DBEXECUTE_ERROR") && RETRY_MAX > retries =>
+                case JsSuccess(err, _) if err.data.contains("DBEXECUTE_ERROR") && DBEXECUTE_ERR_RETRY_MAX > retries =>
                   // This is a workaround.
-                  // Although I do not know the cause, DBEXECUTE_ERROR will occur
+                  // Although I do not know the cause, DBEXECUTE_ERROR or timeout will occur
                   // in the first POST API call after the zabbix server is started for the first time.
                   // I know it will happen on docker and vagrant, but it may happen in other environments as well.
                   // To avoid this, retry will only be done at DBEXECUTE_ERROR.
-                  val sleep = retries * 200
-                  logger.warn(s"${method} request failed(DBEXECUTE_ERROR). retry after $sleep msec. (${retries + 1} times)")
-                  Thread.sleep(sleep)
-                  requestWithAuth(method, param, auth, retries + 1)
+                  logger.warn(s"${method} request failed(DBEXECUTE_ERROR). (${retries + 1} times)")
+                  retry()
                 case JsSuccess(err, _) =>
                   Future.failed(ErrorResponseException(method, err, s"(retried $retries times)"))
                 case JsError(errors) =>
@@ -180,6 +188,11 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
           logger.error(s"${method} respond ${r.getResponseBody()}")
           Future.failed(new ApiException(s"Unkown status($code) respond"))
       }
+    } recoverWith {
+      case e: TimeoutException if TIMEOUT_RETRY_MAX > retries =>
+        // This is also workaround for issue for the first time api calling.
+        logger.warn(s"${method} request failed(timeout). (${retries + 1} times)")
+        retry()
     }
   }
 

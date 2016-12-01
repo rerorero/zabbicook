@@ -30,7 +30,7 @@ case class ZabbixApiConf(
   def httpClientConfig: AsyncHttpClientConfig = {
     new AsyncHttpClientConfig.Builder()
       .setAcceptAnyCertificate(true)
-      .setRequestTimeout(30000)
+      .setRequestTimeout(20000)
       .build()
   }
 }
