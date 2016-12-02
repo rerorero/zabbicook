@@ -23,7 +23,7 @@ trait TestConfig {
 
 object TestConfig {
   // to avoid 'DBEXECUTE_ERROR' on travis.ci (experimental)
-  val sleep: Duration = Duration.ofMillis(System.getProperty("sleep", "100").toInt)
+  val sleep: Duration = Duration.ofMillis(System.getProperty("sleep", "0").toInt)
   println(s"sleep: ${sleep.toMillis} msec")
 
   val apiConfs: Map[Version, ZabbixApiConf] = Map(
@@ -31,13 +31,15 @@ object TestConfig {
       apiPath = "http://localhost:8080/api_jsonrpc.php",
       authUser = "Admin",
       authPass = "zabbix",
-      interval = sleep
+      interval = sleep,
+      concurrency = false
     ),
     Version(3,2,1) -> ZabbixApiConf(
       apiPath = "http://localhost:8081/api_jsonrpc.php",
       authUser = "Admin",
       authPass = "zabbix",
-      interval = sleep
+      interval = sleep,
+      concurrency = false
     )
   )
 }

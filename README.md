@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/rerorero/zabbicook.svg?branch=master)](https://travis-ci.org/rerorero/zabbicook)
 
 # Zabbicook
-Zabbicook will set up your zabbix server according to the configuration file described in [Hocon] (https://github.com/typesafehub/config/blob/master/HOCON.md) format.  
+Zabbicook sets up your zabbix server according to the configuration file described in [Hocon] (https://github.com/typesafehub/config/blob/master/HOCON.md) format.  
 Some items of the setting have idempotency.
 
 # Requirements
