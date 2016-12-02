@@ -16,7 +16,8 @@ case class Arguments(
   showDoc: Boolean = false,
   docDepth: Int = Int.MaxValue,
   docRoot: String = "",
-  apiInterval: Duration = Duration.ZERO
+  apiInterval: Duration = Duration.ZERO,
+  apiConcurrency: Boolean = false
 )
 
 object Arguments {
@@ -72,11 +73,17 @@ object Arguments {
       .action((x, c) => c.copy(docRoot = x))
       .text("The root of the tree displayed by '--doc'.")
 
-    opt[Int]('s', "sleep").optional()
+    opt[Int]("interval").optional()
       .valueName("<interval msec>")
       .action((x, c) => c.copy(apiInterval = Duration.ofMillis(Math.min(Math.max(x, 0), 1000))))
       .text("Specify the interval of calling zabbix api in milliseconds. The default is 0 and maximum value is 1000" + "" +
         " If you do not want to load the zabbix server and database, set the interval.")
+
+    opt[Int]('c', "concurrency").optional()
+      .action((_, c) => c.copy(apiConcurrency = true))
+      .text("By default, calling Zabbix api is serialized. When set this option, optimized for concurrent api operations." +
+        " If you do not want to stress the server, leave it as default.")
+
 
     opt[Unit]('d', "debug").optional()
       .action((_, c) => c.copy(isDebug = true))

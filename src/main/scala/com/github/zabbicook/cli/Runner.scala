@@ -22,7 +22,8 @@ class Runner(conf: Arguments) extends Logging {
     apiPath = conf.url.toString,
     authUser = conf.user,
     authPass = conf.pass,
-    interval = conf.apiInterval
+    interval = conf.apiInterval,
+    concurrency = conf.apiConcurrency
   )
 
   def run(): Future[RunResult] = {

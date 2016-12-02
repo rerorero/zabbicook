@@ -23,11 +23,11 @@ class ZabbixApi(conf: ZabbixApiConf) extends Logging {
   private[this] val sequence = new Random
 
   private[this] val throttle: Throttle = {
-    if (conf.interval.isZero) {
+    if (conf.concurrency && conf.interval.isZero) {
       NonStrictThrottle
     } else {
       new StrictThrottle(
-        concurrency = 1,
+        concurrency = if (conf.concurrency) 10 else 1,
         timeout = conf.timeout.multipliedBy(3),
         startInterval = conf.interval
       )

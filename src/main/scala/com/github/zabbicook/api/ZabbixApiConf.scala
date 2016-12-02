@@ -12,6 +12,7 @@ import scala.concurrent.ExecutionContext
   * @param authUser admin user
   * @param authPass admin password
   * @param interval interval of calling api
+  * @param concurrency flag of concurrency
   * @param executionContext execution context
   */
 case class ZabbixApiConf(
@@ -20,6 +21,7 @@ case class ZabbixApiConf(
   authUser: String,
   authPass: String,
   interval: Duration,
+  concurrency: Boolean,
   executionContext: ExecutionContext = ExecutionContext.global,
   timeout: Duration = Duration.ofSeconds(20)
 ) {
