@@ -1,0 +1,3268 @@
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+    <!--
+    #sidebar.affix-top {
+      position: static;
+      margin-top:100px;
+      width:228px;
+    }
+
+    #sidebar.affix {
+      position: fixed;
+      top:70px;
+      width:228px;
+    }
+    .list-group.panel > .list-group-item {
+      border-bottom-right-radius: 4px;
+      border-bottom-left-radius: 4px;
+      padding: 4px;
+    }
+    .list-group-submenu {
+      margin-left:20px;
+    }
+    -->
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="col-md-3" id="left-col">
+        <div class="list-group panel" id="sidebar">
+            
+                
+    
+        <a href="#c-mediaTypes" class="list-group-item" data-parent="#c-" data-toggle="collapse">mediaTypes</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-mediaTypes">
+        
+            
+    
+        <a href="#m-mediaTypes-name" class="list-group-item" data-parent="#c-mediaTypes">name</a>
+    
+
+        
+            
+    
+        <a href="#m-mediaTypes-type" class="list-group-item" data-parent="#c-mediaTypes">type</a>
+    
+
+        
+            
+    
+        <a href="#m-mediaTypes-scriptName" class="list-group-item" data-parent="#c-mediaTypes">scriptName</a>
+    
+
+        
+            
+    
+        <a href="#m-mediaTypes-gsmModem" class="list-group-item" data-parent="#c-mediaTypes">gsmModem</a>
+    
+
+        
+            
+    
+        <a href="#m-mediaTypes-password" class="list-group-item" data-parent="#c-mediaTypes">password</a>
+    
+
+        
+            
+    
+        <a href="#m-mediaTypes-SMTPEmail" class="list-group-item" data-parent="#c-mediaTypes">SMTPEmail</a>
+    
+
+        
+            
+    
+        <a href="#m-mediaTypes-SMTPHELO" class="list-group-item" data-parent="#c-mediaTypes">SMTPHELO</a>
+    
+
+        
+            
+    
+        <a href="#m-mediaTypes-SMTPServer" class="list-group-item" data-parent="#c-mediaTypes">SMTPServer</a>
+    
+
+        
+            
+    
+        <a href="#m-mediaTypes-enabled" class="list-group-item" data-parent="#c-mediaTypes">enabled</a>
+    
+
+        
+            
+    
+        <a href="#m-mediaTypes-user" class="list-group-item" data-parent="#c-mediaTypes">user</a>
+    
+
+        
+            
+    
+        <a href="#m-mediaTypes-scriptParameters" class="list-group-item" data-parent="#c-mediaTypes">scriptParameters</a>
+    
+
+        
+    </div>
+
+    
+
+            
+                
+    
+        <a href="#c-hostGroups" class="list-group-item" data-parent="#c-" data-toggle="collapse">hostGroups</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-hostGroups">
+        
+            
+    
+        <a href="#m-hostGroups-name" class="list-group-item" data-parent="#c-hostGroups">name</a>
+    
+
+        
+    </div>
+
+    
+
+            
+                
+    
+        <a href="#c-hosts" class="list-group-item" data-parent="#c-" data-toggle="collapse">hosts</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-hosts">
+        
+            
+    
+        <a href="#c-hosts-host" class="list-group-item" data-parent="#c-hosts" data-toggle="collapse">host</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-hosts-host">
+        
+            
+    
+        <a href="#m-hosts-host-hostname" class="list-group-item" data-parent="#c-hosts-host">hostname</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-host-description" class="list-group-item" data-parent="#c-hosts-host">description</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-host-inventoryMode" class="list-group-item" data-parent="#c-hosts-host">inventoryMode</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-host-ipmiAuthAlgorithm" class="list-group-item" data-parent="#c-hosts-host">ipmiAuthAlgorithm</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-host-ipmiPass" class="list-group-item" data-parent="#c-hosts-host">ipmiPass</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-host-ipmiPrivilegeLevel" class="list-group-item" data-parent="#c-hosts-host">ipmiPrivilegeLevel</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-host-ipmiUser" class="list-group-item" data-parent="#c-hosts-host">ipmiUser</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-host-visibleName" class="list-group-item" data-parent="#c-hosts-host">visibleName</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-host-enabled" class="list-group-item" data-parent="#c-hosts-host">enabled</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#m-hosts-groups" class="list-group-item" data-parent="#c-hosts">groups</a>
+    
+
+        
+            
+    
+        <a href="#c-hosts-interfaces" class="list-group-item" data-parent="#c-hosts" data-toggle="collapse">interfaces</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-hosts-interfaces">
+        
+            
+    
+        <a href="#m-hosts-interfaces-dns" class="list-group-item" data-parent="#c-hosts-interfaces">dns</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-interfaces-ip" class="list-group-item" data-parent="#c-hosts-interfaces">ip</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-interfaces-default" class="list-group-item" data-parent="#c-hosts-interfaces">default</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-interfaces-port" class="list-group-item" data-parent="#c-hosts-interfaces">port</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-interfaces-type" class="list-group-item" data-parent="#c-hosts-interfaces">type</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-interfaces-connectTo" class="list-group-item" data-parent="#c-hosts-interfaces">connectTo</a>
+    
+
+        
+            
+    
+        <a href="#m-hosts-interfaces-bulk" class="list-group-item" data-parent="#c-hosts-interfaces">bulk</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#m-hosts-templates" class="list-group-item" data-parent="#c-hosts">templates</a>
+    
+
+        
+    </div>
+
+    
+
+            
+                
+    
+        <a href="#c-userGroups" class="list-group-item" data-parent="#c-" data-toggle="collapse">userGroups</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-userGroups">
+        
+            
+    
+        <a href="#c-userGroups-userGroup" class="list-group-item" data-parent="#c-userGroups" data-toggle="collapse">userGroup</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-userGroups-userGroup">
+        
+            
+    
+        <a href="#m-userGroups-userGroup-name" class="list-group-item" data-parent="#c-userGroups-userGroup">name</a>
+    
+
+        
+            
+    
+        <a href="#m-userGroups-userGroup-debug" class="list-group-item" data-parent="#c-userGroups-userGroup">debug</a>
+    
+
+        
+            
+    
+        <a href="#m-userGroups-userGroup-guiAccess" class="list-group-item" data-parent="#c-userGroups-userGroup">guiAccess</a>
+    
+
+        
+            
+    
+        <a href="#m-userGroups-userGroup-enabled" class="list-group-item" data-parent="#c-userGroups-userGroup">enabled</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#c-userGroups-permissions" class="list-group-item" data-parent="#c-userGroups" data-toggle="collapse">permissions</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-userGroups-permissions">
+        
+            
+    
+        <a href="#m-userGroups-permissions-hostgroup" class="list-group-item" data-parent="#c-userGroups-permissions">hostgroup</a>
+    
+
+        
+            
+    
+        <a href="#m-userGroups-permissions-permission" class="list-group-item" data-parent="#c-userGroups-permissions">permission</a>
+    
+
+        
+    </div>
+
+    
+
+        
+    </div>
+
+    
+
+            
+                
+    
+        <a href="#c-users" class="list-group-item" data-parent="#c-" data-toggle="collapse">users</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-users">
+        
+            
+    
+        <a href="#c-users-user" class="list-group-item" data-parent="#c-users" data-toggle="collapse">user</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-users-user">
+        
+            
+    
+        <a href="#m-users-user-alias" class="list-group-item" data-parent="#c-users-user">alias</a>
+    
+
+        
+            
+    
+        <a href="#m-users-user-autoLogin" class="list-group-item" data-parent="#c-users-user">autoLogin</a>
+    
+
+        
+            
+    
+        <a href="#m-users-user-lang" class="list-group-item" data-parent="#c-users-user">lang</a>
+    
+
+        
+            
+    
+        <a href="#m-users-user-name" class="list-group-item" data-parent="#c-users-user">name</a>
+    
+
+        
+            
+    
+        <a href="#m-users-user-refresh" class="list-group-item" data-parent="#c-users-user">refresh</a>
+    
+
+        
+            
+    
+        <a href="#m-users-user-rowsPerPage" class="list-group-item" data-parent="#c-users-user">rowsPerPage</a>
+    
+
+        
+            
+    
+        <a href="#m-users-user-surName" class="list-group-item" data-parent="#c-users-user">surName</a>
+    
+
+        
+            
+    
+        <a href="#m-users-user-theme" class="list-group-item" data-parent="#c-users-user">theme</a>
+    
+
+        
+            
+    
+        <a href="#m-users-user-type" class="list-group-item" data-parent="#c-users-user">type</a>
+    
+
+        
+            
+    
+        <a href="#m-users-user-url" class="list-group-item" data-parent="#c-users-user">url</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#m-users-groups" class="list-group-item" data-parent="#c-users">groups</a>
+    
+
+        
+            
+    
+        <a href="#m-users-password" class="list-group-item" data-parent="#c-users">password</a>
+    
+
+        
+            
+    
+        <a href="#m-users-initialPassword" class="list-group-item" data-parent="#c-users">initialPassword</a>
+    
+
+        
+            
+    
+        <a href="#c-users-media" class="list-group-item" data-parent="#c-users" data-toggle="collapse">media</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-users-media">
+        
+            
+    
+        <a href="#m-users-media-enabled" class="list-group-item" data-parent="#c-users-media">enabled</a>
+    
+
+        
+            
+    
+        <a href="#m-users-media-type" class="list-group-item" data-parent="#c-users-media">type</a>
+    
+
+        
+            
+    
+        <a href="#m-users-media-whenActive" class="list-group-item" data-parent="#c-users-media">whenActive</a>
+    
+
+        
+            
+    
+        <a href="#m-users-media-sendTo" class="list-group-item" data-parent="#c-users-media">sendTo</a>
+    
+
+        
+            
+    
+        <a href="#m-users-media-severity" class="list-group-item" data-parent="#c-users-media">severity</a>
+    
+
+        
+    </div>
+
+    
+
+        
+    </div>
+
+    
+
+            
+                
+    
+        <a href="#c-actions" class="list-group-item" data-parent="#c-" data-toggle="collapse">actions</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-actions">
+        
+            
+    
+        <a href="#m-actions-name" class="list-group-item" data-parent="#c-actions">name</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-defaultStepDuration" class="list-group-item" data-parent="#c-actions">defaultStepDuration</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-event" class="list-group-item" data-parent="#c-actions">event</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-message" class="list-group-item" data-parent="#c-actions">message</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-subject" class="list-group-item" data-parent="#c-actions">subject</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-recoveryMessage" class="list-group-item" data-parent="#c-actions">recoveryMessage</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-recoverySubject" class="list-group-item" data-parent="#c-actions">recoverySubject</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-recoveryMessageEnabled" class="list-group-item" data-parent="#c-actions">recoveryMessageEnabled</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-enabled" class="list-group-item" data-parent="#c-actions">enabled</a>
+    
+
+        
+            
+    
+        <a href="#c-actions-filter" class="list-group-item" data-parent="#c-actions" data-toggle="collapse">filter</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-actions-filter">
+        
+            
+    
+        <a href="#c-actions-filter-conditions" class="list-group-item" data-parent="#c-actions-filter" data-toggle="collapse">conditions</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-actions-filter-conditions">
+        
+            
+    
+        <a href="#m-actions-filter-conditions-type" class="list-group-item" data-parent="#c-actions-filter-conditions">type</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-filter-conditions-value" class="list-group-item" data-parent="#c-actions-filter-conditions">value</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-filter-conditions-value2" class="list-group-item" data-parent="#c-actions-filter-conditions">value2</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-filter-conditions-label" class="list-group-item" data-parent="#c-actions-filter-conditions">label</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-filter-conditions-operator" class="list-group-item" data-parent="#c-actions-filter-conditions">operator</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#m-actions-filter-type" class="list-group-item" data-parent="#c-actions-filter">type</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-filter-customExpression" class="list-group-item" data-parent="#c-actions-filter">customExpression</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#c-actions-operations" class="list-group-item" data-parent="#c-actions" data-toggle="collapse">operations</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-actions-operations">
+        
+            
+    
+        <a href="#m-actions-operations-type" class="list-group-item" data-parent="#c-actions-operations">type</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-operations-operationCondition" class="list-group-item" data-parent="#c-actions-operations">operationCondition</a>
+    
+
+        
+            
+    
+        <a href="#c-actions-operations-message" class="list-group-item" data-parent="#c-actions-operations" data-toggle="collapse">message</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-actions-operations-message">
+        
+            
+    
+        <a href="#m-actions-operations-message-defaultMessage" class="list-group-item" data-parent="#c-actions-operations-message">defaultMessage</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-operations-message-mediaType" class="list-group-item" data-parent="#c-actions-operations-message">mediaType</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-operations-message-message" class="list-group-item" data-parent="#c-actions-operations-message">message</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-operations-message-subject" class="list-group-item" data-parent="#c-actions-operations-message">subject</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#m-actions-operations-sendToUserGroups" class="list-group-item" data-parent="#c-actions-operations">sendToUserGroups</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-operations-sendToUsers" class="list-group-item" data-parent="#c-actions-operations">sendToUsers</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-operations-stepDuration" class="list-group-item" data-parent="#c-actions-operations">stepDuration</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-operations-stepFrom" class="list-group-item" data-parent="#c-actions-operations">stepFrom</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-operations-stepTo" class="list-group-item" data-parent="#c-actions-operations">stepTo</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#c-actions-recoveryOperations" class="list-group-item" data-parent="#c-actions" data-toggle="collapse">recoveryOperations</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-actions-recoveryOperations">
+        
+            
+    
+        <a href="#m-actions-recoveryOperations-type" class="list-group-item" data-parent="#c-actions-recoveryOperations">type</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-recoveryOperations-operationCondition" class="list-group-item" data-parent="#c-actions-recoveryOperations">operationCondition</a>
+    
+
+        
+            
+    
+        <a href="#c-actions-recoveryOperations-message" class="list-group-item" data-parent="#c-actions-recoveryOperations" data-toggle="collapse">message</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-actions-recoveryOperations-message">
+        
+            
+    
+        <a href="#m-actions-recoveryOperations-message-defaultMessage" class="list-group-item" data-parent="#c-actions-recoveryOperations-message">defaultMessage</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-recoveryOperations-message-mediaType" class="list-group-item" data-parent="#c-actions-recoveryOperations-message">mediaType</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-recoveryOperations-message-message" class="list-group-item" data-parent="#c-actions-recoveryOperations-message">message</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-recoveryOperations-message-subject" class="list-group-item" data-parent="#c-actions-recoveryOperations-message">subject</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#m-actions-recoveryOperations-sendToUserGroups" class="list-group-item" data-parent="#c-actions-recoveryOperations">sendToUserGroups</a>
+    
+
+        
+            
+    
+        <a href="#m-actions-recoveryOperations-sendToUsers" class="list-group-item" data-parent="#c-actions-recoveryOperations">sendToUsers</a>
+    
+
+        
+    </div>
+
+    
+
+        
+    </div>
+
+    
+
+            
+                
+    
+        <a href="#c-templates" class="list-group-item" data-parent="#c-" data-toggle="collapse">templates</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-templates">
+        
+            
+    
+        <a href="#c-templates-template" class="list-group-item" data-parent="#c-templates" data-toggle="collapse">template</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-templates-template">
+        
+            
+    
+        <a href="#m-templates-template-name" class="list-group-item" data-parent="#c-templates-template">name</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-template-description" class="list-group-item" data-parent="#c-templates-template">description</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-template-visibleName" class="list-group-item" data-parent="#c-templates-template">visibleName</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#c-templates-groups" class="list-group-item" data-parent="#c-templates" data-toggle="collapse">groups</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-templates-groups">
+        
+            
+    
+        <a href="#m-templates-groups-name" class="list-group-item" data-parent="#c-templates-groups">name</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-groups-description" class="list-group-item" data-parent="#c-templates-groups">description</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-groups-visibleName" class="list-group-item" data-parent="#c-templates-groups">visibleName</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#m-templates-groups" class="list-group-item" data-parent="#c-templates">groups</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-linkedTemplates" class="list-group-item" data-parent="#c-templates">linkedTemplates</a>
+    
+
+        
+            
+    
+        <a href="#c-templates-items" class="list-group-item" data-parent="#c-templates" data-toggle="collapse">items</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-templates-items">
+        
+            
+    
+        <a href="#m-templates-items-interval" class="list-group-item" data-parent="#c-templates-items">interval</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-key" class="list-group-item" data-parent="#c-templates-items">key</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-name" class="list-group-item" data-parent="#c-templates-items">name</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-type" class="list-group-item" data-parent="#c-templates-items">type</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-typeOfInformation" class="list-group-item" data-parent="#c-templates-items">typeOfInformation</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-authMethod" class="list-group-item" data-parent="#c-templates-items">authMethod</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-dataType" class="list-group-item" data-parent="#c-templates-items">dataType</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-delta" class="list-group-item" data-parent="#c-templates-items">delta</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-description" class="list-group-item" data-parent="#c-templates-items">description</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-multiplier" class="list-group-item" data-parent="#c-templates-items">multiplier</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-history" class="list-group-item" data-parent="#c-templates-items">history</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-hostInventoryField" class="list-group-item" data-parent="#c-templates-items">hostInventoryField</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-IPMISensor" class="list-group-item" data-parent="#c-templates-items">IPMISensor</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-logTimeFormat" class="list-group-item" data-parent="#c-templates-items">logTimeFormat</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-multiplierEnabled" class="list-group-item" data-parent="#c-templates-items">multiplierEnabled</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-params" class="list-group-item" data-parent="#c-templates-items">params</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-password" class="list-group-item" data-parent="#c-templates-items">password</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-port" class="list-group-item" data-parent="#c-templates-items">port</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-privateKey" class="list-group-item" data-parent="#c-templates-items">privateKey</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-publicKey" class="list-group-item" data-parent="#c-templates-items">publicKey</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-SNMPCommunity" class="list-group-item" data-parent="#c-templates-items">SNMPCommunity</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-SNMPOID" class="list-group-item" data-parent="#c-templates-items">SNMPOID</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-SNMPAuthPassphrase" class="list-group-item" data-parent="#c-templates-items">SNMPAuthPassphrase</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-SNMPAuthProtocol" class="list-group-item" data-parent="#c-templates-items">SNMPAuthProtocol</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-SNMPContextName" class="list-group-item" data-parent="#c-templates-items">SNMPContextName</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-SNMPPrivacyPassphrase" class="list-group-item" data-parent="#c-templates-items">SNMPPrivacyPassphrase</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-SNMPPrivacyProtocol" class="list-group-item" data-parent="#c-templates-items">SNMPPrivacyProtocol</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-SNMPSecurityLevel" class="list-group-item" data-parent="#c-templates-items">SNMPSecurityLevel</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-SNMPSecurityName" class="list-group-item" data-parent="#c-templates-items">SNMPSecurityName</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-status" class="list-group-item" data-parent="#c-templates-items">status</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-allowedHosts" class="list-group-item" data-parent="#c-templates-items">allowedHosts</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-trends" class="list-group-item" data-parent="#c-templates-items">trends</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-units" class="list-group-item" data-parent="#c-templates-items">units</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-items-username" class="list-group-item" data-parent="#c-templates-items">username</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#c-templates-graphs" class="list-group-item" data-parent="#c-templates" data-toggle="collapse">graphs</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-templates-graphs">
+        
+            
+    
+        <a href="#c-templates-graphs-graph" class="list-group-item" data-parent="#c-templates-graphs" data-toggle="collapse">graph</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-templates-graphs-graph">
+        
+            
+    
+        <a href="#m-templates-graphs-graph-height" class="list-group-item" data-parent="#c-templates-graphs-graph">height</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-graph-name" class="list-group-item" data-parent="#c-templates-graphs-graph">name</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-graph-width" class="list-group-item" data-parent="#c-templates-graphs-graph">width</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-graph-type" class="list-group-item" data-parent="#c-templates-graphs-graph">type</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-graph-percentLeft" class="list-group-item" data-parent="#c-templates-graphs-graph">percentLeft</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-graph-percentRight" class="list-group-item" data-parent="#c-templates-graphs-graph">percentRight</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-graph-view3D" class="list-group-item" data-parent="#c-templates-graphs-graph">view3D</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-graph-showLegend" class="list-group-item" data-parent="#c-templates-graphs-graph">showLegend</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-graph-showWorkingTime" class="list-group-item" data-parent="#c-templates-graphs-graph">showWorkingTime</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-graph-yAxisMax" class="list-group-item" data-parent="#c-templates-graphs-graph">yAxisMax</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-graph-yAxisMin" class="list-group-item" data-parent="#c-templates-graphs-graph">yAxisMin</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-graph-yAxisMaxType" class="list-group-item" data-parent="#c-templates-graphs-graph">yAxisMaxType</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-graph-yAxisMinType" class="list-group-item" data-parent="#c-templates-graphs-graph">yAxisMinType</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#c-templates-graphs-items" class="list-group-item" data-parent="#c-templates-graphs" data-toggle="collapse">items</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-templates-graphs-items">
+        
+            
+    
+        <a href="#m-templates-graphs-items-color" class="list-group-item" data-parent="#c-templates-graphs-items">color</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-items-itemName" class="list-group-item" data-parent="#c-templates-graphs-items">itemName</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-items-function" class="list-group-item" data-parent="#c-templates-graphs-items">function</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-items-style" class="list-group-item" data-parent="#c-templates-graphs-items">style</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-items-order" class="list-group-item" data-parent="#c-templates-graphs-items">order</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-items-type" class="list-group-item" data-parent="#c-templates-graphs-items">type</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-graphs-items-yAxisSide" class="list-group-item" data-parent="#c-templates-graphs-items">yAxisSide</a>
+    
+
+        
+    </div>
+
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#c-templates-triggers" class="list-group-item" data-parent="#c-templates" data-toggle="collapse">triggers</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-templates-triggers">
+        
+            
+    
+        <a href="#c-templates-triggers-trigger" class="list-group-item" data-parent="#c-templates-triggers" data-toggle="collapse">trigger</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-templates-triggers-trigger">
+        
+            
+    
+        <a href="#m-templates-triggers-trigger-name" class="list-group-item" data-parent="#c-templates-triggers-trigger">name</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-trigger-expression" class="list-group-item" data-parent="#c-templates-triggers-trigger">expression</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-trigger-description" class="list-group-item" data-parent="#c-templates-triggers-trigger">description</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-trigger-severity" class="list-group-item" data-parent="#c-templates-triggers-trigger">severity</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-trigger-enabled" class="list-group-item" data-parent="#c-templates-triggers-trigger">enabled</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-trigger-eventGenerationMode" class="list-group-item" data-parent="#c-templates-triggers-trigger">eventGenerationMode</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-trigger-url" class="list-group-item" data-parent="#c-templates-triggers-trigger">url</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-trigger-okEventGeneration" class="list-group-item" data-parent="#c-templates-triggers-trigger">okEventGeneration</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-trigger-recoveryExpression" class="list-group-item" data-parent="#c-templates-triggers-trigger">recoveryExpression</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-trigger-okEventCloses" class="list-group-item" data-parent="#c-templates-triggers-trigger">okEventCloses</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-trigger-tagForMatching" class="list-group-item" data-parent="#c-templates-triggers-trigger">tagForMatching</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-trigger-manualClose" class="list-group-item" data-parent="#c-templates-triggers-trigger">manualClose</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#c-templates-triggers-dependencies" class="list-group-item" data-parent="#c-templates-triggers" data-toggle="collapse">dependencies</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-templates-triggers-dependencies">
+        
+            
+    
+        <a href="#m-templates-triggers-dependencies-template" class="list-group-item" data-parent="#c-templates-triggers-dependencies">template</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-dependencies-name" class="list-group-item" data-parent="#c-templates-triggers-dependencies">name</a>
+    
+
+        
+    </div>
+
+    
+
+        
+            
+    
+        <a href="#c-templates-triggers-tags" class="list-group-item" data-parent="#c-templates-triggers" data-toggle="collapse">tags</a>
+        
+    <div class="collapse list-group-submenu list-group-submenu-1" id="c-templates-triggers-tags">
+        
+            
+    
+        <a href="#m-templates-triggers-tags-tag" class="list-group-item" data-parent="#c-templates-triggers-tags">tag</a>
+    
+
+        
+            
+    
+        <a href="#m-templates-triggers-tags-value" class="list-group-item" data-parent="#c-templates-triggers-tags">value</a>
+    
+
+        
+    </div>
+
+    
+
+        
+    </div>
+
+    
+
+        
+    </div>
+
+    
+
+            
+        </div>
+    </div>
+
+    <div class="col-md-9" id="mainCol">
+        
+            
+    <h1 id="m-mediaTypes">mediaTypes</h2>
+    
+        <p>The MediaType object</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-mediaTypes-name">mediaTypes.name</h2>
+    
+        <p>(required)	Name of the media type.</p>
+    
+    
+
+    
+        
+    <h4 id="m-mediaTypes-type">mediaTypes.type</h2>
+    
+        <p>(required) Transport used by the media type.</p>
+    
+    
+
+    
+        
+    <h4 id="m-mediaTypes-scriptName">mediaTypes.scriptName (textLimit)</h2>
+    
+        <p>Script name or text limit.</p>
+    
+        <p>For script media types scriptName contains the name of the executed script.</p>
+    
+        <p>For Ez Texting textLimit contains the message text limit.</p>
+    
+        <p>  Possible text limit values:</p>
+    
+        <p>  0 - USA (160 characters);</p>
+    
+        <p>  1 - Canada (136 characters).</p>
+    
+        <p>Required for script and Ez Texting media types. </p>
+    
+    
+
+    
+        
+    <h4 id="m-mediaTypes-gsmModem">mediaTypes.gsmModem</h2>
+    
+        <p>Serial device name of the GSM modem.</p>
+    
+        <p>Required for SMS media types. </p>
+    
+    
+
+    
+        
+    <h4 id="m-mediaTypes-password">mediaTypes.password</h2>
+    
+        <p>Authentication password.</p>
+    
+        <p>Required for Jabber and Ez Texting media types. </p>
+    
+    
+
+    
+        
+    <h4 id="m-mediaTypes-SMTPEmail">mediaTypes.SMTPEmail</h2>
+    
+        <p>Email address from which notifications will be sent.</p>
+    
+        <p>Required for email media types. </p>
+    
+    
+
+    
+        
+    <h4 id="m-mediaTypes-SMTPHELO">mediaTypes.SMTPHELO</h2>
+    
+        <p>SMTP HELO.</p>
+    
+        <p>Required for email media types. </p>
+    
+    
+
+    
+        
+    <h4 id="m-mediaTypes-SMTPServer">mediaTypes.SMTPServer</h2>
+    
+        <p>SMTP server.</p>
+    
+        <p>Required for email media types. </p>
+    
+    
+
+    
+        
+    <h4 id="m-mediaTypes-enabled">mediaTypes.enabled</h2>
+    
+        <p>Whether the media type is enabled.</p>
+    
+    
+
+    
+        
+    <h4 id="m-mediaTypes-user">mediaTypes.user (username)</h2>
+    
+        <p>Username or Jabber identifier.</p>
+    
+        <p>Required for Jabber and Ez Texting media types. </p>
+    
+    
+
+    
+        
+    <h4 id="m-mediaTypes-scriptParameters">mediaTypes.scriptParameters (params)</h2>
+    
+        <p>Script parameters.</p>
+    
+        <p>Each parameter ends with a new line feed. </p>
+    
+    
+
+    
+
+    
+
+        
+            
+    <h1 id="m-hostGroups">hostGroups</h2>
+    
+        <p>Host group object</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-hostGroups-name">hostGroups.name</h2>
+    
+        <p>(required) Name of the host group.</p>
+    
+    
+
+    
+
+    
+
+        
+            
+    <h1 id="m-hosts">hosts</h2>
+    
+        <p>Host configurations</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h2 id="m-hosts-host">hosts.host</h2>
+    
+        <p>The host object</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-hosts-host-hostname">hosts.host.hostname (name)</h2>
+    
+        <p>(required) Technical name of the host.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-host-description">hosts.host.description (desc)</h2>
+    
+        <p>Description of the host.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-host-inventoryMode">hosts.host.inventoryMode</h2>
+    
+        <p>Host inventory population mode.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-host-ipmiAuthAlgorithm">hosts.host.ipmiAuthAlgorithm</h2>
+    
+        <p>IPMI authentication algorithm.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-host-ipmiPass">hosts.host.ipmiPass (ipmiPassword)</h2>
+    
+        <p>IPMI password.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-host-ipmiPrivilegeLevel">hosts.host.ipmiPrivilegeLevel</h2>
+    
+        <p>IPMI privilege level.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-host-ipmiUser">hosts.host.ipmiUser</h2>
+    
+        <p>IPMI username.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-host-visibleName">hosts.host.visibleName</h2>
+    
+        <p>Visible name of the host.</p>
+    
+        <p>|Default: host property value.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-host-enabled">hosts.host.enabled</h2>
+    
+        <p>Enabled status of the host.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h4 id="m-hosts-groups">hosts.groups (hostGroups)</h2>
+    
+        <p>(required) Host groups to add the host to.</p>
+    
+    
+
+    
+        
+    <h2 id="m-hosts-interfaces">hosts.interfaces</h2>
+    
+        <p>Host interface object</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-hosts-interfaces-dns">hosts.interfaces.dns</h2>
+    
+        <p>(required if DNS used) DNS name used by the interface.</p>
+    
+        <p>Can be empty if the connection is made via IP.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-interfaces-ip">hosts.interfaces.ip</h2>
+    
+        <p>(required if IP used) IP address used by the interface.</p>
+    
+        <p>Can be empty if the connection is made via DNS.</p>
+    
+        <p>      </p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-interfaces-default">hosts.interfaces.default (main)</h2>
+    
+        <p>(required)	boolean	Whether the interface is used as default on the host.&quot; +</p>
+    
+        <p>Only one interface of some type can be set as default on a host.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-interfaces-port">hosts.interfaces.port</h2>
+    
+        <p>(required, String) Port number used by the interface. Can contain user macros.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-interfaces-type">hosts.interfaces.type</h2>
+    
+        <p>(required) Interface type.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-interfaces-connectTo">hosts.interfaces.connectTo (useIP)</h2>
+    
+        <p>(required) Whether the connection should be made via IP.</p>
+    
+    
+
+    
+        
+    <h4 id="m-hosts-interfaces-bulk">hosts.interfaces.bulk (useBulk)</h2>
+    
+        <p>Whether to use bulk SNMP requests.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h4 id="m-hosts-templates">hosts.templates</h2>
+    
+        <p>Linked template names.</p>
+    
+    
+
+    
+
+    
+
+        
+            
+    <h1 id="m-userGroups">userGroups</h2>
+    
+        <p>Permission of a user group.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h2 id="m-userGroups-userGroup">userGroups.userGroup</h2>
+    
+        <p>User group object.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-userGroups-userGroup-name">userGroups.userGroup.name</h2>
+    
+        <p>(required) Name of the user group.</p>
+    
+    
+
+    
+        
+    <h4 id="m-userGroups-userGroup-debug">userGroups.userGroup.debug (debugMode)</h2>
+    
+        <p>Whether debug mode is enabled or disabled.</p>
+    
+    
+
+    
+        
+    <h4 id="m-userGroups-userGroup-guiAccess">userGroups.userGroup.guiAccess (gui)</h2>
+    
+        <p>Frontend authentication method of the users in the group.</p>
+    
+    
+
+    
+        
+    <h4 id="m-userGroups-userGroup-enabled">userGroups.userGroup.enabled (usersStatus)</h2>
+    
+        <p>Whether the user group is enabled or disabled.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h2 id="m-userGroups-permissions">userGroups.permissions</h2>
+    
+        <p>Permission of ths host group.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-userGroups-permissions-hostgroup">userGroups.permissions.hostgroup (hostGroup)</h2>
+    
+        <p>Name of the host group</p>
+    
+    
+
+    
+        
+    <h4 id="m-userGroups-permissions-permission">userGroups.permissions.permission</h2>
+    
+        <p>Access level to the host group.</p>
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+        
+            
+    <h1 id="m-users">users</h2>
+    
+        <p>User settings.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h2 id="m-users-user">users.user</h2>
+    
+        <p>User object.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-users-user-alias">users.user.alias</h2>
+    
+        <p>(required) User alias.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-user-autoLogin">users.user.autoLogin (autologin)</h2>
+    
+        <p>Whether to enable auto-login.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-user-lang">users.user.lang (language)</h2>
+    
+        <p> Language code of the user&#x27;s language.</p>
+    
+        <p>Default: en_GB.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-user-name">users.user.name</h2>
+    
+        <p>Name of the user.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-user-refresh">users.user.refresh</h2>
+    
+        <p>Automatic refresh period in seconds.</p>
+    
+        <p>Default: 30.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-user-rowsPerPage">users.user.rowsPerPage (rows)</h2>
+    
+        <p>Amount of object rows to show per page.</p>
+    
+        <p>Default: 50.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-user-surName">users.user.surName (surname, sur)</h2>
+    
+        <p>Surname of the user.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-user-theme">users.user.theme</h2>
+    
+        <p>User&#x27;s theme.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-user-type">users.user.type</h2>
+    
+        <p>Type of the user.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-user-url">users.user.url</h2>
+    
+        <p>URL of the page to redirect the user to after logging in.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h4 id="m-users-groups">users.groups</h2>
+    
+        <p>(required) User groups to add the user to.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-password">users.password</h2>
+    
+        <p>(required) User&#x27;s password.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-initialPassword">users.initialPassword</h2>
+    
+        <p>(required) Whether the password is used only when the user is created.</p>
+    
+        <p>If set false, zabbicook always set the password.</p>
+    
+    
+
+    
+        
+    <h2 id="m-users-media">users.media</h2>
+    
+        <p>The Media object</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-users-media-enabled">users.media.enabled</h2>
+    
+        <p>(required)	Whether the media is enabled.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-media-type">users.media.type</h2>
+    
+        <p>(required) The media type used by the media.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-media-whenActive">users.media.whenActive (period)</h2>
+    
+        <p>(required) Time when the notifications can be sent as a time period.</p>
+    
+        <p>ex. &quot;1-7,00:00-24:00&quot; </p>
+    
+    
+
+    
+        
+    <h4 id="m-users-media-sendTo">users.media.sendTo</h2>
+    
+        <p>(required) Address, user name or other identifier of the recipient.</p>
+    
+    
+
+    
+        
+    <h4 id="m-users-media-severity">users.media.severity</h2>
+    
+        <p>(required)	Array of trigger severities to send notifications about.</p>
+    
+        <p>Notifications will be sent from triggers with severities as followed this setting.</p>
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+        
+            
+    <h1 id="m-actions">actions</h2>
+    
+        <p>Action object.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-actions-name">actions.name</h2>
+    
+        <p>(required)	string	Name of the action.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-defaultStepDuration">actions.defaultStepDuration (stepDuration)</h2>
+    
+        <p>(required)	integer	Default operation step duration. Must be greater than 60 seconds.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-event">actions.event</h2>
+    
+        <p>(required)(constant) Type of events that the action will handle. This value is not changeable.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-message">actions.message (defaultMessage)</h2>
+    
+        <p>Problem message text.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-subject">actions.subject (defaultSubject)</h2>
+    
+        <p>Problem message subject.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-recoveryMessage">actions.recoveryMessage</h2>
+    
+        <p>Recovery message text.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-recoverySubject">actions.recoverySubject</h2>
+    
+        <p>Recovery message subject</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-recoveryMessageEnabled">actions.recoveryMessageEnabled</h2>
+    
+        <p>Whether recovery messages are enabled. (Zabbix version &lt;= 3.0.x)</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-enabled">actions.enabled</h2>
+    
+        <p>Whether the action is enabled or disabled.</p>
+    
+    
+
+    
+        
+    <h2 id="m-actions-filter">actions.filter</h2>
+    
+        <p>The action filter object defines a set of conditions that must be met to perform the configured action operations.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h2 id="m-actions-filter-conditions">actions.filter.conditions</h2>
+    
+        <p>Set of filter conditions to use for filtering results.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-actions-filter-conditions-type">actions.filter.conditions.type</h2>
+    
+        <p>(required) Type of filter condition.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-filter-conditions-value">actions.filter.conditions.value</h2>
+    
+        <p>(required) Value to compare with.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-filter-conditions-value2">actions.filter.conditions.value2</h2>
+    
+        <p>Secondary value to compare with. Requried for trigger actions when condition type is &#x27;eventTagValue&#x27;</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-filter-conditions-label">actions.filter.conditions.label (formulaid)</h2>
+    
+        <p>Arbitrary unique ID that is used to reference the condition from a custom expression.</p>
+    
+        <p>Can only contain capital-case letters.</p>
+    
+        <p>The ID must be defined by the user when modifying filter conditions, but will be generated anew when requesting them afterward.</p>
+    
+        <p>      </p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-filter-conditions-operator">actions.filter.conditions.operator</h2>
+    
+        <p>Filter condition operator.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h4 id="m-actions-filter-type">actions.filter.type (typeOfCalculation)</h2>
+    
+        <p>(required) Filter condition evaluation method.</p>
+    
+        <p>When conditions is empty array this does not affect but it should be set &#x27;AndOr&#x27;.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-filter-customExpression">actions.filter.customExpression (formula)</h2>
+    
+        <p>User-defined expression to be used for evaluating conditions of filters with a &#x27;customExpression&#x27;.</p>
+    
+        <p>The expression must contain IDs that reference specific filter conditions by its formulaid(i.e. &#x27;label&#x27;).</p>
+    
+        <p>The IDs used in the expression must exactly match the ones defined in the filter conditions:</p>
+    
+        <p>no condition can remain unused or omitted.</p>
+    
+        <p>Required for &#x27;customExpression&#x27; filters.</p>
+    
+        <p>      </p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h2 id="m-actions-operations">actions.operations</h2>
+    
+        <p>The action operation object defines an operation that will be performed when an action is executed.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-actions-operations-type">actions.operations.type (operationType)</h2>
+    
+        <p>Type of operation.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-operations-operationCondition">actions.operations.operationCondition</h2>
+    
+        <p>Operation condition evaluation method.</p>
+    
+    
+
+    
+        
+    <h2 id="m-actions-operations-message">actions.operations.message</h2>
+    
+        <p>Object containing the data about the message sent by the operation.</p>
+    
+        <p>Required for message operations.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-actions-operations-message-defaultMessage">actions.operations.message.defaultMessage</h2>
+    
+        <p>Whether to use the default action message text and subject.</p>
+    
+        <p>When set &#x27;true&#x27;, use the data from the operation;</p>
+    
+        <p>When set &#x27;false&#x27;, use the data from the action.</p>
+    
+        <p>Default: false.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-operations-message-mediaType">actions.operations.message.mediaType</h2>
+    
+        <p>Name of the media type that will be used to send the message.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-operations-message-message">actions.operations.message.message</h2>
+    
+        <p>Operation message text. It is used when defaultMessage is false.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-operations-message-subject">actions.operations.message.subject</h2>
+    
+        <p>Operation message subject. It is used when defaultMessage is false.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h4 id="m-actions-operations-sendToUserGroups">actions.operations.sendToUserGroups</h2>
+    
+        <p>User groups to send messages to.</p>
+    
+        <p>Required for message operations if &#x27;sendToUsers&#x27; is not set. </p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-operations-sendToUsers">actions.operations.sendToUsers</h2>
+    
+        <p>Users to send messages to.</p>
+    
+        <p>Required for message operations if &#x27;sendToUserGroups&#x27; is not set. </p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-operations-stepDuration">actions.operations.stepDuration</h2>
+    
+        <p>Duration of an escalation step in seconds. Must be greater than 60 seconds.</p>
+    
+        <p>If set to 0, the default action escalation period will be used.</p>
+    
+        <p>Default: 0.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-operations-stepFrom">actions.operations.stepFrom</h2>
+    
+        <p>Step to start escalation from. Default: 1.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-operations-stepTo">actions.operations.stepTo</h2>
+    
+        <p>Step to end escalation at. Default: 1.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h2 id="m-actions-recoveryOperations">actions.recoveryOperations</h2>
+    
+        <p>The action recovery operation object defines an operation that will be performed when a problem is resolved.</p>
+    
+        <p>Recovery operations are possible for trigger actions and internal actions.</p>
+    
+        <p>(Zabbix version &gt;= 3.2.x)</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-actions-recoveryOperations-type">actions.recoveryOperations.type (operationType)</h2>
+    
+        <p>Type of operation.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-recoveryOperations-operationCondition">actions.recoveryOperations.operationCondition</h2>
+    
+        <p>Operation condition evaluation method.</p>
+    
+    
+
+    
+        
+    <h2 id="m-actions-recoveryOperations-message">actions.recoveryOperations.message</h2>
+    
+        <p>Object containing the data about the message sent by the operation.</p>
+    
+        <p>Required for message operations.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-actions-recoveryOperations-message-defaultMessage">actions.recoveryOperations.message.defaultMessage</h2>
+    
+        <p>Whether to use the default action message text and subject.</p>
+    
+        <p>When set &#x27;true&#x27;, use the data from the operation;</p>
+    
+        <p>When set &#x27;false&#x27;, use the data from the action.</p>
+    
+        <p>Default: false.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-recoveryOperations-message-mediaType">actions.recoveryOperations.message.mediaType</h2>
+    
+        <p>Name of the media type that will be used to send the message.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-recoveryOperations-message-message">actions.recoveryOperations.message.message</h2>
+    
+        <p>Operation message text. It is used when defaultMessage is false.</p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-recoveryOperations-message-subject">actions.recoveryOperations.message.subject</h2>
+    
+        <p>Operation message subject. It is used when defaultMessage is false.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h4 id="m-actions-recoveryOperations-sendToUserGroups">actions.recoveryOperations.sendToUserGroups</h2>
+    
+        <p>User groups to send messages to.</p>
+    
+        <p>Required for message operations if &#x27;sendToUsers&#x27; is not set. </p>
+    
+    
+
+    
+        
+    <h4 id="m-actions-recoveryOperations-sendToUsers">actions.recoveryOperations.sendToUsers</h2>
+    
+        <p>Users to send messages to.</p>
+    
+        <p>Required for message operations if &#x27;sendToUserGroups&#x27; is not set. </p>
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+        
+            
+    <h1 id="m-templates">templates</h2>
+    
+        <p>Template settings and information that belongs to the template</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h2 id="m-templates-template">templates.template</h2>
+    
+        <p>Template object</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-templates-template-name">templates.template.name</h2>
+    
+        <p>(required) Technical name of the template.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-template-description">templates.template.description</h2>
+    
+        <p>Description of the template.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-template-visibleName">templates.template.visibleName</h2>
+    
+        <p>Visible name of the host.</p>
+    
+        <p>Default: name property value.</p>
+    
+        <p>CAUTION: It seems that it can often not be changed due to problems with zabbix.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h2 id="m-templates-groups">templates.groups</h2>
+    
+        <p>Template object</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-templates-groups-name">templates.groups.name</h2>
+    
+        <p>(required) Technical name of the template.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-groups-description">templates.groups.description</h2>
+    
+        <p>Description of the template.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-groups-visibleName">templates.groups.visibleName</h2>
+    
+        <p>Visible name of the host.</p>
+    
+        <p>Default: name property value.</p>
+    
+        <p>CAUTION: It seems that it can often not be changed due to problems with zabbix.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h4 id="m-templates-groups">templates.groups</h2>
+    
+        <p>(required) Names of host groups to add the template to.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-linkedTemplates">templates.linkedTemplates</h2>
+    
+        <p>Names of templates to be linked to the template.</p>
+    
+    
+
+    
+        
+    <h2 id="m-templates-items">templates.items</h2>
+    
+        <p>Item object</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-templates-items-interval">templates.items.interval (delay)</h2>
+    
+        <p>(required) Update interval of the item in seconds.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-key">templates.items.key</h2>
+    
+        <p>(required) Item key.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-name">templates.items.name</h2>
+    
+        <p>(required) Name of the item.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-type">templates.items.type</h2>
+    
+        <p>(required) Type of item.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-typeOfInformation">templates.items.typeOfInformation (valueType)</h2>
+    
+        <p>Type of information of the item.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-authMethod">templates.items.authMethod (authType)</h2>
+    
+        <p>SSH authentication method. Used only by SSH agent items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-dataType">templates.items.dataType</h2>
+    
+        <p>Data type of the item.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-delta">templates.items.delta</h2>
+    
+        <p>Value that will be stored.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-description">templates.items.description (desc)</h2>
+    
+        <p>Description of the item.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-multiplier">templates.items.multiplier (formula)</h2>
+    
+        <p>(integer/float) Custom multiplier.</p>
+    
+        <p>Default: 1.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-history">templates.items.history</h2>
+    
+        <p>Number of days to keep item&#x27;s history data.</p>
+    
+        <p>Default: 90. </p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-hostInventoryField">templates.items.hostInventoryField</h2>
+    
+        <p>ID of the host inventory field that is populated by the item.</p>
+    
+        <p>Refer to the host inventory page for a list of supported host inventory fields and their IDs.</p>
+    
+        <p>Default: 0. </p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-IPMISensor">templates.items.IPMISensor</h2>
+    
+        <p>IPMI sensor. Used only by IPMI items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-logTimeFormat">templates.items.logTimeFormat</h2>
+    
+        <p>Format of the time in log entries. Used only by log items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-multiplierEnabled">templates.items.multiplierEnabled</h2>
+    
+        <p>Whether to use a custom multiplier.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-params">templates.items.params</h2>
+    
+        <p>Additional parameters depending on the type of the item:</p>
+    
+        <p>- executed script for SSH and Telnet items;</p>
+    
+        <p>- SQL query for database monitor items;</p>
+    
+        <p>- formula for calculated items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-password">templates.items.password</h2>
+    
+        <p>Password for authentication. Used by simple check, SSH, Telnet, database monitor and JMX items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-port">templates.items.port</h2>
+    
+        <p>Port monitored by the item. Used only by SNMP items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-privateKey">templates.items.privateKey</h2>
+    
+        <p>Name of the private key file.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-publicKey">templates.items.publicKey</h2>
+    
+        <p>Name of the public key file.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-SNMPCommunity">templates.items.SNMPCommunity</h2>
+    
+        <p>SNMP community. Used only by SNMPv1 and SNMPv2 items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-SNMPOID">templates.items.SNMPOID (OID)</h2>
+    
+        <p>SNMP OID.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-SNMPAuthPassphrase">templates.items.SNMPAuthPassphrase</h2>
+    
+        <p>SNMPv3 auth passphrase. Used only by SNMPv3 items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-SNMPAuthProtocol">templates.items.SNMPAuthProtocol</h2>
+    
+        <p>SNMPv3 authentication protocol. Used only by SNMPv3 items. </p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-SNMPContextName">templates.items.SNMPContextName</h2>
+    
+        <p>SNMPv3 context name. Used only by SNMPv3 items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-SNMPPrivacyPassphrase">templates.items.SNMPPrivacyPassphrase</h2>
+    
+        <p>SNMPv3 priv passphrase. Used only by SNMPv3 items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-SNMPPrivacyProtocol">templates.items.SNMPPrivacyProtocol</h2>
+    
+        <p>SNMPv3 privacy protocol. Used only by SNMPv3 items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-SNMPSecurityLevel">templates.items.SNMPSecurityLevel</h2>
+    
+        <p>SNMPv3 security level. Used only by SNMPv3 items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-SNMPSecurityName">templates.items.SNMPSecurityName</h2>
+    
+        <p>SNMPv3 security name. Used only by SNMPv3 items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-status">templates.items.status (enabled)</h2>
+    
+        <p>Status of the item.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-allowedHosts">templates.items.allowedHosts (trapperHosts)</h2>
+    
+        <p>Allowed hosts. Used only by trapper items.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-trends">templates.items.trends</h2>
+    
+        <p>Number of days to keep item&#x27;s trends data.</p>
+    
+        <p>Default: 365.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-units">templates.items.units</h2>
+    
+        <p>Value units.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-items-username">templates.items.username</h2>
+    
+        <p>Username for authentication. Used by simple check, SSH, Telnet, database monitor and JMX items.</p>
+    
+        <p>Required by SSH and Telnet items.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h2 id="m-templates-graphs">templates.graphs</h2>
+    
+        <p>Graph settings object.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h2 id="m-templates-graphs-graph">templates.graphs.graph</h2>
+    
+        <p>Graph object.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-templates-graphs-graph-height">templates.graphs.graph.height</h2>
+    
+        <p>(required)	Height of the graph in pixels.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-graph-name">templates.graphs.graph.name</h2>
+    
+        <p>(required)	Name of the graph.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-graph-width">templates.graphs.graph.width</h2>
+    
+        <p>(required)	Width of the graph in pixels.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-graph-type">templates.graphs.graph.type</h2>
+    
+        <p>Graph&#x27;s layout type.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-graph-percentLeft">templates.graphs.graph.percentLeft (percentL)</h2>
+    
+        <p>Left percentile.</p>
+    
+        <p>Default: 0.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-graph-percentRight">templates.graphs.graph.percentRight (percentR)</h2>
+    
+        <p>Right percentile.</p>
+    
+        <p>Default: 0.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-graph-view3D">templates.graphs.graph.view3D</h2>
+    
+        <p>Whether to show pie and exploded graphs in 3D.</p>
+    
+        <p>Default: false</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-graph-showLegend">templates.graphs.graph.showLegend</h2>
+    
+        <p>Whether to show the legend on the graph.</p>
+    
+        <p>Default: true</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-graph-showWorkingTime">templates.graphs.graph.showWorkingTime</h2>
+    
+        <p>Whether to show the working time on the graph.</p>
+    
+        <p>Default:true</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-graph-yAxisMax">templates.graphs.graph.yAxisMax (yMax)</h2>
+    
+        <p>The fixed maximum value for the Y axis.</p>
+    
+        <p>Default: 100</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-graph-yAxisMin">templates.graphs.graph.yAxisMin (yMin)</h2>
+    
+        <p>The fixed minimum value for the Y axis.</p>
+    
+        <p>Default: 0</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-graph-yAxisMaxType">templates.graphs.graph.yAxisMaxType (yMaxType)</h2>
+    
+        <p>Maximum/Minimum value calculation method for the Y axis.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-graph-yAxisMinType">templates.graphs.graph.yAxisMinType (yMinType)</h2>
+    
+        <p>Maximum/Minimum value calculation method for the Y axis.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h2 id="m-templates-graphs-items">templates.graphs.items</h2>
+    
+        <p>Graph item object.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-templates-graphs-items-color">templates.graphs.items.color</h2>
+    
+        <p>(required)	Graph item&#x27;s draw color as a hexadecimal color code.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-items-itemName">templates.graphs.items.itemName (item)</h2>
+    
+        <p>Name of the item associated with this graph item.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-items-function">templates.graphs.items.function</h2>
+    
+        <p>Value of the item that will be displayed.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-items-style">templates.graphs.items.style (drawStyle)</h2>
+    
+        <p>Draw style of the graph item.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-items-order">templates.graphs.items.order</h2>
+    
+        <p>Position of the item in the graph.</p>
+    
+        <p>Default: starts with 0 and increases by one with each entry.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-items-type">templates.graphs.items.type</h2>
+    
+        <p>Type of graph item.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-graphs-items-yAxisSide">templates.graphs.items.yAxisSide (yAxis)</h2>
+    
+        <p>Side of the graph where the graph item&#x27;s Y scale will be drawn.</p>
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        
+    <h2 id="m-templates-triggers">templates.triggers</h2>
+    
+        <p>Trigger setting.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h2 id="m-templates-triggers-trigger">templates.triggers.trigger</h2>
+    
+        <p>Trigger object.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-templates-triggers-trigger-name">templates.triggers.trigger.name</h2>
+    
+        <p>(required) Name of the trigger.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-trigger-expression">templates.triggers.trigger.expression</h2>
+    
+        <p>(required)	Reduced trigger expression.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-trigger-description">templates.triggers.trigger.description (comments)</h2>
+    
+        <p>Additional comments to the trigger.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-trigger-severity">templates.triggers.trigger.severity (priority)</h2>
+    
+        <p>Severity of the trigger.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-trigger-enabled">templates.triggers.trigger.enabled</h2>
+    
+        <p>Whether the trigger is enabled or disabled.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-trigger-eventGenerationMode">templates.triggers.trigger.eventGenerationMode (multipleEvents)</h2>
+    
+        <p>Whether the trigger can generate multiple problem events.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-trigger-url">templates.triggers.trigger.url</h2>
+    
+        <p>URL associated with the trigger.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-trigger-okEventGeneration">templates.triggers.trigger.okEventGeneration (recoveryMode)</h2>
+    
+        <p>OK event generation mode. (Available in Zabbix Version &gt;= 3.2.0.)</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-trigger-recoveryExpression">templates.triggers.trigger.recoveryExpression</h2>
+    
+        <p>Reduced trigger recovery expression. (available Zabbix version &gt;= 3.2)</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-trigger-okEventCloses">templates.triggers.trigger.okEventCloses</h2>
+    
+        <p>OK event closes. (available in Zabbix Version &gt;= 3.2.0.)</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-trigger-tagForMatching">templates.triggers.trigger.tagForMatching</h2>
+    
+        <p>Tag for matching. (available in Zabbix version &gt;= 3.2.0)</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-trigger-manualClose">templates.triggers.trigger.manualClose (allowManualClose)</h2>
+    
+        <p>Allow manual close.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h2 id="m-templates-triggers-dependencies">templates.triggers.dependencies</h2>
+    
+        <p>Dependent triggers.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-templates-triggers-dependencies-template">templates.triggers.dependencies.template</h2>
+    
+        <p>Template name to which the trigger belongs.</p>
+    
+        <p>(default) The template to which this trigger belongs. </p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-dependencies-name">templates.triggers.dependencies.name</h2>
+    
+        <p>(required) Trigger name.</p>
+    
+    
+
+    
+
+    
+
+    
+        
+    <h2 id="m-templates-triggers-tags">templates.triggers.tags</h2>
+    
+        <p>Trigger tags.</p>
+    
+    
+        <hr class="col-md-12">
+        
+    
+        
+    <h4 id="m-templates-triggers-tags-tag">templates.triggers.tags.tag</h2>
+    
+        <p>(required) Tag name.</p>
+    
+    
+
+    
+        
+    <h4 id="m-templates-triggers-tags-value">templates.triggers.tags.value</h2>
+    
+        <p>(required) Tag value.</p>
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+        
+    </div>
+</hr>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+    <!--
+    $('#sidebar').affix({
+      offset: {
+        top: 100
+      }
+    });
+
+    // var $body   = $(document.body);
+    // var navHeight = $('.navbar').outerHeight(true) + 10;
+    //
+    // $body.scrollspy({
+    // 	target: '#left-col',
+    // 	offset: navHeight
+    // });
+    -->
+    </script>
+</body>
+</html>
