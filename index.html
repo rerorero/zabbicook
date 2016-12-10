@@ -13,9 +13,9 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Bootstrap 101 Template</title>
+    <title>Zabbicook Configurations</title>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -33,22 +33,32 @@
     <!--
     #sidebar.affix-top {
       position: static;
-      margin-top:100px;
+      margin-top:10px;
       width:228px;
     }
 
     #sidebar.affix {
       position: fixed;
-      top:70px;
+      top:10px;
       width:228px;
+    }
+    .list-group-item {
+      padding: 4px 4px;
     }
     .list-group.panel > .list-group-item {
       border-bottom-right-radius: 4px;
       border-bottom-left-radius: 4px;
-      padding: 4px;
+      padding: 4px 4px;
     }
     .list-group-submenu {
-      margin-left:20px;
+      margin-left:10px;
+    }
+    .scrollable {
+      height: 100%;
+      overflow: auto;
+    }
+    .max-height {
+      height: 100%;
     }
     -->
     </style>
@@ -56,7 +66,7 @@
 <body>
 <div class="container">
     <div class="col-md-3" id="left-col">
-        <div class="list-group panel" id="sidebar">
+        <div class="list-group panel scrollable max-height" id="sidebar">
             
                 
     
@@ -827,35 +837,6 @@
         
             
     
-        <a href="#c-templates-groups" class="list-group-item" data-parent="#c-templates" data-toggle="collapse">groups</a>
-        
-    <div class="collapse list-group-submenu list-group-submenu-1" id="c-templates-groups">
-        
-            
-    
-        <a href="#m-templates-groups-name" class="list-group-item" data-parent="#c-templates-groups">name</a>
-    
-
-        
-            
-    
-        <a href="#m-templates-groups-description" class="list-group-item" data-parent="#c-templates-groups">description</a>
-    
-
-        
-            
-    
-        <a href="#m-templates-groups-visibleName" class="list-group-item" data-parent="#c-templates-groups">visibleName</a>
-    
-
-        
-    </div>
-
-    
-
-        
-            
-    
         <a href="#m-templates-groups" class="list-group-item" data-parent="#c-templates">groups</a>
     
 
@@ -1385,6 +1366,7 @@
     <div class="col-md-9" id="mainCol">
         
             
+    <div class="col-xs-offset-1">
     <h1 id="m-mediaTypes">mediaTypes</h2>
     
         <p>The MediaType object</p>
@@ -1394,22 +1376,27 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-mediaTypes-name">mediaTypes.name</h2>
     
         <p>(required)	Name of the media type.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-mediaTypes-type">mediaTypes.type</h2>
     
         <p>(required) Transport used by the media type.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-mediaTypes-scriptName">mediaTypes.scriptName (textLimit)</h2>
     
         <p>Script name or text limit.</p>
@@ -1427,9 +1414,11 @@
         <p>Required for script and Ez Texting media types. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-mediaTypes-gsmModem">mediaTypes.gsmModem</h2>
     
         <p>Serial device name of the GSM modem.</p>
@@ -1437,9 +1426,11 @@
         <p>Required for SMS media types. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-mediaTypes-password">mediaTypes.password</h2>
     
         <p>Authentication password.</p>
@@ -1447,9 +1438,11 @@
         <p>Required for Jabber and Ez Texting media types. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-mediaTypes-SMTPEmail">mediaTypes.SMTPEmail</h2>
     
         <p>Email address from which notifications will be sent.</p>
@@ -1457,9 +1450,11 @@
         <p>Required for email media types. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-mediaTypes-SMTPHELO">mediaTypes.SMTPHELO</h2>
     
         <p>SMTP HELO.</p>
@@ -1467,9 +1462,11 @@
         <p>Required for email media types. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-mediaTypes-SMTPServer">mediaTypes.SMTPServer</h2>
     
         <p>SMTP server.</p>
@@ -1477,17 +1474,21 @@
         <p>Required for email media types. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-mediaTypes-enabled">mediaTypes.enabled</h2>
     
         <p>Whether the media type is enabled.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-mediaTypes-user">mediaTypes.user (username)</h2>
     
         <p>Username or Jabber identifier.</p>
@@ -1495,9 +1496,11 @@
         <p>Required for Jabber and Ez Texting media types. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-mediaTypes-scriptParameters">mediaTypes.scriptParameters (params)</h2>
     
         <p>Script parameters.</p>
@@ -1505,13 +1508,16 @@
         <p>Each parameter ends with a new line feed. </p>
     
     
+    </div>
 
     
 
     
+    </div>
 
         
             
+    <div class="col-xs-offset-1">
     <h1 id="m-hostGroups">hostGroups</h2>
     
         <p>Host group object</p>
@@ -1521,18 +1527,22 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hostGroups-name">hostGroups.name</h2>
     
         <p>(required) Name of the host group.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
         
             
+    <div class="col-xs-offset-1">
     <h1 id="m-hosts">hosts</h2>
     
         <p>Host configurations</p>
@@ -1542,6 +1552,7 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-hosts-host">hosts.host</h2>
     
         <p>The host object</p>
@@ -1551,62 +1562,77 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-host-hostname">hosts.host.hostname (name)</h2>
     
         <p>(required) Technical name of the host.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-host-description">hosts.host.description (desc)</h2>
     
         <p>Description of the host.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-host-inventoryMode">hosts.host.inventoryMode</h2>
     
         <p>Host inventory population mode.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-host-ipmiAuthAlgorithm">hosts.host.ipmiAuthAlgorithm</h2>
     
         <p>IPMI authentication algorithm.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-host-ipmiPass">hosts.host.ipmiPass (ipmiPassword)</h2>
     
         <p>IPMI password.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-host-ipmiPrivilegeLevel">hosts.host.ipmiPrivilegeLevel</h2>
     
         <p>IPMI privilege level.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-host-ipmiUser">hosts.host.ipmiUser</h2>
     
         <p>IPMI username.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-host-visibleName">hosts.host.visibleName</h2>
     
         <p>Visible name of the host.</p>
@@ -1614,29 +1640,36 @@
         <p>|Default: host property value.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-host-enabled">hosts.host.enabled</h2>
     
         <p>Enabled status of the host.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-groups">hosts.groups (hostGroups)</h2>
     
         <p>(required) Host groups to add the host to.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-hosts-interfaces">hosts.interfaces</h2>
     
         <p>Host interface object</p>
@@ -1646,6 +1679,7 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-interfaces-dns">hosts.interfaces.dns</h2>
     
         <p>(required if DNS used) DNS name used by the interface.</p>
@@ -1653,9 +1687,11 @@
         <p>Can be empty if the connection is made via IP.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-interfaces-ip">hosts.interfaces.ip</h2>
     
         <p>(required if IP used) IP address used by the interface.</p>
@@ -1665,9 +1701,11 @@
         <p>      </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-interfaces-default">hosts.interfaces.default (main)</h2>
     
         <p>(required)	boolean	Whether the interface is used as default on the host.&quot; +</p>
@@ -1675,57 +1713,71 @@
         <p>Only one interface of some type can be set as default on a host.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-interfaces-port">hosts.interfaces.port</h2>
     
         <p>(required, String) Port number used by the interface. Can contain user macros.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-interfaces-type">hosts.interfaces.type</h2>
     
         <p>(required) Interface type.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-interfaces-connectTo">hosts.interfaces.connectTo (useIP)</h2>
     
         <p>(required) Whether the connection should be made via IP.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-interfaces-bulk">hosts.interfaces.bulk (useBulk)</h2>
     
         <p>Whether to use bulk SNMP requests.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-hosts-templates">hosts.templates</h2>
     
         <p>Linked template names.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
         
             
+    <div class="col-xs-offset-1">
     <h1 id="m-userGroups">userGroups</h2>
     
         <p>Permission of a user group.</p>
@@ -1735,6 +1787,7 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-userGroups-userGroup">userGroups.userGroup</h2>
     
         <p>User group object.</p>
@@ -1744,42 +1797,52 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-userGroups-userGroup-name">userGroups.userGroup.name</h2>
     
         <p>(required) Name of the user group.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-userGroups-userGroup-debug">userGroups.userGroup.debug (debugMode)</h2>
     
         <p>Whether debug mode is enabled or disabled.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-userGroups-userGroup-guiAccess">userGroups.userGroup.guiAccess (gui)</h2>
     
         <p>Frontend authentication method of the users in the group.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-userGroups-userGroup-enabled">userGroups.userGroup.enabled (usersStatus)</h2>
     
         <p>Whether the user group is enabled or disabled.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-userGroups-permissions">userGroups.permissions</h2>
     
         <p>Permission of ths host group.</p>
@@ -1789,30 +1852,37 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-userGroups-permissions-hostgroup">userGroups.permissions.hostgroup (hostGroup)</h2>
     
         <p>Name of the host group</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-userGroups-permissions-permission">userGroups.permissions.permission</h2>
     
         <p>Access level to the host group.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
 
     
+    </div>
 
         
             
+    <div class="col-xs-offset-1">
     <h1 id="m-users">users</h2>
     
         <p>User settings.</p>
@@ -1822,6 +1892,7 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-users-user">users.user</h2>
     
         <p>User object.</p>
@@ -1831,22 +1902,27 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-user-alias">users.user.alias</h2>
     
         <p>(required) User alias.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-user-autoLogin">users.user.autoLogin (autologin)</h2>
     
         <p>Whether to enable auto-login.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-user-lang">users.user.lang (language)</h2>
     
         <p> Language code of the user&#x27;s language.</p>
@@ -1854,17 +1930,21 @@
         <p>Default: en_GB.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-user-name">users.user.name</h2>
     
         <p>Name of the user.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-user-refresh">users.user.refresh</h2>
     
         <p>Automatic refresh period in seconds.</p>
@@ -1872,9 +1952,11 @@
         <p>Default: 30.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-user-rowsPerPage">users.user.rowsPerPage (rows)</h2>
     
         <p>Amount of object rows to show per page.</p>
@@ -1882,61 +1964,76 @@
         <p>Default: 50.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-user-surName">users.user.surName (surname, sur)</h2>
     
         <p>Surname of the user.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-user-theme">users.user.theme</h2>
     
         <p>User&#x27;s theme.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-user-type">users.user.type</h2>
     
         <p>Type of the user.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-user-url">users.user.url</h2>
     
         <p>URL of the page to redirect the user to after logging in.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-groups">users.groups</h2>
     
         <p>(required) User groups to add the user to.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-password">users.password</h2>
     
         <p>(required) User&#x27;s password.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-initialPassword">users.initialPassword</h2>
     
         <p>(required) Whether the password is used only when the user is created.</p>
@@ -1944,9 +2041,11 @@
         <p>If set false, zabbicook always set the password.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-users-media">users.media</h2>
     
         <p>The Media object</p>
@@ -1956,22 +2055,27 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-media-enabled">users.media.enabled</h2>
     
         <p>(required)	Whether the media is enabled.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-media-type">users.media.type</h2>
     
         <p>(required) The media type used by the media.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-media-whenActive">users.media.whenActive (period)</h2>
     
         <p>(required) Time when the notifications can be sent as a time period.</p>
@@ -1979,17 +2083,21 @@
         <p>ex. &quot;1-7,00:00-24:00&quot; </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-media-sendTo">users.media.sendTo</h2>
     
         <p>(required) Address, user name or other identifier of the recipient.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-users-media-severity">users.media.severity</h2>
     
         <p>(required)	Array of trigger severities to send notifications about.</p>
@@ -1997,17 +2105,21 @@
         <p>Notifications will be sent from triggers with severities as followed this setting.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
 
     
+    </div>
 
         
             
+    <div class="col-xs-offset-1">
     <h1 id="m-actions">actions</h2>
     
         <p>Action object.</p>
@@ -2017,78 +2129,97 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-name">actions.name</h2>
     
         <p>(required)	string	Name of the action.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-defaultStepDuration">actions.defaultStepDuration (stepDuration)</h2>
     
         <p>(required)	integer	Default operation step duration. Must be greater than 60 seconds.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-event">actions.event</h2>
     
         <p>(required)(constant) Type of events that the action will handle. This value is not changeable.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-message">actions.message (defaultMessage)</h2>
     
         <p>Problem message text.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-subject">actions.subject (defaultSubject)</h2>
     
         <p>Problem message subject.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-recoveryMessage">actions.recoveryMessage</h2>
     
         <p>Recovery message text.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-recoverySubject">actions.recoverySubject</h2>
     
         <p>Recovery message subject</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-recoveryMessageEnabled">actions.recoveryMessageEnabled</h2>
     
         <p>Whether recovery messages are enabled. (Zabbix version &lt;= 3.0.x)</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-enabled">actions.enabled</h2>
     
         <p>Whether the action is enabled or disabled.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-actions-filter">actions.filter</h2>
     
         <p>The action filter object defines a set of conditions that must be met to perform the configured action operations.</p>
@@ -2098,6 +2229,7 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-actions-filter-conditions">actions.filter.conditions</h2>
     
         <p>Set of filter conditions to use for filtering results.</p>
@@ -2107,30 +2239,37 @@
         
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-filter-conditions-type">actions.filter.conditions.type</h2>
     
         <p>(required) Type of filter condition.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-filter-conditions-value">actions.filter.conditions.value</h2>
     
         <p>(required) Value to compare with.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-filter-conditions-value2">actions.filter.conditions.value2</h2>
     
         <p>Secondary value to compare with. Requried for trigger actions when condition type is &#x27;eventTagValue&#x27;</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-filter-conditions-label">actions.filter.conditions.label (formulaid)</h2>
     
         <p>Arbitrary unique ID that is used to reference the condition from a custom expression.</p>
@@ -2142,21 +2281,26 @@
         <p>      </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-filter-conditions-operator">actions.filter.conditions.operator</h2>
     
         <p>Filter condition operator.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-filter-type">actions.filter.type (typeOfCalculation)</h2>
     
         <p>(required) Filter condition evaluation method.</p>
@@ -2164,9 +2308,11 @@
         <p>When conditions is empty array this does not affect but it should be set &#x27;AndOr&#x27;.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-filter-customExpression">actions.filter.customExpression (formula)</h2>
     
         <p>User-defined expression to be used for evaluating conditions of filters with a &#x27;customExpression&#x27;.</p>
@@ -2182,13 +2328,16 @@
         <p>      </p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-actions-operations">actions.operations</h2>
     
         <p>The action operation object defines an operation that will be performed when an action is executed.</p>
@@ -2198,22 +2347,27 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-operations-type">actions.operations.type (operationType)</h2>
     
         <p>Type of operation.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-operations-operationCondition">actions.operations.operationCondition</h2>
     
         <p>Operation condition evaluation method.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-actions-operations-message">actions.operations.message</h2>
     
         <p>Object containing the data about the message sent by the operation.</p>
@@ -2225,6 +2379,7 @@
         
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-operations-message-defaultMessage">actions.operations.message.defaultMessage</h2>
     
         <p>Whether to use the default action message text and subject.</p>
@@ -2236,37 +2391,46 @@
         <p>Default: false.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-operations-message-mediaType">actions.operations.message.mediaType</h2>
     
         <p>Name of the media type that will be used to send the message.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-operations-message-message">actions.operations.message.message</h2>
     
         <p>Operation message text. It is used when defaultMessage is false.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-operations-message-subject">actions.operations.message.subject</h2>
     
         <p>Operation message subject. It is used when defaultMessage is false.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-operations-sendToUserGroups">actions.operations.sendToUserGroups</h2>
     
         <p>User groups to send messages to.</p>
@@ -2274,9 +2438,11 @@
         <p>Required for message operations if &#x27;sendToUsers&#x27; is not set. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-operations-sendToUsers">actions.operations.sendToUsers</h2>
     
         <p>Users to send messages to.</p>
@@ -2284,9 +2450,11 @@
         <p>Required for message operations if &#x27;sendToUserGroups&#x27; is not set. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-operations-stepDuration">actions.operations.stepDuration</h2>
     
         <p>Duration of an escalation step in seconds. Must be greater than 60 seconds.</p>
@@ -2296,29 +2464,36 @@
         <p>Default: 0.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-operations-stepFrom">actions.operations.stepFrom</h2>
     
         <p>Step to start escalation from. Default: 1.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-operations-stepTo">actions.operations.stepTo</h2>
     
         <p>Step to end escalation at. Default: 1.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-actions-recoveryOperations">actions.recoveryOperations</h2>
     
         <p>The action recovery operation object defines an operation that will be performed when a problem is resolved.</p>
@@ -2332,22 +2507,27 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-recoveryOperations-type">actions.recoveryOperations.type (operationType)</h2>
     
         <p>Type of operation.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-recoveryOperations-operationCondition">actions.recoveryOperations.operationCondition</h2>
     
         <p>Operation condition evaluation method.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-actions-recoveryOperations-message">actions.recoveryOperations.message</h2>
     
         <p>Object containing the data about the message sent by the operation.</p>
@@ -2359,6 +2539,7 @@
         
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-recoveryOperations-message-defaultMessage">actions.recoveryOperations.message.defaultMessage</h2>
     
         <p>Whether to use the default action message text and subject.</p>
@@ -2370,37 +2551,46 @@
         <p>Default: false.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-recoveryOperations-message-mediaType">actions.recoveryOperations.message.mediaType</h2>
     
         <p>Name of the media type that will be used to send the message.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-recoveryOperations-message-message">actions.recoveryOperations.message.message</h2>
     
         <p>Operation message text. It is used when defaultMessage is false.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-actions-recoveryOperations-message-subject">actions.recoveryOperations.message.subject</h2>
     
         <p>Operation message subject. It is used when defaultMessage is false.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-recoveryOperations-sendToUserGroups">actions.recoveryOperations.sendToUserGroups</h2>
     
         <p>User groups to send messages to.</p>
@@ -2408,9 +2598,11 @@
         <p>Required for message operations if &#x27;sendToUsers&#x27; is not set. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-actions-recoveryOperations-sendToUsers">actions.recoveryOperations.sendToUsers</h2>
     
         <p>Users to send messages to.</p>
@@ -2418,17 +2610,21 @@
         <p>Required for message operations if &#x27;sendToUserGroups&#x27; is not set. </p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
 
     
+    </div>
 
         
             
+    <div class="col-xs-offset-1">
     <h1 id="m-templates">templates</h2>
     
         <p>Template settings and information that belongs to the template</p>
@@ -2438,6 +2634,7 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-templates-template">templates.template</h2>
     
         <p>Template object</p>
@@ -2447,22 +2644,27 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-template-name">templates.template.name</h2>
     
         <p>(required) Technical name of the template.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-template-description">templates.template.description</h2>
     
         <p>Description of the template.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-template-visibleName">templates.template.visibleName</h2>
     
         <p>Visible name of the host.</p>
@@ -2472,70 +2674,36 @@
         <p>CAUTION: It seems that it can often not be changed due to problems with zabbix.</p>
     
     
+    </div>
 
     
 
     
-
-    
-        
-    <h2 id="m-templates-groups">templates.groups</h2>
-    
-        <p>Template object</p>
-    
-    
-        <hr class="col-md-12">
-        
-    
-        
-    <h4 id="m-templates-groups-name">templates.groups.name</h2>
-    
-        <p>(required) Technical name of the template.</p>
-    
-    
+    </div>
 
     
         
-    <h4 id="m-templates-groups-description">templates.groups.description</h2>
-    
-        <p>Description of the template.</p>
-    
-    
-
-    
-        
-    <h4 id="m-templates-groups-visibleName">templates.groups.visibleName</h2>
-    
-        <p>Visible name of the host.</p>
-    
-        <p>Default: name property value.</p>
-    
-        <p>CAUTION: It seems that it can often not be changed due to problems with zabbix.</p>
-    
-    
-
-    
-
-    
-
-    
-        
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-groups">templates.groups</h2>
     
         <p>(required) Names of host groups to add the template to.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-linkedTemplates">templates.linkedTemplates</h2>
     
         <p>Names of templates to be linked to the template.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-templates-items">templates.items</h2>
     
         <p>Item object</p>
@@ -2545,78 +2713,97 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-interval">templates.items.interval (delay)</h2>
     
         <p>(required) Update interval of the item in seconds.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-key">templates.items.key</h2>
     
         <p>(required) Item key.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-name">templates.items.name</h2>
     
         <p>(required) Name of the item.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-type">templates.items.type</h2>
     
         <p>(required) Type of item.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-typeOfInformation">templates.items.typeOfInformation (valueType)</h2>
     
         <p>Type of information of the item.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-authMethod">templates.items.authMethod (authType)</h2>
     
         <p>SSH authentication method. Used only by SSH agent items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-dataType">templates.items.dataType</h2>
     
         <p>Data type of the item.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-delta">templates.items.delta</h2>
     
         <p>Value that will be stored.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-description">templates.items.description (desc)</h2>
     
         <p>Description of the item.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-multiplier">templates.items.multiplier (formula)</h2>
     
         <p>(integer/float) Custom multiplier.</p>
@@ -2624,9 +2811,11 @@
         <p>Default: 1.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-history">templates.items.history</h2>
     
         <p>Number of days to keep item&#x27;s history data.</p>
@@ -2634,9 +2823,11 @@
         <p>Default: 90. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-hostInventoryField">templates.items.hostInventoryField</h2>
     
         <p>ID of the host inventory field that is populated by the item.</p>
@@ -2646,33 +2837,41 @@
         <p>Default: 0. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-IPMISensor">templates.items.IPMISensor</h2>
     
         <p>IPMI sensor. Used only by IPMI items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-logTimeFormat">templates.items.logTimeFormat</h2>
     
         <p>Format of the time in log entries. Used only by log items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-multiplierEnabled">templates.items.multiplierEnabled</h2>
     
         <p>Whether to use a custom multiplier.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-params">templates.items.params</h2>
     
         <p>Additional parameters depending on the type of the item:</p>
@@ -2684,129 +2883,161 @@
         <p>- formula for calculated items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-password">templates.items.password</h2>
     
         <p>Password for authentication. Used by simple check, SSH, Telnet, database monitor and JMX items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-port">templates.items.port</h2>
     
         <p>Port monitored by the item. Used only by SNMP items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-privateKey">templates.items.privateKey</h2>
     
         <p>Name of the private key file.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-publicKey">templates.items.publicKey</h2>
     
         <p>Name of the public key file.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-SNMPCommunity">templates.items.SNMPCommunity</h2>
     
         <p>SNMP community. Used only by SNMPv1 and SNMPv2 items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-SNMPOID">templates.items.SNMPOID (OID)</h2>
     
         <p>SNMP OID.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-SNMPAuthPassphrase">templates.items.SNMPAuthPassphrase</h2>
     
         <p>SNMPv3 auth passphrase. Used only by SNMPv3 items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-SNMPAuthProtocol">templates.items.SNMPAuthProtocol</h2>
     
         <p>SNMPv3 authentication protocol. Used only by SNMPv3 items. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-SNMPContextName">templates.items.SNMPContextName</h2>
     
         <p>SNMPv3 context name. Used only by SNMPv3 items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-SNMPPrivacyPassphrase">templates.items.SNMPPrivacyPassphrase</h2>
     
         <p>SNMPv3 priv passphrase. Used only by SNMPv3 items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-SNMPPrivacyProtocol">templates.items.SNMPPrivacyProtocol</h2>
     
         <p>SNMPv3 privacy protocol. Used only by SNMPv3 items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-SNMPSecurityLevel">templates.items.SNMPSecurityLevel</h2>
     
         <p>SNMPv3 security level. Used only by SNMPv3 items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-SNMPSecurityName">templates.items.SNMPSecurityName</h2>
     
         <p>SNMPv3 security name. Used only by SNMPv3 items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-status">templates.items.status (enabled)</h2>
     
         <p>Status of the item.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-allowedHosts">templates.items.allowedHosts (trapperHosts)</h2>
     
         <p>Allowed hosts. Used only by trapper items.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-trends">templates.items.trends</h2>
     
         <p>Number of days to keep item&#x27;s trends data.</p>
@@ -2814,17 +3045,21 @@
         <p>Default: 365.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-units">templates.items.units</h2>
     
         <p>Value units.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h4 id="m-templates-items-username">templates.items.username</h2>
     
         <p>Username for authentication. Used by simple check, SSH, Telnet, database monitor and JMX items.</p>
@@ -2832,13 +3067,16 @@
         <p>Required by SSH and Telnet items.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-templates-graphs">templates.graphs</h2>
     
         <p>Graph settings object.</p>
@@ -2848,6 +3086,7 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-templates-graphs-graph">templates.graphs.graph</h2>
     
         <p>Graph object.</p>
@@ -2857,38 +3096,47 @@
         
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-height">templates.graphs.graph.height</h2>
     
         <p>(required)	Height of the graph in pixels.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-name">templates.graphs.graph.name</h2>
     
         <p>(required)	Name of the graph.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-width">templates.graphs.graph.width</h2>
     
         <p>(required)	Width of the graph in pixels.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-type">templates.graphs.graph.type</h2>
     
         <p>Graph&#x27;s layout type.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-percentLeft">templates.graphs.graph.percentLeft (percentL)</h2>
     
         <p>Left percentile.</p>
@@ -2896,9 +3144,11 @@
         <p>Default: 0.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-percentRight">templates.graphs.graph.percentRight (percentR)</h2>
     
         <p>Right percentile.</p>
@@ -2906,9 +3156,11 @@
         <p>Default: 0.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-view3D">templates.graphs.graph.view3D</h2>
     
         <p>Whether to show pie and exploded graphs in 3D.</p>
@@ -2916,9 +3168,11 @@
         <p>Default: false</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-showLegend">templates.graphs.graph.showLegend</h2>
     
         <p>Whether to show the legend on the graph.</p>
@@ -2926,9 +3180,11 @@
         <p>Default: true</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-showWorkingTime">templates.graphs.graph.showWorkingTime</h2>
     
         <p>Whether to show the working time on the graph.</p>
@@ -2936,9 +3192,11 @@
         <p>Default:true</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-yAxisMax">templates.graphs.graph.yAxisMax (yMax)</h2>
     
         <p>The fixed maximum value for the Y axis.</p>
@@ -2946,9 +3204,11 @@
         <p>Default: 100</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-yAxisMin">templates.graphs.graph.yAxisMin (yMin)</h2>
     
         <p>The fixed minimum value for the Y axis.</p>
@@ -2956,29 +3216,36 @@
         <p>Default: 0</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-yAxisMaxType">templates.graphs.graph.yAxisMaxType (yMaxType)</h2>
     
         <p>Maximum/Minimum value calculation method for the Y axis.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-graph-yAxisMinType">templates.graphs.graph.yAxisMinType (yMinType)</h2>
     
         <p>Maximum/Minimum value calculation method for the Y axis.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-templates-graphs-items">templates.graphs.items</h2>
     
         <p>Graph item object.</p>
@@ -2988,38 +3255,47 @@
         
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-items-color">templates.graphs.items.color</h2>
     
         <p>(required)	Graph item&#x27;s draw color as a hexadecimal color code.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-items-itemName">templates.graphs.items.itemName (item)</h2>
     
         <p>Name of the item associated with this graph item.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-items-function">templates.graphs.items.function</h2>
     
         <p>Value of the item that will be displayed.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-items-style">templates.graphs.items.style (drawStyle)</h2>
     
         <p>Draw style of the graph item.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-items-order">templates.graphs.items.order</h2>
     
         <p>Position of the item in the graph.</p>
@@ -3027,33 +3303,41 @@
         <p>Default: starts with 0 and increases by one with each entry.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-items-type">templates.graphs.items.type</h2>
     
         <p>Type of graph item.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-graphs-items-yAxisSide">templates.graphs.items.yAxisSide (yAxis)</h2>
     
         <p>Side of the graph where the graph item&#x27;s Y scale will be drawn.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-templates-triggers">templates.triggers</h2>
     
         <p>Trigger setting.</p>
@@ -3063,6 +3347,7 @@
         
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-templates-triggers-trigger">templates.triggers.trigger</h2>
     
         <p>Trigger object.</p>
@@ -3072,106 +3357,132 @@
         
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-trigger-name">templates.triggers.trigger.name</h2>
     
         <p>(required) Name of the trigger.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-trigger-expression">templates.triggers.trigger.expression</h2>
     
         <p>(required)	Reduced trigger expression.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-trigger-description">templates.triggers.trigger.description (comments)</h2>
     
         <p>Additional comments to the trigger.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-trigger-severity">templates.triggers.trigger.severity (priority)</h2>
     
         <p>Severity of the trigger.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-trigger-enabled">templates.triggers.trigger.enabled</h2>
     
         <p>Whether the trigger is enabled or disabled.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-trigger-eventGenerationMode">templates.triggers.trigger.eventGenerationMode (multipleEvents)</h2>
     
         <p>Whether the trigger can generate multiple problem events.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-trigger-url">templates.triggers.trigger.url</h2>
     
         <p>URL associated with the trigger.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-trigger-okEventGeneration">templates.triggers.trigger.okEventGeneration (recoveryMode)</h2>
     
         <p>OK event generation mode. (Available in Zabbix Version &gt;= 3.2.0.)</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-trigger-recoveryExpression">templates.triggers.trigger.recoveryExpression</h2>
     
         <p>Reduced trigger recovery expression. (available Zabbix version &gt;= 3.2)</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-trigger-okEventCloses">templates.triggers.trigger.okEventCloses</h2>
     
         <p>OK event closes. (available in Zabbix Version &gt;= 3.2.0.)</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-trigger-tagForMatching">templates.triggers.trigger.tagForMatching</h2>
     
         <p>Tag for matching. (available in Zabbix version &gt;= 3.2.0)</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-trigger-manualClose">templates.triggers.trigger.manualClose (allowManualClose)</h2>
     
         <p>Allow manual close.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-templates-triggers-dependencies">templates.triggers.dependencies</h2>
     
         <p>Dependent triggers.</p>
@@ -3181,6 +3492,7 @@
         
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-dependencies-template">templates.triggers.dependencies.template</h2>
     
         <p>Template name to which the trigger belongs.</p>
@@ -3188,21 +3500,26 @@
         <p>(default) The template to which this trigger belongs. </p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-dependencies-name">templates.triggers.dependencies.name</h2>
     
         <p>(required) Trigger name.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
         
+    <div class="col-xs-offset-1">
     <h2 id="m-templates-triggers-tags">templates.triggers.tags</h2>
     
         <p>Trigger tags.</p>
@@ -3212,31 +3529,38 @@
         
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-tags-tag">templates.triggers.tags.tag</h2>
     
         <p>(required) Tag name.</p>
     
     
+    </div>
 
     
         
+    <div class="col-xs-offset-0">
     <h4 id="m-templates-triggers-tags-value">templates.triggers.tags.value</h2>
     
         <p>(required) Tag value.</p>
     
     
+    </div>
 
     
 
     
+    </div>
 
     
 
     
+    </div>
 
     
 
     
+    </div>
 
         
     </div>
@@ -3251,17 +3575,9 @@
     <!--
     $('#sidebar').affix({
       offset: {
-        top: 100
+        top: 10
       }
     });
-
-    // var $body   = $(document.body);
-    // var navHeight = $('.navbar').outerHeight(true) + 10;
-    //
-    // $body.scrollspy({
-    // 	target: '#left-col',
-    // 	offset: navHeight
-    // });
     -->
     </script>
 </body>
