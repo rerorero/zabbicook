@@ -44,7 +44,10 @@ object HtmlMeta {
 
   def fromMeta(meta: Meta, baseRoute: Seq[String] = Seq()): HtmlMeta = {
     val route: Seq[String] = baseRoute ++ Seq(meta.aliases.headOption).flatten
-    val description = meta.desc.desc.split(System.lineSeparator())
+    val description = {
+      val desc = meta.desc.desc.split(System.lineSeparator()).toList
+      if (meta.isInstanceOf[ArrayMeta]) "(Array object)" :: desc else desc
+    }
     val offset = if (baseRoute.isEmpty || baseRoute.length > 3) 0 else 1
     val children = meta match {
       case m: EntityMeta =>

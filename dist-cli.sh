@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -eu
+
 VERSION=$1
 if [ "$#" -ne 1 ]; then
   echo "No versions specified."
