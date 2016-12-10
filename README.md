@@ -38,8 +38,10 @@ zabbicook -f zabbicook.conf -i http://localhost:8080/ -u Admin -p zabbix
 After checking the result of `Succeed: total changes = 1`, access `http://localhost:8080/hostgroups.php` in the browser and make sure that `my groups` has been added.
 
 # Setting file
-Unfortunately, not all settings of the zabbix server can be set, but only some of the setting items of the setting file to be passed to the `-f (- file)` option.  
-You can check items that can be set with the `zabbicook --doc` command in tree.  
+
+Please look [here](https://rerorero.github.io/zabbicook/) for setting properties of the setting file to be passed to the `-f (- file)` option.  
+Unfortunately, not all settings of the zabbix server can be set, but only some of the setting items of the setting file.  
+You can also check items that can be set with the `zabbicook --doc` command in tree.  
 You can specify the root path of the tree with `-r` and the depth to display with `-L`.
 ```
 Zabbicook --doc -r templates.items -L 1

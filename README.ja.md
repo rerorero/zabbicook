@@ -38,8 +38,10 @@ zabbicook -f zabbicook.conf -i http://localhost:8080/ -u Admin -p zabbix
 `Succeed: Total changes = 1`という結果を確認したら、ブラウザで `http://localhost:8080/hostgroups.php` にアクセスし、`my groups` が追加されていることを確認しましょう。
 
 # 設定ファイル
-`-f(--file)` オプションに渡す設定ファイルの設定項目は、今の所残念ながら、zabbixサーバーの全ての設定ができるわけではなく、一部しか対応していません。  
-`zabbicook --doc` コマンドで設定できる項目をツリー形式で確認することができます。  
+`-f(--file)` オプションに渡す設定ファイルの設定項目の一覧は、 [ここ](https://rerorero.github.io/zabbicook/) を見てください。  
+残念ながら今の所、zabbixサーバーの全ての設定ができるわけではなく、一部しか対応していません。  
+
+また、`zabbicook --doc` コマンドで設定できる項目をツリー形式で確認することもできます。  
 `-r` でツリーのルートパスを、`-L` 表示する深さを指定できます。
 ```
 zabbicook --doc -r templates.items -L 1
