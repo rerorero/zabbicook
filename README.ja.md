@@ -1,6 +1,8 @@
+zabbicook
+=========
 [![Build Status](https://travis-ci.org/rerorero/zabbicook.svg?branch=master)](https://travis-ci.org/rerorero/zabbicook)
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
-# zabbicook
 zabbicookは[Hocon](https://github.com/typesafehub/config/blob/master/HOCON.md)フォーマットで記述された設定ファイルのとおりに、あなたのzabbixサーバーをセットアップします。  
 設定の一部の項目は冪等性があります。
 

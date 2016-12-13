@@ -1,6 +1,8 @@
+Zabbicook
+=======
 [![Build Status](https://travis-ci.org/rerorero/zabbicook.svg?branch=master)](https://travis-ci.org/rerorero/zabbicook)
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
-# Zabbicook
 Zabbicook sets up your zabbix server according to the configuration file described in [Hocon] (https://github.com/typesafehub/config/blob/master/HOCON.md) format.  
 Some items of the setting have idempotency.
 
