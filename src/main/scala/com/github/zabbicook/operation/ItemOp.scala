@@ -35,11 +35,6 @@ class ItemOp(api: ZabbixApi, templateOp: TemplateOp) extends OperationHelper wit
     api.requestAs[Seq[Item[Stored]]]("item.get", params)
   }
 
-  def findByHostId(hostId: StoredId): Future[Seq[Item[Stored]]] = {
-    val params = Json.obj().prop("hostids" -> hostId)
-    api.requestAs[Seq[Item[Stored]]]("item.get", params)
-  }
-
   def create(hostId: StoredId, item: Item[NotStored]): Future[Report] = {
     val newItem = item.setHost(hostId)
     val param = Json.toJson(newItem)

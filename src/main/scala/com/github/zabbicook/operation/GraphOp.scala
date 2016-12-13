@@ -67,12 +67,14 @@ class GraphOp(api: ZabbixApi, templateOp: TemplateOp, itemOp: ItemOp) extends Op
 
     def itemSettingToItem(
       setting: GraphSetting
-    ): Future[Seq[GraphItem[NotStored]]] = Future {
-      setting.items.map { is =>
-        val item = itemsOfTemplate.find(_.name == is.itemName).headOption.getOrElse(
-          throw NoSuchEntityException(s"Template '${template.host}' has no such item '${is.itemName}'.")
-        )
-        is.toGraphItem(item.getStoredId)
+    ): Future[Seq[GraphItem[NotStored]]] = {
+      getInheritedGraphs(template.getStoredId).map { storedGraph =>
+        setting.items.map { is =>
+          val item = itemsOfTemplate.find(_.name == is.itemName).headOption.getOrElse(
+            throw NoSuchEntityException(s"Template '${template.host}' has no such item '${is.itemName}'.")
+          )
+          is.toGraphItem(item.getStoredId)
+        }
       }
     }
 
@@ -126,7 +128,8 @@ class GraphOp(api: ZabbixApi, templateOp: TemplateOp, itemOp: ItemOp) extends Op
     for {
       _ <- showStartInfo(logger, graphSettings.length, s"graphs (and graph items) of template '${templateHost}'")
       template <- templateOp.findByHostnamesAbsolutely(Seq(templateHost)).map(_.head.template)
-      templateItems <- itemOp.findByHostId(template.getStoredId)
+      itemsBelongingToTemplate <- itemOp.getBelongingItems(template.getStoredId)
+      itemsInheritedTemplate <- itemOp.getInheritedItems(template.getStoredId)
       currentGraphs <- getBelongingGraphs(template.getStoredId)
       // Warn? (currentExisted, toBeDeleted) = currentGraphs.partition(cur => graphSettings.exists(_.graph.name == cur.name))
       x = currentGraphs.partition(cur => graphSettings.exists(_.graph.name == cur.name))
@@ -135,7 +138,7 @@ class GraphOp(api: ZabbixApi, templateOp: TemplateOp, itemOp: ItemOp) extends Op
       deleted <- delete(toBeDeleted)
       createdAndUpdated <- traverseOperations(graphSettings) { g =>
         val currentOpt = currentExisted.find(_.name == g.graph.name)
-        presentGraph(template, templateItems, g, currentOpt)
+        presentGraph(template, itemsBelongingToTemplate ++ itemsInheritedTemplate, g, currentOpt)
       }
     } yield {
       deleted + createdAndUpdated
