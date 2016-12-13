@@ -1369,7 +1369,10 @@
     <div class="col-xs-offset-1">
     <h1 id="m-mediaTypes">mediaTypes</h2>
     
+        <p>(Array object)</p>
+    
         <p>The MediaType object</p>
+    
     
     
         <hr class="col-md-12">
@@ -1382,6 +1385,7 @@
         <p>(required)	Name of the media type.</p>
     
     
+    
     </div>
 
     
@@ -1390,6 +1394,22 @@
     <h4 id="m-mediaTypes-type">mediaTypes.type</h2>
     
         <p>(required) Transport used by the media type.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;email&#x27; - email</li>
+            
+              <li>&#x27;script&#x27; - script</li>
+            
+              <li>&#x27;SMS&#x27; - SMS</li>
+            
+              <li>&#x27;Jabber&#x27; - Jabber</li>
+            
+              <li>&#x27;EzTexting&#x27; - Ez Texting</li>
+            
+        </ul>
     
     
     </div>
@@ -1414,6 +1434,7 @@
         <p>Required for script and Ez Texting media types. </p>
     
     
+    
     </div>
 
     
@@ -1424,6 +1445,7 @@
         <p>Serial device name of the GSM modem.</p>
     
         <p>Required for SMS media types. </p>
+    
     
     
     </div>
@@ -1438,6 +1460,7 @@
         <p>Required for Jabber and Ez Texting media types. </p>
     
     
+    
     </div>
 
     
@@ -1448,6 +1471,7 @@
         <p>Email address from which notifications will be sent.</p>
     
         <p>Required for email media types. </p>
+    
     
     
     </div>
@@ -1462,6 +1486,7 @@
         <p>Required for email media types. </p>
     
     
+    
     </div>
 
     
@@ -1474,6 +1499,7 @@
         <p>Required for email media types. </p>
     
     
+    
     </div>
 
     
@@ -1482,6 +1508,16 @@
     <h4 id="m-mediaTypes-enabled">mediaTypes.enabled</h2>
     
         <p>Whether the media type is enabled.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;true&#x27; - Enabled</li>
+            
+              <li>&#x27;false&#x27; - Disabled</li>
+            
+        </ul>
     
     
     </div>
@@ -1496,6 +1532,7 @@
         <p>Required for Jabber and Ez Texting media types. </p>
     
     
+    
     </div>
 
     
@@ -1506,6 +1543,7 @@
         <p>Script parameters.</p>
     
         <p>Each parameter ends with a new line feed. </p>
+    
     
     
     </div>
@@ -1520,7 +1558,10 @@
     <div class="col-xs-offset-1">
     <h1 id="m-hostGroups">hostGroups</h2>
     
+        <p>(Array object)</p>
+    
         <p>Host group object</p>
+    
     
     
         <hr class="col-md-12">
@@ -1531,6 +1572,7 @@
     <h4 id="m-hostGroups-name">hostGroups.name</h2>
     
         <p>(required) Name of the host group.</p>
+    
     
     
     </div>
@@ -1545,7 +1587,10 @@
     <div class="col-xs-offset-1">
     <h1 id="m-hosts">hosts</h2>
     
+        <p>(Array object)</p>
+    
         <p>Host configurations</p>
+    
     
     
         <hr class="col-md-12">
@@ -1558,6 +1603,7 @@
         <p>The host object</p>
     
     
+    
         <hr class="col-md-12">
         
     
@@ -1566,6 +1612,7 @@
     <h4 id="m-hosts-host-hostname">hosts.host.hostname (name)</h2>
     
         <p>(required) Technical name of the host.</p>
+    
     
     
     </div>
@@ -1578,6 +1625,7 @@
         <p>Description of the host.</p>
     
     
+    
     </div>
 
     
@@ -1586,6 +1634,18 @@
     <h4 id="m-hosts-host-inventoryMode">hosts.host.inventoryMode</h2>
     
         <p>Host inventory population mode.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;disabled&#x27; - disabled</li>
+            
+              <li>&#x27;manual&#x27; - (default) manual</li>
+            
+              <li>&#x27;automatic&#x27; - automatic</li>
+            
+        </ul>
     
     
     </div>
@@ -1598,6 +1658,26 @@
         <p>IPMI authentication algorithm.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;default&#x27; - default</li>
+            
+              <li>&#x27;none&#x27; - none</li>
+            
+              <li>&#x27;MD2&#x27; - MD2</li>
+            
+              <li>&#x27;MD5&#x27; - MD5</li>
+            
+              <li>&#x27;straight&#x27; - straight</li>
+            
+              <li>&#x27;OEM&#x27; - OEM</li>
+            
+              <li>&#x27;RMCPPlus&#x27; - RMCP+</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -1606,6 +1686,7 @@
     <h4 id="m-hosts-host-ipmiPass">hosts.host.ipmiPass (ipmiPassword)</h2>
     
         <p>IPMI password.</p>
+    
     
     
     </div>
@@ -1618,6 +1699,22 @@
         <p>IPMI privilege level.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;callback&#x27; - callback</li>
+            
+              <li>&#x27;user&#x27; - (default)user</li>
+            
+              <li>&#x27;operator&#x27; - operator</li>
+            
+              <li>&#x27;admin&#x27; - admin</li>
+            
+              <li>&#x27;OEM&#x27; - OEM</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -1626,6 +1723,7 @@
     <h4 id="m-hosts-host-ipmiUser">hosts.host.ipmiUser</h2>
     
         <p>IPMI username.</p>
+    
     
     
     </div>
@@ -1640,6 +1738,7 @@
         <p>|Default: host property value.</p>
     
     
+    
     </div>
 
     
@@ -1648,6 +1747,16 @@
     <h4 id="m-hosts-host-enabled">hosts.host.enabled</h2>
     
         <p>Enabled status of the host.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;true&#x27; - Enabled</li>
+            
+              <li>&#x27;false&#x27; - Disabled</li>
+            
+        </ul>
     
     
     </div>
@@ -1662,7 +1771,10 @@
     <div class="col-xs-offset-1">
     <h4 id="m-hosts-groups">hosts.groups (hostGroups)</h2>
     
+        <p>(Array object)</p>
+    
         <p>(required) Host groups to add the host to.</p>
+    
     
     
     </div>
@@ -1672,7 +1784,10 @@
     <div class="col-xs-offset-1">
     <h2 id="m-hosts-interfaces">hosts.interfaces</h2>
     
+        <p>(Array object)</p>
+    
         <p>Host interface object</p>
+    
     
     
         <hr class="col-md-12">
@@ -1685,6 +1800,7 @@
         <p>(required if DNS used) DNS name used by the interface.</p>
     
         <p>Can be empty if the connection is made via IP.</p>
+    
     
     
     </div>
@@ -1701,6 +1817,7 @@
         <p>      </p>
     
     
+    
     </div>
 
     
@@ -1713,6 +1830,16 @@
         <p>Only one interface of some type can be set as default on a host.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -1721,6 +1848,7 @@
     <h4 id="m-hosts-interfaces-port">hosts.interfaces.port</h2>
     
         <p>(required, String) Port number used by the interface. Can contain user macros.</p>
+    
     
     
     </div>
@@ -1733,6 +1861,20 @@
         <p>(required) Interface type.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;agent&#x27; - agent</li>
+            
+              <li>&#x27;SNMP&#x27; - SNMP</li>
+            
+              <li>&#x27;IPMI&#x27; - IPMI</li>
+            
+              <li>&#x27;JMX&#x27; - JMX</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -1743,6 +1885,16 @@
         <p>(required) Whether the connection should be made via IP.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;dns&#x27; - connect using host DNS name</li>
+            
+              <li>&#x27;ip&#x27; - connect using host IP address for this host interface.</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -1751,6 +1903,16 @@
     <h4 id="m-hosts-interfaces-bulk">hosts.interfaces.bulk (useBulk)</h2>
     
         <p>Whether to use bulk SNMP requests.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
     
     
     </div>
@@ -1765,7 +1927,10 @@
     <div class="col-xs-offset-1">
     <h4 id="m-hosts-templates">hosts.templates</h2>
     
+        <p>(Array object)</p>
+    
         <p>Linked template names.</p>
+    
     
     
     </div>
@@ -1780,7 +1945,10 @@
     <div class="col-xs-offset-1">
     <h1 id="m-userGroups">userGroups</h2>
     
+        <p>(Array object)</p>
+    
         <p>Permission of a user group.</p>
+    
     
     
         <hr class="col-md-12">
@@ -1793,6 +1961,7 @@
         <p>User group object.</p>
     
     
+    
         <hr class="col-md-12">
         
     
@@ -1801,6 +1970,7 @@
     <h4 id="m-userGroups-userGroup-name">userGroups.userGroup.name</h2>
     
         <p>(required) Name of the user group.</p>
+    
     
     
     </div>
@@ -1813,6 +1983,16 @@
         <p>Whether debug mode is enabled or disabled.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -1823,6 +2003,18 @@
         <p>Frontend authentication method of the users in the group.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;default&#x27; - (default) use the system default authentication method</li>
+            
+              <li>&#x27;internal&#x27; - use internal authentication</li>
+            
+              <li>&#x27;disable&#x27; - disable access to the frontend</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -1831,6 +2023,16 @@
     <h4 id="m-userGroups-userGroup-enabled">userGroups.userGroup.enabled (usersStatus)</h2>
     
         <p>Whether the user group is enabled or disabled.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;true&#x27; - Enabled</li>
+            
+              <li>&#x27;false&#x27; - Disabled</li>
+            
+        </ul>
     
     
     </div>
@@ -1845,7 +2047,10 @@
     <div class="col-xs-offset-1">
     <h2 id="m-userGroups-permissions">userGroups.permissions</h2>
     
+        <p>(Array object)</p>
+    
         <p>Permission of ths host group.</p>
+    
     
     
         <hr class="col-md-12">
@@ -1858,6 +2063,7 @@
         <p>Name of the host group</p>
     
     
+    
     </div>
 
     
@@ -1866,6 +2072,18 @@
     <h4 id="m-userGroups-permissions-permission">userGroups.permissions.permission</h2>
     
         <p>Access level to the host group.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;denied&#x27; - access denied</li>
+            
+              <li>&#x27;readOnly&#x27; - read-only access</li>
+            
+              <li>&#x27;readWrite&#x27; - read-write access</li>
+            
+        </ul>
     
     
     </div>
@@ -1885,7 +2103,10 @@
     <div class="col-xs-offset-1">
     <h1 id="m-users">users</h2>
     
+        <p>(Array object)</p>
+    
         <p>User settings.</p>
+    
     
     
         <hr class="col-md-12">
@@ -1898,6 +2119,7 @@
         <p>User object.</p>
     
     
+    
         <hr class="col-md-12">
         
     
@@ -1908,6 +2130,7 @@
         <p>(required) User alias.</p>
     
     
+    
     </div>
 
     
@@ -1916,6 +2139,16 @@
     <h4 id="m-users-user-autoLogin">users.user.autoLogin (autologin)</h2>
     
         <p>Whether to enable auto-login.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
     
     
     </div>
@@ -1930,6 +2163,7 @@
         <p>Default: en_GB.</p>
     
     
+    
     </div>
 
     
@@ -1938,6 +2172,7 @@
     <h4 id="m-users-user-name">users.user.name</h2>
     
         <p>Name of the user.</p>
+    
     
     
     </div>
@@ -1952,6 +2187,7 @@
         <p>Default: 30.</p>
     
     
+    
     </div>
 
     
@@ -1964,6 +2200,7 @@
         <p>Default: 50.</p>
     
     
+    
     </div>
 
     
@@ -1972,6 +2209,7 @@
     <h4 id="m-users-user-surName">users.user.surName (surname, sur)</h2>
     
         <p>Surname of the user.</p>
+    
     
     
     </div>
@@ -1984,6 +2222,18 @@
         <p>User&#x27;s theme.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;default&#x27; - default</li>
+            
+              <li>&#x27;blue&#x27; - Blue</li>
+            
+              <li>&#x27;dark&#x27; - Dark</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -1994,6 +2244,18 @@
         <p>Type of the user.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;user&#x27; - (default) Zabbix user</li>
+            
+              <li>&#x27;admin&#x27; - Zabbix admin</li>
+            
+              <li>&#x27;superAdmin&#x27; - Zabbix super admin</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2002,6 +2264,7 @@
     <h4 id="m-users-user-url">users.user.url</h2>
     
         <p>URL of the page to redirect the user to after logging in.</p>
+    
     
     
     </div>
@@ -2016,7 +2279,10 @@
     <div class="col-xs-offset-1">
     <h4 id="m-users-groups">users.groups</h2>
     
+        <p>(Array object)</p>
+    
         <p>(required) User groups to add the user to.</p>
+    
     
     
     </div>
@@ -2027,6 +2293,7 @@
     <h4 id="m-users-password">users.password</h2>
     
         <p>(required) User&#x27;s password.</p>
+    
     
     
     </div>
@@ -2041,6 +2308,7 @@
         <p>If set false, zabbicook always set the password.</p>
     
     
+    
     </div>
 
     
@@ -2048,7 +2316,10 @@
     <div class="col-xs-offset-1">
     <h2 id="m-users-media">users.media</h2>
     
+        <p>(Array object)</p>
+    
         <p>The Media object</p>
+    
     
     
         <hr class="col-md-12">
@@ -2061,6 +2332,16 @@
         <p>(required)	Whether the media is enabled.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;true&#x27; - Enabled</li>
+            
+              <li>&#x27;false&#x27; - Disabled</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2069,6 +2350,7 @@
     <h4 id="m-users-media-type">users.media.type</h2>
     
         <p>(required) The media type used by the media.</p>
+    
     
     
     </div>
@@ -2083,6 +2365,7 @@
         <p>ex. &quot;1-7,00:00-24:00&quot; </p>
     
     
+    
     </div>
 
     
@@ -2093,6 +2376,7 @@
         <p>(required) Address, user name or other identifier of the recipient.</p>
     
     
+    
     </div>
 
     
@@ -2100,9 +2384,29 @@
     <div class="col-xs-offset-1">
     <h4 id="m-users-media-severity">users.media.severity</h2>
     
+        <p>(Array object)</p>
+    
         <p>(required)	Array of trigger severities to send notifications about.</p>
     
         <p>Notifications will be sent from triggers with severities as followed this setting.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;classified&#x27; - (default) not classified</li>
+            
+              <li>&#x27;information&#x27; - information</li>
+            
+              <li>&#x27;warning&#x27; - warning</li>
+            
+              <li>&#x27;average&#x27; - average</li>
+            
+              <li>&#x27;high&#x27; - high</li>
+            
+              <li>&#x27;disaster&#x27; - disaster</li>
+            
+        </ul>
     
     
     </div>
@@ -2122,7 +2426,10 @@
     <div class="col-xs-offset-1">
     <h1 id="m-actions">actions</h2>
     
+        <p>(Array object)</p>
+    
         <p>Action object.</p>
+    
     
     
         <hr class="col-md-12">
@@ -2135,6 +2442,7 @@
         <p>(required)	string	Name of the action.</p>
     
     
+    
     </div>
 
     
@@ -2143,6 +2451,7 @@
     <h4 id="m-actions-defaultStepDuration">actions.defaultStepDuration (stepDuration)</h2>
     
         <p>(required)	integer	Default operation step duration. Must be greater than 60 seconds.</p>
+    
     
     
     </div>
@@ -2155,6 +2464,20 @@
         <p>(required)(constant) Type of events that the action will handle. This value is not changeable.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;trigger&#x27; - event created by a trigger</li>
+            
+              <li>&#x27;discovery&#x27; - event created by a discovery rule</li>
+            
+              <li>&#x27;registration&#x27; - event created by active agent auto-registration</li>
+            
+              <li>&#x27;internal&#x27; - internal event</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2163,6 +2486,7 @@
     <h4 id="m-actions-message">actions.message (defaultMessage)</h2>
     
         <p>Problem message text.</p>
+    
     
     
     </div>
@@ -2175,6 +2499,7 @@
         <p>Problem message subject.</p>
     
     
+    
     </div>
 
     
@@ -2183,6 +2508,7 @@
     <h4 id="m-actions-recoveryMessage">actions.recoveryMessage</h2>
     
         <p>Recovery message text.</p>
+    
     
     
     </div>
@@ -2195,6 +2521,7 @@
         <p>Recovery message subject</p>
     
     
+    
     </div>
 
     
@@ -2203,6 +2530,16 @@
     <h4 id="m-actions-recoveryMessageEnabled">actions.recoveryMessageEnabled</h2>
     
         <p>Whether recovery messages are enabled. (Zabbix version &lt;= 3.0.x)</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
     
     
     </div>
@@ -2215,6 +2552,16 @@
         <p>Whether the action is enabled or disabled.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2225,6 +2572,7 @@
         <p>The action filter object defines a set of conditions that must be met to perform the configured action operations.</p>
     
     
+    
         <hr class="col-md-12">
         
     
@@ -2232,7 +2580,10 @@
     <div class="col-xs-offset-1">
     <h2 id="m-actions-filter-conditions">actions.filter.conditions</h2>
     
+        <p>(Array object)</p>
+    
         <p>Set of filter conditions to use for filtering results.</p>
+    
     
     
         <hr class="col-md-12">
@@ -2245,6 +2596,62 @@
         <p>(required) Type of filter condition.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;hostGroup&#x27; - host group (possible for trigger and internal actions)</li>
+            
+              <li>&#x27;host&#x27; - host (possible for trigger and internal actions)</li>
+            
+              <li>&#x27;trigger&#x27; - trigger (possible for trigger actions)</li>
+            
+              <li>&#x27;triggerName&#x27; - trigger name (possible for trigger actions)</li>
+            
+              <li>&#x27;triggerSeverity&#x27; - trigger severity (possible for trigger actions). For this type, set a number according to the level at the &#x27;value&#x27;.0 - classified, 1 - information, 2 - warning, 3 - average, 4 - high, 5 - disaster</li>
+            
+              <li>&#x27;triggerValue&#x27; - trigger value (possible for trigger actions) (Zabbix Ver &lt;= 3.0.x)</li>
+            
+              <li>&#x27;timePeriod&#x27; - time period (possible for trigger actions)</li>
+            
+              <li>&#x27;hostIP&#x27; - host IP (possible for discovery actions)</li>
+            
+              <li>&#x27;descoveredServiceType&#x27; - discovered service type (possible for discovery actions)</li>
+            
+              <li>&#x27;discoveredServicePort&#x27; - discovered service port (possible for discovery actions)</li>
+            
+              <li>&#x27;discoveredStatus&#x27; - discovery status (possible for discovery actions)</li>
+            
+              <li>&#x27;uptimeOrDowntimeDuration&#x27; - uptime or downtime duration (possible for discovery actions)</li>
+            
+              <li>&#x27;receivedValue&#x27; - received value (possible for discovery actions)</li>
+            
+              <li>&#x27;hostTemplate&#x27; - host template (possible for trigger and internal actions)</li>
+            
+              <li>&#x27;application&#x27; - application (possible for trigger and internal actions)</li>
+            
+              <li>&#x27;maintenanceStatus&#x27; - maintenance status. (possible for trigger actions)</li>
+            
+              <li>&#x27;discoveryRule&#x27; - discovery rule (possible for discovery actions)</li>
+            
+              <li>&#x27;discoveryCheck&#x27; - discovery check (possible for discovery actions)</li>
+            
+              <li>&#x27;proxy&#x27; - proxy (possible for discovery and auto-registration actions)</li>
+            
+              <li>&#x27;discoveryObject&#x27; - discovery object. (possible for discovery actions)</li>
+            
+              <li>&#x27;hostName&#x27; - host name (possible for auto-registration actions)</li>
+            
+              <li>&#x27;eventType&#x27; - event type. (possible for internal actions)</li>
+            
+              <li>&#x27;hostMetadata&#x27; - host metadata. (possible for auto-registration actions)</li>
+            
+              <li>&#x27;eventTag&#x27; - event tag (possible for trigger actions) (Zabbix Ver &gt;= 3.2.x)</li>
+            
+              <li>&#x27;eventTagValue&#x27; - event tag value (possible for trigger actions) (Zabbix Ver &gt;= 3.2.x)</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2255,6 +2662,7 @@
         <p>(required) Value to compare with.</p>
     
     
+    
     </div>
 
     
@@ -2263,6 +2671,7 @@
     <h4 id="m-actions-filter-conditions-value2">actions.filter.conditions.value2</h2>
     
         <p>Secondary value to compare with. Requried for trigger actions when condition type is &#x27;eventTagValue&#x27;</p>
+    
     
     
     </div>
@@ -2281,6 +2690,7 @@
         <p>      </p>
     
     
+    
     </div>
 
     
@@ -2289,6 +2699,28 @@
     <h4 id="m-actions-filter-conditions-operator">actions.filter.conditions.operator</h2>
     
         <p>Filter condition operator.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;equal&#x27; - = (default)</li>
+            
+              <li>&#x27;notEqual&#x27; - &lt;&gt;</li>
+            
+              <li>&#x27;like&#x27; - like</li>
+            
+              <li>&#x27;notLike&#x27; - not like</li>
+            
+              <li>&#x27;in&#x27; - in</li>
+            
+              <li>&#x27;greaterEqual&#x27; - &gt;=</li>
+            
+              <li>&#x27;lessEqual&#x27; - &lt;=</li>
+            
+              <li>&#x27;notIn&#x27; - not in</li>
+            
+        </ul>
     
     
     </div>
@@ -2306,6 +2738,20 @@
         <p>(required) Filter condition evaluation method.</p>
     
         <p>When conditions is empty array this does not affect but it should be set &#x27;AndOr&#x27;.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;AndOr&#x27; - (default) AND / OR</li>
+            
+              <li>&#x27;And&#x27; - AND</li>
+            
+              <li>&#x27;Or&#x27; - OR</li>
+            
+              <li>&#x27;customExpression&#x27; - custom expression</li>
+            
+        </ul>
     
     
     </div>
@@ -2328,6 +2774,7 @@
         <p>      </p>
     
     
+    
     </div>
 
     
@@ -2340,7 +2787,10 @@
     <div class="col-xs-offset-1">
     <h2 id="m-actions-operations">actions.operations</h2>
     
+        <p>(Array object)</p>
+    
         <p>The action operation object defines an operation that will be performed when an action is executed.</p>
+    
     
     
         <hr class="col-md-12">
@@ -2353,6 +2803,14 @@
         <p>Type of operation.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;sendMessage&#x27; - send message</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2361,6 +2819,18 @@
     <h4 id="m-actions-operations-operationCondition">actions.operations.operationCondition</h2>
     
         <p>Operation condition evaluation method.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;AndOr&#x27; - (default) AND / OR</li>
+            
+              <li>&#x27;And&#x27; - AND</li>
+            
+              <li>&#x27;Or&#x27; - OR</li>
+            
+        </ul>
     
     
     </div>
@@ -2373,6 +2843,7 @@
         <p>Object containing the data about the message sent by the operation.</p>
     
         <p>Required for message operations.</p>
+    
     
     
         <hr class="col-md-12">
@@ -2391,6 +2862,16 @@
         <p>Default: false.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2399,6 +2880,7 @@
     <h4 id="m-actions-operations-message-mediaType">actions.operations.message.mediaType</h2>
     
         <p>Name of the media type that will be used to send the message.</p>
+    
     
     
     </div>
@@ -2411,6 +2893,7 @@
         <p>Operation message text. It is used when defaultMessage is false.</p>
     
     
+    
     </div>
 
     
@@ -2419,6 +2902,7 @@
     <h4 id="m-actions-operations-message-subject">actions.operations.message.subject</h2>
     
         <p>Operation message subject. It is used when defaultMessage is false.</p>
+    
     
     
     </div>
@@ -2433,9 +2917,12 @@
     <div class="col-xs-offset-1">
     <h4 id="m-actions-operations-sendToUserGroups">actions.operations.sendToUserGroups</h2>
     
+        <p>(Array object)</p>
+    
         <p>User groups to send messages to.</p>
     
         <p>Required for message operations if &#x27;sendToUsers&#x27; is not set. </p>
+    
     
     
     </div>
@@ -2445,9 +2932,12 @@
     <div class="col-xs-offset-1">
     <h4 id="m-actions-operations-sendToUsers">actions.operations.sendToUsers</h2>
     
+        <p>(Array object)</p>
+    
         <p>Users to send messages to.</p>
     
         <p>Required for message operations if &#x27;sendToUserGroups&#x27; is not set. </p>
+    
     
     
     </div>
@@ -2464,6 +2954,7 @@
         <p>Default: 0.</p>
     
     
+    
     </div>
 
     
@@ -2474,6 +2965,7 @@
         <p>Step to start escalation from. Default: 1.</p>
     
     
+    
     </div>
 
     
@@ -2482,6 +2974,7 @@
     <h4 id="m-actions-operations-stepTo">actions.operations.stepTo</h2>
     
         <p>Step to end escalation at. Default: 1.</p>
+    
     
     
     </div>
@@ -2496,11 +2989,14 @@
     <div class="col-xs-offset-1">
     <h2 id="m-actions-recoveryOperations">actions.recoveryOperations</h2>
     
+        <p>(Array object)</p>
+    
         <p>The action recovery operation object defines an operation that will be performed when a problem is resolved.</p>
     
         <p>Recovery operations are possible for trigger actions and internal actions.</p>
     
         <p>(Zabbix version &gt;= 3.2.x)</p>
+    
     
     
         <hr class="col-md-12">
@@ -2513,6 +3009,14 @@
         <p>Type of operation.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;sendMessage&#x27; - send message</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2521,6 +3025,18 @@
     <h4 id="m-actions-recoveryOperations-operationCondition">actions.recoveryOperations.operationCondition</h2>
     
         <p>Operation condition evaluation method.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;AndOr&#x27; - (default) AND / OR</li>
+            
+              <li>&#x27;And&#x27; - AND</li>
+            
+              <li>&#x27;Or&#x27; - OR</li>
+            
+        </ul>
     
     
     </div>
@@ -2533,6 +3049,7 @@
         <p>Object containing the data about the message sent by the operation.</p>
     
         <p>Required for message operations.</p>
+    
     
     
         <hr class="col-md-12">
@@ -2551,6 +3068,16 @@
         <p>Default: false.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2559,6 +3086,7 @@
     <h4 id="m-actions-recoveryOperations-message-mediaType">actions.recoveryOperations.message.mediaType</h2>
     
         <p>Name of the media type that will be used to send the message.</p>
+    
     
     
     </div>
@@ -2571,6 +3099,7 @@
         <p>Operation message text. It is used when defaultMessage is false.</p>
     
     
+    
     </div>
 
     
@@ -2579,6 +3108,7 @@
     <h4 id="m-actions-recoveryOperations-message-subject">actions.recoveryOperations.message.subject</h2>
     
         <p>Operation message subject. It is used when defaultMessage is false.</p>
+    
     
     
     </div>
@@ -2593,9 +3123,12 @@
     <div class="col-xs-offset-1">
     <h4 id="m-actions-recoveryOperations-sendToUserGroups">actions.recoveryOperations.sendToUserGroups</h2>
     
+        <p>(Array object)</p>
+    
         <p>User groups to send messages to.</p>
     
         <p>Required for message operations if &#x27;sendToUsers&#x27; is not set. </p>
+    
     
     
     </div>
@@ -2605,9 +3138,12 @@
     <div class="col-xs-offset-1">
     <h4 id="m-actions-recoveryOperations-sendToUsers">actions.recoveryOperations.sendToUsers</h2>
     
+        <p>(Array object)</p>
+    
         <p>Users to send messages to.</p>
     
         <p>Required for message operations if &#x27;sendToUserGroups&#x27; is not set. </p>
+    
     
     
     </div>
@@ -2627,7 +3163,10 @@
     <div class="col-xs-offset-1">
     <h1 id="m-templates">templates</h2>
     
+        <p>(Array object)</p>
+    
         <p>Template settings and information that belongs to the template</p>
+    
     
     
         <hr class="col-md-12">
@@ -2640,6 +3179,7 @@
         <p>Template object</p>
     
     
+    
         <hr class="col-md-12">
         
     
@@ -2650,6 +3190,7 @@
         <p>(required) Technical name of the template.</p>
     
     
+    
     </div>
 
     
@@ -2658,6 +3199,7 @@
     <h4 id="m-templates-template-description">templates.template.description</h2>
     
         <p>Description of the template.</p>
+    
     
     
     </div>
@@ -2674,6 +3216,7 @@
         <p>CAUTION: It seems that it can often not be changed due to problems with zabbix.</p>
     
     
+    
     </div>
 
     
@@ -2686,7 +3229,10 @@
     <div class="col-xs-offset-1">
     <h4 id="m-templates-groups">templates.groups</h2>
     
+        <p>(Array object)</p>
+    
         <p>(required) Names of host groups to add the template to.</p>
+    
     
     
     </div>
@@ -2696,7 +3242,10 @@
     <div class="col-xs-offset-1">
     <h4 id="m-templates-linkedTemplates">templates.linkedTemplates</h2>
     
+        <p>(Array object)</p>
+    
         <p>Names of templates to be linked to the template.</p>
+    
     
     
     </div>
@@ -2706,7 +3255,10 @@
     <div class="col-xs-offset-1">
     <h2 id="m-templates-items">templates.items</h2>
     
+        <p>(Array object)</p>
+    
         <p>Item object</p>
+    
     
     
         <hr class="col-md-12">
@@ -2719,6 +3271,7 @@
         <p>(required) Update interval of the item in seconds.</p>
     
     
+    
     </div>
 
     
@@ -2727,6 +3280,7 @@
     <h4 id="m-templates-items-key">templates.items.key</h2>
     
         <p>(required) Item key.</p>
+    
     
     
     </div>
@@ -2739,6 +3293,7 @@
         <p>(required) Name of the item.</p>
     
     
+    
     </div>
 
     
@@ -2747,6 +3302,48 @@
     <h4 id="m-templates-items-type">templates.items.type</h2>
     
         <p>(required) Type of item.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;ZabbixAgent&#x27; - Zabbix agent</li>
+            
+              <li>&#x27;SNMPv1agent&#x27; - SNMPv1 agent</li>
+            
+              <li>&#x27;ZabbixTrapper&#x27; - Zabbix trapper</li>
+            
+              <li>&#x27;SimpleCheck&#x27; - Simple check</li>
+            
+              <li>&#x27;SNMPv2Agent&#x27; - SNMPv2 agent</li>
+            
+              <li>&#x27;ZabbixInternal&#x27; - Zabbix internal</li>
+            
+              <li>&#x27;SNMPv3Agent&#x27; - SNMPv3 agent</li>
+            
+              <li>&#x27;ZabbixAgentActive&#x27; - Zabbix agent (active)</li>
+            
+              <li>&#x27;ZabbixAggregate&#x27; - Zabbix aggregate</li>
+            
+              <li>&#x27;WebItem&#x27; - web item</li>
+            
+              <li>&#x27;ExternalCheck&#x27; - external check</li>
+            
+              <li>&#x27;DatabaseMonitor&#x27; - database monitor</li>
+            
+              <li>&#x27;IPMIagent&#x27; - IPMI agent</li>
+            
+              <li>&#x27;SSHagent&#x27; - SSH agent</li>
+            
+              <li>&#x27;TELNETagent&#x27; - TELNET agent</li>
+            
+              <li>&#x27;calculated&#x27; - calculated</li>
+            
+              <li>&#x27;JMXagent&#x27; - JMX agent</li>
+            
+              <li>&#x27;SNMPtrap&#x27; - SNMP trap</li>
+            
+        </ul>
     
     
     </div>
@@ -2759,6 +3356,22 @@
         <p>Type of information of the item.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;float&#x27; - numeric float</li>
+            
+              <li>&#x27;character&#x27; - character</li>
+            
+              <li>&#x27;log&#x27; - log</li>
+            
+              <li>&#x27;unsigned&#x27; - numeric unsigned</li>
+            
+              <li>&#x27;text&#x27; - text</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2767,6 +3380,16 @@
     <h4 id="m-templates-items-authMethod">templates.items.authMethod (authType)</h2>
     
         <p>SSH authentication method. Used only by SSH agent items.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;password&#x27; - (default) password</li>
+            
+              <li>&#x27;publicKey&#x27; - public key</li>
+            
+        </ul>
     
     
     </div>
@@ -2779,6 +3402,20 @@
         <p>Data type of the item.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;decimal&#x27; - (default) decimal</li>
+            
+              <li>&#x27;octal&#x27; - octal</li>
+            
+              <li>&#x27;hexadecimal&#x27; - hexadecimal</li>
+            
+              <li>&#x27;boolean&#x27; - boolean</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2789,6 +3426,18 @@
         <p>Value that will be stored.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;AsIs&#x27; - (default) as is</li>
+            
+              <li>&#x27;SpeedPerSec&#x27; - Delta, speed per second.</li>
+            
+              <li>&#x27;SimpleChange&#x27; - Delta, simple change</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2797,6 +3446,7 @@
     <h4 id="m-templates-items-description">templates.items.description (desc)</h2>
     
         <p>Description of the item.</p>
+    
     
     
     </div>
@@ -2811,6 +3461,7 @@
         <p>Default: 1.</p>
     
     
+    
     </div>
 
     
@@ -2821,6 +3472,7 @@
         <p>Number of days to keep item&#x27;s history data.</p>
     
         <p>Default: 90. </p>
+    
     
     
     </div>
@@ -2837,6 +3489,7 @@
         <p>Default: 0. </p>
     
     
+    
     </div>
 
     
@@ -2845,6 +3498,7 @@
     <h4 id="m-templates-items-IPMISensor">templates.items.IPMISensor</h2>
     
         <p>IPMI sensor. Used only by IPMI items.</p>
+    
     
     
     </div>
@@ -2857,6 +3511,7 @@
         <p>Format of the time in log entries. Used only by log items.</p>
     
     
+    
     </div>
 
     
@@ -2865,6 +3520,16 @@
     <h4 id="m-templates-items-multiplierEnabled">templates.items.multiplierEnabled</h2>
     
         <p>Whether to use a custom multiplier.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
     
     
     </div>
@@ -2883,6 +3548,7 @@
         <p>- formula for calculated items.</p>
     
     
+    
     </div>
 
     
@@ -2891,6 +3557,7 @@
     <h4 id="m-templates-items-password">templates.items.password</h2>
     
         <p>Password for authentication. Used by simple check, SSH, Telnet, database monitor and JMX items.</p>
+    
     
     
     </div>
@@ -2903,6 +3570,7 @@
         <p>Port monitored by the item. Used only by SNMP items.</p>
     
     
+    
     </div>
 
     
@@ -2911,6 +3579,7 @@
     <h4 id="m-templates-items-privateKey">templates.items.privateKey</h2>
     
         <p>Name of the private key file.</p>
+    
     
     
     </div>
@@ -2923,6 +3592,7 @@
         <p>Name of the public key file.</p>
     
     
+    
     </div>
 
     
@@ -2931,6 +3601,7 @@
     <h4 id="m-templates-items-SNMPCommunity">templates.items.SNMPCommunity</h2>
     
         <p>SNMP community. Used only by SNMPv1 and SNMPv2 items.</p>
+    
     
     
     </div>
@@ -2943,6 +3614,7 @@
         <p>SNMP OID.</p>
     
     
+    
     </div>
 
     
@@ -2951,6 +3623,7 @@
     <h4 id="m-templates-items-SNMPAuthPassphrase">templates.items.SNMPAuthPassphrase</h2>
     
         <p>SNMPv3 auth passphrase. Used only by SNMPv3 items.</p>
+    
     
     
     </div>
@@ -2963,6 +3636,16 @@
         <p>SNMPv3 authentication protocol. Used only by SNMPv3 items. </p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;MD5&#x27; - (default) MD5</li>
+            
+              <li>&#x27;SHA&#x27; - SHA</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -2971,6 +3654,7 @@
     <h4 id="m-templates-items-SNMPContextName">templates.items.SNMPContextName</h2>
     
         <p>SNMPv3 context name. Used only by SNMPv3 items.</p>
+    
     
     
     </div>
@@ -2983,6 +3667,7 @@
         <p>SNMPv3 priv passphrase. Used only by SNMPv3 items.</p>
     
     
+    
     </div>
 
     
@@ -2991,6 +3676,16 @@
     <h4 id="m-templates-items-SNMPPrivacyProtocol">templates.items.SNMPPrivacyProtocol</h2>
     
         <p>SNMPv3 privacy protocol. Used only by SNMPv3 items.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;DES&#x27; - DES</li>
+            
+              <li>&#x27;AES&#x27; - AES</li>
+            
+        </ul>
     
     
     </div>
@@ -3003,6 +3698,18 @@
         <p>SNMPv3 security level. Used only by SNMPv3 items.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;noAuthNoPriv&#x27; - noAuthNoPriv</li>
+            
+              <li>&#x27;authNoPriv&#x27; - authNoPriv</li>
+            
+              <li>&#x27;authPriv&#x27; - authPriv</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -3011,6 +3718,7 @@
     <h4 id="m-templates-items-SNMPSecurityName">templates.items.SNMPSecurityName</h2>
     
         <p>SNMPv3 security name. Used only by SNMPv3 items.</p>
+    
     
     
     </div>
@@ -3023,6 +3731,16 @@
         <p>Status of the item.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;true&#x27; - Enabled</li>
+            
+              <li>&#x27;false&#x27; - Disabled</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -3031,6 +3749,7 @@
     <h4 id="m-templates-items-allowedHosts">templates.items.allowedHosts (trapperHosts)</h2>
     
         <p>Allowed hosts. Used only by trapper items.</p>
+    
     
     
     </div>
@@ -3045,6 +3764,7 @@
         <p>Default: 365.</p>
     
     
+    
     </div>
 
     
@@ -3053,6 +3773,7 @@
     <h4 id="m-templates-items-units">templates.items.units</h2>
     
         <p>Value units.</p>
+    
     
     
     </div>
@@ -3067,6 +3788,7 @@
         <p>Required by SSH and Telnet items.</p>
     
     
+    
     </div>
 
     
@@ -3079,7 +3801,10 @@
     <div class="col-xs-offset-1">
     <h2 id="m-templates-graphs">templates.graphs</h2>
     
+        <p>(Array object)</p>
+    
         <p>Graph settings object.</p>
+    
     
     
         <hr class="col-md-12">
@@ -3092,6 +3817,7 @@
         <p>Graph object.</p>
     
     
+    
         <hr class="col-md-12">
         
     
@@ -3100,6 +3826,7 @@
     <h4 id="m-templates-graphs-graph-height">templates.graphs.graph.height</h2>
     
         <p>(required)	Height of the graph in pixels.</p>
+    
     
     
     </div>
@@ -3112,6 +3839,7 @@
         <p>(required)	Name of the graph.</p>
     
     
+    
     </div>
 
     
@@ -3122,6 +3850,7 @@
         <p>(required)	Width of the graph in pixels.</p>
     
     
+    
     </div>
 
     
@@ -3130,6 +3859,20 @@
     <h4 id="m-templates-graphs-graph-type">templates.graphs.graph.type</h2>
     
         <p>Graph&#x27;s layout type.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;normal&#x27; - (default) normal</li>
+            
+              <li>&#x27;stacked&#x27; - stacked</li>
+            
+              <li>&#x27;pie&#x27; - pie</li>
+            
+              <li>&#x27;exploded&#x27; - exploded</li>
+            
+        </ul>
     
     
     </div>
@@ -3144,6 +3887,7 @@
         <p>Default: 0.</p>
     
     
+    
     </div>
 
     
@@ -3154,6 +3898,7 @@
         <p>Right percentile.</p>
     
         <p>Default: 0.</p>
+    
     
     
     </div>
@@ -3168,6 +3913,16 @@
         <p>Default: false</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -3178,6 +3933,16 @@
         <p>Whether to show the legend on the graph.</p>
     
         <p>Default: true</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
     
     
     </div>
@@ -3192,6 +3957,16 @@
         <p>Default:true</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -3202,6 +3977,7 @@
         <p>The fixed maximum value for the Y axis.</p>
     
         <p>Default: 100</p>
+    
     
     
     </div>
@@ -3216,6 +3992,7 @@
         <p>Default: 0</p>
     
     
+    
     </div>
 
     
@@ -3226,6 +4003,16 @@
         <p>Maximum/Minimum value calculation method for the Y axis.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;calculated&#x27; - (default) calculated</li>
+            
+              <li>&#x27;fixed&#x27; - fixed</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -3234,6 +4021,16 @@
     <h4 id="m-templates-graphs-graph-yAxisMinType">templates.graphs.graph.yAxisMinType (yMinType)</h2>
     
         <p>Maximum/Minimum value calculation method for the Y axis.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;calculated&#x27; - (default) calculated</li>
+            
+              <li>&#x27;fixed&#x27; - fixed</li>
+            
+        </ul>
     
     
     </div>
@@ -3248,7 +4045,10 @@
     <div class="col-xs-offset-1">
     <h2 id="m-templates-graphs-items">templates.graphs.items</h2>
     
+        <p>(Array object)</p>
+    
         <p>Graph item object.</p>
+    
     
     
         <hr class="col-md-12">
@@ -3261,6 +4061,7 @@
         <p>(required)	Graph item&#x27;s draw color as a hexadecimal color code.</p>
     
     
+    
     </div>
 
     
@@ -3269,6 +4070,7 @@
     <h4 id="m-templates-graphs-items-itemName">templates.graphs.items.itemName (item)</h2>
     
         <p>Name of the item associated with this graph item.</p>
+    
     
     
     </div>
@@ -3281,6 +4083,22 @@
         <p>Value of the item that will be displayed.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;minimum&#x27; - minimum value</li>
+            
+              <li>&#x27;average&#x27; - (default) average value</li>
+            
+              <li>&#x27;maximum&#x27; - maximum value</li>
+            
+              <li>&#x27;all&#x27; - all values</li>
+            
+              <li>&#x27;last&#x27; - last value, used only by pie and exploded graphs</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -3289,6 +4107,24 @@
     <h4 id="m-templates-graphs-items-style">templates.graphs.items.style (drawStyle)</h2>
     
         <p>Draw style of the graph item.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;default&#x27; - (defualt) line</li>
+            
+              <li>&#x27;region&#x27; - filled region</li>
+            
+              <li>&#x27;bold&#x27; - bold line</li>
+            
+              <li>&#x27;dot&#x27; - dot</li>
+            
+              <li>&#x27;dashed&#x27; - dashed line</li>
+            
+              <li>&#x27;gradient&#x27; - gradient line</li>
+            
+        </ul>
     
     
     </div>
@@ -3303,6 +4139,7 @@
         <p>Default: starts with 0 and increases by one with each entry.</p>
     
     
+    
     </div>
 
     
@@ -3313,6 +4150,16 @@
         <p>Type of graph item.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;simple&#x27; - (default) simple</li>
+            
+              <li>&#x27;sum&#x27; - graph sum, used only by pie and exploded graphs.</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -3321,6 +4168,16 @@
     <h4 id="m-templates-graphs-items-yAxisSide">templates.graphs.items.yAxisSide (yAxis)</h2>
     
         <p>Side of the graph where the graph item&#x27;s Y scale will be drawn.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;left&#x27; - (default) left side</li>
+            
+              <li>&#x27;right&#x27; - right side</li>
+            
+        </ul>
     
     
     </div>
@@ -3340,7 +4197,10 @@
     <div class="col-xs-offset-1">
     <h2 id="m-templates-triggers">templates.triggers</h2>
     
+        <p>(Array object)</p>
+    
         <p>Trigger setting.</p>
+    
     
     
         <hr class="col-md-12">
@@ -3353,6 +4213,7 @@
         <p>Trigger object.</p>
     
     
+    
         <hr class="col-md-12">
         
     
@@ -3361,6 +4222,7 @@
     <h4 id="m-templates-triggers-trigger-name">templates.triggers.trigger.name</h2>
     
         <p>(required) Name of the trigger.</p>
+    
     
     
     </div>
@@ -3373,6 +4235,7 @@
         <p>(required)	Reduced trigger expression.</p>
     
     
+    
     </div>
 
     
@@ -3381,6 +4244,7 @@
     <h4 id="m-templates-triggers-trigger-description">templates.triggers.trigger.description (comments)</h2>
     
         <p>Additional comments to the trigger.</p>
+    
     
     
     </div>
@@ -3393,6 +4257,24 @@
         <p>Severity of the trigger.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;classified&#x27; - (default) not classified</li>
+            
+              <li>&#x27;information&#x27; - information</li>
+            
+              <li>&#x27;warning&#x27; - warning</li>
+            
+              <li>&#x27;average&#x27; - average</li>
+            
+              <li>&#x27;high&#x27; - high</li>
+            
+              <li>&#x27;disaster&#x27; - disaster</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -3401,6 +4283,16 @@
     <h4 id="m-templates-triggers-trigger-enabled">templates.triggers.trigger.enabled</h2>
     
         <p>Whether the trigger is enabled or disabled.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;true&#x27; - Enabled</li>
+            
+              <li>&#x27;false&#x27; - Disabled</li>
+            
+        </ul>
     
     
     </div>
@@ -3413,6 +4305,16 @@
         <p>Whether the trigger can generate multiple problem events.</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;single&#x27; - (default) do not generate multiple events.</li>
+            
+              <li>&#x27;multiple&#x27; - generate multiple events.</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -3421,6 +4323,7 @@
     <h4 id="m-templates-triggers-trigger-url">templates.triggers.trigger.url</h2>
     
         <p>URL associated with the trigger.</p>
+    
     
     
     </div>
@@ -3433,6 +4336,18 @@
         <p>OK event generation mode. (Available in Zabbix Version &gt;= 3.2.0.)</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;expression&#x27; - (default) Expression</li>
+            
+              <li>&#x27;recoveryExpression&#x27; - Recovery expression (&#x27;recoveryExpression&#x27; required)</li>
+            
+              <li>&#x27;none&#x27; - None</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -3441,6 +4356,7 @@
     <h4 id="m-templates-triggers-trigger-recoveryExpression">templates.triggers.trigger.recoveryExpression</h2>
     
         <p>Reduced trigger recovery expression. (available Zabbix version &gt;= 3.2)</p>
+    
     
     
     </div>
@@ -3453,6 +4369,16 @@
         <p>OK event closes. (available in Zabbix Version &gt;= 3.2.0.)</p>
     
     
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;all&#x27; - (default) All problems</li>
+            
+              <li>&#x27;tagMatched&#x27; - All problems if tag values match.</li>
+            
+        </ul>
+    
+    
     </div>
 
     
@@ -3463,6 +4389,7 @@
         <p>Tag for matching. (available in Zabbix version &gt;= 3.2.0)</p>
     
     
+    
     </div>
 
     
@@ -3471,6 +4398,16 @@
     <h4 id="m-templates-triggers-trigger-manualClose">templates.triggers.trigger.manualClose (allowManualClose)</h2>
     
         <p>Allow manual close.</p>
+    
+    
+        <p>Possible values:</p>
+        <ul>
+            
+              <li>&#x27;false&#x27; - Disable</li>
+            
+              <li>&#x27;true&#x27; - Enable</li>
+            
+        </ul>
     
     
     </div>
@@ -3485,7 +4422,10 @@
     <div class="col-xs-offset-1">
     <h2 id="m-templates-triggers-dependencies">templates.triggers.dependencies</h2>
     
+        <p>(Array object)</p>
+    
         <p>Dependent triggers.</p>
+    
     
     
         <hr class="col-md-12">
@@ -3500,6 +4440,7 @@
         <p>(default) The template to which this trigger belongs. </p>
     
     
+    
     </div>
 
     
@@ -3508,6 +4449,7 @@
     <h4 id="m-templates-triggers-dependencies-name">templates.triggers.dependencies.name</h2>
     
         <p>(required) Trigger name.</p>
+    
     
     
     </div>
@@ -3522,7 +4464,10 @@
     <div class="col-xs-offset-1">
     <h2 id="m-templates-triggers-tags">templates.triggers.tags</h2>
     
+        <p>(Array object)</p>
+    
         <p>Trigger tags.</p>
+    
     
     
         <hr class="col-md-12">
@@ -3535,6 +4480,7 @@
         <p>(required) Tag name.</p>
     
     
+    
     </div>
 
     
@@ -3543,6 +4489,7 @@
     <h4 id="m-templates-triggers-tags-value">templates.triggers.tags.value</h2>
     
         <p>(required) Tag value.</p>
+    
     
     
     </div>
