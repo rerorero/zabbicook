@@ -12,7 +12,7 @@ case class HtmlMeta(
   menuId: String,
   parentId: String,
   description: Seq[String],
-  possibles: Option[Seq[String]],
+  possibles: Seq[String],
   children: Seq[HtmlMeta],
   offset: Int
 ) {
@@ -64,7 +64,7 @@ object HtmlMeta {
       menuId = "c-" + flattenRoute(route, "-"),
       parentId = "c-" + flattenRoute(baseRoute, "-"),
       description = description,
-      possibles = meta.desc.possibles,
+      possibles = meta.desc.possibles.getOrElse(Seq()),
       children = children,
       offset = offset
     )

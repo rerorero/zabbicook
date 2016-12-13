@@ -24,7 +24,15 @@
     @for(desc <- tree.description) {
         <p>@desc</p>
     }
-    @if(!tree.children.isEmpty) {
+    @if(tree.possibles.nonEmpty) {
+        <p>Possible values:</p>
+        <ul>
+            @for(pv <- tree.possibles) {
+              <li>@pv</li>
+            }
+        </ul>
+    }
+    @if(tree.children.nonEmpty) {
         <hr class="col-md-12">
         @contentChildren(tree)
     }
