@@ -35,6 +35,17 @@ class ItemOp(api: ZabbixApi, templateOp: TemplateOp) extends OperationHelper wit
     api.requestAs[Seq[Item[Stored]]]("item.get", params)
   }
 
+  def findByNameAndHost(name: String, hostId: StoredId): Future[Option[Item[Stored]]] = {
+    val params = Json.obj()
+      .prop("hostids" -> hostId)
+      .filter("name" -> name)
+    api.requestSingleAs[Item[Stored]]("item.get", params)
+  }
+
+  def findByNameAndHostAbsolutely(name: String, hostId: StoredId): Future[Item[Stored]] = {
+    findByNameAndHost(name, hostId).map(_.getOrElse(throw NoSuchEntityException(s"No such template item: $name")))
+  }
+
   def create(hostId: StoredId, item: Item[NotStored]): Future[Report] = {
     val newItem = item.setHost(hostId)
     val param = Json.toJson(newItem)
@@ -65,12 +76,12 @@ class ItemOp(api: ZabbixApi, templateOp: TemplateOp) extends OperationHelper wit
   def presentWithTemplate(template: String, items: Seq[Item[NotStored]]): Future[Report] = {
     def checkDup(inherits: Seq[Item[Stored]]): Unit = {
       val duplicated = items.groupBy(_.`key_`).find(_._2.length > 1)
-      duplicated.foreach(dup => throw ItemKeyDuplicated(
+      duplicated.foreach(dup => throw EntityDuplicated(
         s"Key of items has duplicate. key=${dup._2.headOption.map(_.`key_`).getOrElse("")} items=${dup._2.map(_.name).mkString(",")}"
       ))
       items.foreach { item =>
         inherits.find(_.`key_` == item.`key_`).foreach { i =>
-          throw ItemKeyDuplicated(s"Key '${i.`key_`}' of '${item.name}' are duplicated with the item '${i.name}' which belongs to parent templates")
+          throw EntityDuplicated(s"Key '${i.`key_`}' of '${item.name}' are duplicated with the item '${i.name}' which belongs to parent templates")
         }
       }
     }

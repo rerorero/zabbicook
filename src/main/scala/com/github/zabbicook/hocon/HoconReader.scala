@@ -177,11 +177,15 @@ object HoconReads {
     * @return
     */
   implicit def option[T](implicit tr: HoconReads[T]): HoconReads[Option[T]] = HoconReads.of[Option[T]]((conf,meta) => {
-    tr.read(conf, meta) match {
-      case HoconSuccess(t) => HoconSuccess(Some(t))
-      case e: HoconError.NotExist if e.meta == meta => // metas should be compared because sub property of T which is required may throw NotExist
+    (tr.read(conf, meta), meta) match {
+      case (HoconSuccess(t), _) => HoconSuccess(Some(t))
+      case (e: HoconError.NotExist, _) if e.meta == meta =>
+        // metas should be compared because sub property of T which is required may throw NotExist
         HoconSuccess(None)
-      case e: HoconError => e
+      case (e: HoconError.NotExist, em: EntityMeta) if em.contains(e.meta) =>
+        HoconSuccess(None)
+      case (e: HoconError, _) =>
+        e
     }
   })
 

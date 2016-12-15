@@ -114,7 +114,7 @@ class TriggerOp(api: ZabbixApi, templateOp: TemplateOp) extends OperationHelper 
       if (founds.isEmpty)
         throw NoSuchEntityException(s"No such dependet triggers: ${triggerName} ")
       else if (founds.length > 1)
-        throw ItemKeyDuplicated(s"Name of triggers has duplicate. name=${triggerName}")
+        throw EntityDuplicated(s"Name of triggers has duplicate. name=${triggerName}")
       else
         founds.head
     }

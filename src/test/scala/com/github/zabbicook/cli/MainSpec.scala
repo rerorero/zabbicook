@@ -9,6 +9,7 @@ import com.github.zabbicook.entity.host._
 import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
 import com.github.zabbicook.entity.media.{Media, MediaType, MediaTypeType}
 import com.github.zabbicook.entity.prop.EnabledEnum
+import com.github.zabbicook.entity.screen._
 import com.github.zabbicook.entity.template.{Template, TemplateSettings}
 import com.github.zabbicook.entity.trigger._
 import com.github.zabbicook.entity.user._
@@ -366,7 +367,47 @@ class MainSpec extends UnitSpec with TestConfig with MainSpecRunner {
         )
       )
 
+      val screens: Seq[ScreenSetting] = Seq(
+        ScreenSetting(
+          screen = Screen[NotStored](
+            name = "zabbicook screen1",
+            hsize = Some(10),
+            vsize = Some(10)
+          ),
+          items = Some(Seq(
+            ScreenItemSetting(
+              resourcetype = ScreenResourceType.graph,
+              colspan = Some(2),
+              height = Some(400),
+              width = Some(200),
+              resource = Some(ScreenItemResource(Some("zabbicook-spec template 1"), "zabbicook-spec graph1")),
+              x = Some(1),
+              y = Some(2)
+            ),
+            ScreenItemSetting(
+              resourcetype = ScreenResourceType.systemStatus,
+              x = Some(2),
+              y = Some(4)
+            )
+          ))
+        ),
+        ScreenSetting(
+          screen = Screen[NotStored](
+            name = "zabbicook screen2",
+            hsize = Some(3),
+            vsize = Some(3)
+          ),
+          items = Some(Seq(
+            ScreenItemSetting(
+              resourcetype = ScreenResourceType.hostIssues,
+              resource = Some(ScreenItemResource(name = "zabbicook-spec host1"))
+            )
+          ))
+        )
+      )
+
       def clean(): Unit = {
+        await(op.screen.absent(screens.map(_.screen.name)))
         await(op.host.absent(hosts.map(_.host.host)))
         await(op.item.absentWithTemplate(items.mapValues(_.map(_.name))))
         await(op.template.absent(templates.map(_.template.host)))
@@ -471,6 +512,20 @@ class MainSpec extends UnitSpec with TestConfig with MainSpecRunner {
           assert(interfaces.length === storedIfs.length)
           assert(storedIfs.forall(s => interfaces.exists(_.isIdentical(s))))
           assert(templatNames.getOrElse(Seq()).toSet === storedTemplates.toSet)
+        }
+
+        // screens
+        screens.foreach { case ScreenSetting(screen, Some(items)) =>
+          val actualScreen = await(op.screen.findByNameAbsolutely(screen.name))
+          assert(false === actualScreen.shouldBeUpdated(screen))
+          val actualItems = await(op.screenItem.findByScreenId(None, actualScreen.getStoredId))
+          assert(items.length === actualItems.length)
+          import com.github.zabbicook.entity.screen.ScreenItem.ordering
+          (items.sortBy(_.key) zip actualItems.sortBy(_.key)) foreach {
+            case (expected, actual) =>
+              val expectedResolved = await(op.screenItem.resolveResource(actualScreen.getStoredId, None, expected))
+              assert(false === actual.shouldBeUpdated(expectedResolved))
+          }
         }
       }
 

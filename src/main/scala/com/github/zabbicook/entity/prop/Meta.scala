@@ -57,6 +57,13 @@ case class EntityMeta(
 ) extends Meta {
   def findByName(name: String): Option[Meta] = entity.find(_.name == name)
   val entityAliases: Set[String] = entity.map(_.aliases).flatten.toSet
+  def contains(meta: Meta): Boolean = {
+    entity.exists {
+      case sub if sub == meta => true
+      case sub: EntityMeta => sub.contains(meta)
+      case els => false
+    }
+  }
 }
 
 object Meta {

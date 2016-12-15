@@ -34,6 +34,35 @@ class GraphOp(api: ZabbixApi, templateOp: TemplateOp, itemOp: ItemOp) extends Op
     api.requestAs[Seq[Graph[Stored]]]("graph.get", params)
   }
 
+
+  def findInheritedGraphsByName(name: String, hostId: StoredId): Future[Option[Graph[Stored]]] = findByName(name, hostId, inherited = true)
+
+  def findBelongingGraphsByName(name: String, hostId: StoredId): Future[Option[Graph[Stored]]] = findByName(name, hostId, inherited = false)
+
+  private[this] def findByName(name: String, templateId: StoredId, inherited: Boolean): Future[Option[Graph[Stored]]] = {
+    val params = Json.obj()
+      .prop("templateids" -> templateId)
+      .prop("output" -> "extend")
+      .prop("inherited" -> inherited)
+      .prop("expandName" -> true)
+      .filter("name" -> name)
+    api.requestSingleAs[Graph[Stored]]("graph.get", params)
+  }
+
+  def findByNameAbsolutelyFromAll(hostId: StoredId, name: String): Future[Graph[Stored]] = {
+    for {
+      inherits <- findInheritedGraphsByName(name, hostId)
+      belongs <- findBelongingGraphsByName(name, hostId)
+    } yield {
+      (inherits, belongs) match {
+        case (Some(_), Some(_)) => throw EntityDuplicated(s"The graph '${name}' is duplicated name in same template.")
+        case (Some(g), None) => g
+        case (None, Some(g)) => g
+        case (None, None) => throw NoSuchEntityException(s"A graph named '$name' is not exist in the template.")
+      }
+    }
+  }
+
   def getGraphItems(graphId: StoredId): Future[Seq[GraphItem[Stored]]] = {
     val params = Json.obj()
       .prop("graphids" -> graphId)

@@ -1,5 +1,6 @@
 package com.github.zabbicook.chef
 
+import com.github.zabbicook.entity.screen.ScreenSetting
 import com.github.zabbicook.entity.template.TemplateSettingsConf
 import com.github.zabbicook.operation.{Ops, Report}
 import com.github.zabbicook.recipe.Recipe
@@ -12,31 +13,37 @@ class Chef(api: Ops) {
   def present(recipe: Recipe): Future[Report] = {
     for {
       // First, check the connectivity to zabbix api server via version api
-      _ <- api.getVersion()
+      version <- api.getVersion()
+      _ <- Future.traverse(recipe.validatee)(_.validate(api, version))
       report <- presentAll(recipe)
     } yield report
   }
 
+  private[this] def callOpt[T](opt: Option[T])(f: T => Future[Report]): Future[Report] = {
+    opt.map(f).getOrElse(Future.successful(Report.empty()))
+  }
+
   private[this] def presentAll(recipe: Recipe): Future[Report] = {
-    val templateSection = recipe.templates.getOrElse(Seq())
+    val templateSection = recipe.templates
     Future {
       val reports = Seq(
         await(
-          api.mediaType.present(recipe.mediaTypes.getOrElse(Seq())),
-          api.hostGroup.present(recipe.hostGroups.getOrElse(Seq()))
+          callOpt(recipe.mediaTypes)(api.mediaType.present),
+          callOpt(recipe.hostGroups)(api.hostGroup.present)
         ),
-        await(api.userGroup.present(recipe.userGroups.getOrElse(Seq()))),
-        await(api.user.present(recipe.users.getOrElse(Seq()))),
+        await(callOpt(recipe.userGroups)(api.userGroup.present)),
+        await(callOpt(recipe.users)(api.user.present)),
         await(
-          api.action.present(recipe.actions.getOrElse(Seq())),
-          api.template.present(templateSection.map(_.toTemplateSettings))
+          callOpt(recipe.actions)(api.action.present),
+          callOpt(templateSection.map(_.map(_.toTemplateSettings)))(api.template.present)
         ),
-        await(presentItems(templateSection)),
+        await(callOpt(templateSection)(presentItems)),
         await(
-          presentGraphs(templateSection),
-          presentTriggers(templateSection),
-          api.host.present(recipe.hosts.getOrElse(Seq()))
-        )
+          callOpt(templateSection)(presentGraphs),
+          callOpt(templateSection)(presentTriggers),
+          callOpt(recipe.hosts)(api.host.present)
+        ),
+        await(callOpt(recipe.screens)(presentGlobalScreens))
       )
       Report.flatten(reports)
     }
@@ -47,17 +54,24 @@ class Chef(api: Ops) {
   }
 
   private[this] def presentItems(section: Seq[TemplateSettingsConf]): Future[Report] = {
-    Future.traverse(section)(s => api.item.presentWithTemplate(s.template.host, s.items.getOrElse(Seq())))
+    Future.traverse(section)(s => callOpt(s.items)(api.item.presentWithTemplate(s.template.host, _)))
       .map(Report.flatten)
   }
 
   private[this] def presentGraphs(section: Seq[TemplateSettingsConf]): Future[Report] = {
-    Future.traverse(section)(s => api.graph.present(s.template.host, s.graphs.getOrElse(Seq())))
+    Future.traverse(section)(s => callOpt(s.graphs)(api.graph.present(s.template.host, _)))
       .map(Report.flatten)
   }
 
   private[this] def presentTriggers(section: Seq[TemplateSettingsConf]): Future[Report] = {
-    Future.traverse(section)(s => api.trigger.presentWithTemplate(s.template.host, s.triggers.getOrElse(Seq())))
+    Future.traverse(section)(s => callOpt(s.triggers)(api.trigger.presentWithTemplate(s.template.host, _)))
       .map(Report.flatten)
+  }
+
+  private[this] def presentGlobalScreens(section: Seq[ScreenSetting]): Future[Report] = {
+    for {
+      screenReport <- api.screen.present(section.map(_.screen))
+      _ <- Future.traverse(section)(s => callOpt(s.items)(api.screenItem.present(s.screen.name, _, None)))
+    } yield screenReport
   }
 }

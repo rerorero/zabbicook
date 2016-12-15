@@ -34,6 +34,10 @@ class HostGroupOp(api: ZabbixApi) extends OperationHelper with Logging {
     }
   }
 
+  def findByNameAbsolutely(name: String): Future[HostGroup[Stored]] = {
+    findByName(name).map(_.getOrElse(throw NoSuchEntityException(s"No such host group: ${name}")))
+  }
+
   def create(group: HostGroup[NotStored]): Future[Report] = {
     val param = Json.toJson(group)
     api.requestSingleId("hostgroup.create", param, "groupids")

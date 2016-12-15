@@ -59,6 +59,13 @@ class TemplateOp(api: ZabbixApi, hostGroupOp: HostGroupOp) extends OperationHelp
     }
   }
 
+  def findByHostnameAbsolutely(hostname: String): Future[TemplateSettings[Stored, Stored, Stored]] = {
+    findByHostname(hostname).map {
+      case Some(t) => t
+      case None => throw NoSuchEntityException(s"No such templates: ${hostname}")
+    }
+  }
+
   /**
     * Creates a new template with the linked templates and host groups to which the template belongs
     */

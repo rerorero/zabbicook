@@ -11,10 +11,13 @@ class Ops(api: ZabbixApi) {
   val user =  new UserOp(api, userGroup, mediaType)
   val action = new ActionOp(api, userGroup, user, mediaType)
   val template = new TemplateOp(api, hostGroup)
+  val screen = new ScreenOp(api)
+  val templateScreen = new TemplateScreenOp(api, template)
   val item = new ItemOp(api, template)
   val trigger = new TriggerOp(api, template)
   val graph = new GraphOp(api, template, item)
   val host = new HostOp(api, hostGroup, template)
+  val screenItem = new ScreenItemOp(api, template, screen, templateScreen, graph, item, hostGroup, host)
 
   def close(): Unit = api.close()
 

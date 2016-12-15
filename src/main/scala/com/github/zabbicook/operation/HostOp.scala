@@ -49,6 +49,10 @@ class HostOp(api: ZabbixApi, hostGroupOp: HostGroupOp, templateOp: TemplateOp) e
     StoredHost(host, interfaces, groups, templates.map(_.name))
   }
 
+  def findByHostnameAbsolutely(hostname: String): Future[StoredHost] = {
+    findByHostname(hostname).map(_.getOrElse(throw NoSuchEntityException(s"No such hostname: ${hostname}")))
+  }
+
   def create(
     host: Host[NotStored],
     groups: Seq[StoredId],
