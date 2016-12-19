@@ -29,8 +29,3 @@ zip -r $NAME-$VERSION.zip $NAME-$VERSION
 
 echo packaged $WORK/$NAME-$VERSION.zip
 
-echo ----------------
-echo publish documents
-echo ----------------
-sbt "run-main com.github.zabbicook.doc.HtmlDoc"
-sbt ghpagesPushSite
