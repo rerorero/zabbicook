@@ -77,7 +77,6 @@ class GraphOp(api: ZabbixApi, templateOp: TemplateOp, itemOp: ItemOp) extends Op
     }
 
     val gitems = graphSetting.items.map { is =>
-      println("natoring", itemsOfTemplate.map(_.name))
       val item = itemsOfTemplate.find(_.name == is.itemName).headOption.getOrElse(
         throw NoSuchEntityException(s"Template '${template.host}' has no such item '${is.itemName}'.")
       )
