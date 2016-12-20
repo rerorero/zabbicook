@@ -65,19 +65,6 @@ class GraphOp(api: ZabbixApi, templateOp: TemplateOp, itemOp: ItemOp) extends Op
     storedOpt: Option[Graph[Stored]]
   ): Future[Report] = {
 
-    def itemSettingToItem(
-      setting: GraphSetting
-    ): Future[Seq[GraphItem[NotStored]]] = {
-      getInheritedGraphs(template.getStoredId).map { storedGraph =>
-        setting.items.map { is =>
-          val item = itemsOfTemplate.find(_.name == is.itemName).headOption.getOrElse(
-            throw NoSuchEntityException(s"Template '${template.host}' has no such item '${is.itemName}'.")
-          )
-          is.toGraphItem(item.getStoredId)
-        }
-      }
-    }
-
     def itemsShoudBeUpdated(stored: Seq[GraphItem[Stored]], setting: Seq[GraphItem[NotStored]]): Boolean = {
       if (stored.length == setting.length) {
         val noDiff = (stored.sortBy(_.itemid) zip setting.sortBy(_.itemid)) forall {
@@ -89,17 +76,20 @@ class GraphOp(api: ZabbixApi, templateOp: TemplateOp, itemOp: ItemOp) extends Op
       }
     }
 
-    val gitemsFut = itemSettingToItem(graphSetting)
+    val gitems = graphSetting.items.map { is =>
+      println("natoring", itemsOfTemplate.map(_.name))
+      val item = itemsOfTemplate.find(_.name == is.itemName).headOption.getOrElse(
+        throw NoSuchEntityException(s"Template '${template.host}' has no such item '${is.itemName}'.")
+      )
+      is.toGraphItem(item.getStoredId)
+    }
 
     storedOpt match {
       case None =>
-        gitemsFut.flatMap { gitems =>
-          create(template.getStoredId, graphSetting.graph, gitems)
-        }
+        create(template.getStoredId, graphSetting.graph, gitems)
 
       case Some(stored) =>
         for {
-          gitems <- gitemsFut
           storedItems <- getGraphItems(stored.getStoredId)
           report <- ((stored.shouldBeUpdated(graphSetting.graph)) || itemsShoudBeUpdated(storedItems, gitems)) match {
             case false =>
