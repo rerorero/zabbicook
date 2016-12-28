@@ -42,7 +42,7 @@ trait TestTriggers extends TestItems { self: UnitSpec =>
   }
 
   def cleanTestTriggers(ops: Ops): Unit = {
-    await(ops.trigger.absentWithTemplate(testItems.mapValues(_.map(_.name))))
+    await(ops.trigger.absentWithTemplate(testTriggers.mapValues(_.map(_.trigger.description))))
     cleanTestItems(ops)
   }
 }

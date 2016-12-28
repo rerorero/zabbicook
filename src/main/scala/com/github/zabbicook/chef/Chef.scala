@@ -54,7 +54,7 @@ class Chef(api: Ops) {
   }
 
   private[this] def presentItems(section: Seq[TemplateSettingsConf]): Future[Report] = {
-    Future.traverse(section)(s => callOpt(s.items)(api.item.presentWithTemplate(s.template.host, _)))
+    Future.traverse(section)(s => callOpt(s.items)(items => api.item.presentWithTemplate(s.template.host, s.applications.getOrElse(Seq()), items)))
       .map(Report.flatten)
   }
 

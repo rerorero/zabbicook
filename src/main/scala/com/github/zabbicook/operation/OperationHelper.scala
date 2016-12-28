@@ -47,6 +47,10 @@ class OperationJsObj(val underlying: JsObject) {
       case None => underlying
     }
   }
+
+  def updated[A](param: (String, A))(implicit w: Writes[A]): JsObject = {
+    new OperationJsObj(underlying - param._1).prop(param)
+  }
 }
 
 class OptionFutureExtends[A](val underlying: Option[A]) {

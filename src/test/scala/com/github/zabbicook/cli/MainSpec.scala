@@ -6,7 +6,7 @@ import com.github.zabbicook.entity.EntityId.StoredId
 import com.github.zabbicook.entity.action._
 import com.github.zabbicook.entity.graph._
 import com.github.zabbicook.entity.host._
-import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
+import com.github.zabbicook.entity.item._
 import com.github.zabbicook.entity.media.{Media, MediaType, MediaTypeType}
 import com.github.zabbicook.entity.prop.EnabledEnum
 import com.github.zabbicook.entity.screen._
@@ -203,7 +203,11 @@ class MainSpec extends UnitSpec with TestConfig with MainSpecRunner {
           value_type = ValueType.unsigned,
           units = Some("B"),
           history = Some(7),
-          trends = Some(10)
+          trends = Some(10),
+          applicationNames = Some(Seq(
+            "zabbicook-spec app1",
+            "zabbicook-spec app2"
+          ))
         ), Item(
           delay = 60,
           `key_` = "sysUpTime",
@@ -215,7 +219,10 @@ class MainSpec extends UnitSpec with TestConfig with MainSpecRunner {
           multiplier = Some(EnabledEnum.enabled),
           snmp_community = Some("mycommunity"),
           snmp_oid = Some("SNMPv2-MIB::sysUpTime.0"),
-          port = Some(8161)
+          port = Some(8161),
+          applicationNames = Some(Seq(
+            "zabbicook-spec app3"
+          ))
         ))
       )
 

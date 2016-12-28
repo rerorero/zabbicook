@@ -6,7 +6,7 @@ import com.github.zabbicook.entity.EntityId.{NotStoredId, StoredId}
 import com.github.zabbicook.entity._
 import com.github.zabbicook.entity.prop.Meta._
 import com.github.zabbicook.entity.prop._
-import play.api.libs.json.{Format, JsObject, Json}
+import play.api.libs.json._
 
 /**
   * @see https://www.zabbix.com/documentation/3.2/manual/api/reference/item/object
@@ -60,8 +60,9 @@ case class Item[S <: EntityState](
   trapper_hosts: Option[String]=None, //	string	Allowed hosts. Used only by trapper items.
   trends: Option[IntProp]=None,           // 	integer	Number of days to keep item's trends data.
   units: Option[String]=None,         // 	string	Value units.
-  username: Option[String]=None       //	string	Username for authentication. Used by simple check, SSH, Telnet, database monitor and JMX items.
+  username: Option[String]=None,       //	string	Username for authentication. Used by simple check, SSH, Telnet, database monitor and JMX items.
   //valuemapid: EntityId	            // unhandled TODO string	ID of the associated value map.
+  applicationNames: Option[Seq[String]] = None // applications property.
 ) extends Entity[S] {
 
   override protected[this] val id: EntityId = itemid
@@ -115,15 +116,55 @@ case class Item[S <: EntityState](
     shouldBeUpdated(trapper_hosts, constant.trapper_hosts) ||
     shouldBeUpdated(trends, constant.trends) ||
     shouldBeUpdated(units, constant.units) ||
-    shouldBeUpdated(username, constant.username)
+    shouldBeUpdated(username, constant.username) ||
+    applicationNames.getOrElse(Seq()).toSet != constant.applicationNames.getOrElse(Seq()).toSet
   }
 }
 
 object Item extends EntityCompanionMetaHelper {
   // @see https://github.com/playframework/playframework/issues/3174
-  implicit lazy val format: Format[Item[Stored]] = Jsonx.formatCaseClass[Item[Stored]]
+  private val format: Format[Item[Stored]] = Jsonx.formatCaseClass[Item[Stored]]
+  private val format2: Format[Item[NotStored]] = Jsonx.formatCaseClass[Item[NotStored]]
 
-  implicit lazy val format2: Format[Item[NotStored]] = Jsonx.formatCaseClass[Item[NotStored]]
+  implicit val reads: Reads[Item[Stored]] = format.flatMap { item: Item[Stored] =>
+    Reads[Item[Stored]] {
+      case js: JsObject =>
+        val applicationsOpt = (js \ "applications").asOpt[Seq[Application[NotStored]]]
+        JsSuccess(item.copy(applicationNames = applicationsOpt.map(_.map(_.name))))
+      case els => JsError("item is not an json object.")
+    }
+  }
+
+  implicit val writes: Writes[Item[Stored]] = Writes[Item[Stored]] { item: Item[Stored] =>
+    format.transform( Writes[JsValue] {
+      case json: JsObject =>
+        item.applicationNames match {
+          case Some(appNames) => json + ("applications" -> Json.toJson[Seq[Application[NotStored]]](appNames.map(Application.toNotStored)))
+          case None => json
+        }
+      case els => els
+    }).writes(item)
+  }
+
+  implicit val reads2: Reads[Item[NotStored]] = format2.flatMap { item: Item[NotStored] =>
+    Reads[Item[NotStored]] {
+      case js: JsObject =>
+        val applicationsOpt = (js \ "applications").asOpt[Seq[Application[NotStored]]]
+        JsSuccess(item.copy(applicationNames = applicationsOpt.map(_.map(_.name))))
+      case els => JsError("item is not an json object.")
+    }
+  }
+
+  implicit val writes2: Writes[Item[NotStored]] = Writes[Item[NotStored]] { item: Item[NotStored] =>
+    format2.transform( Writes[JsValue] {
+      case json: JsObject =>
+        item.applicationNames match {
+          case Some(appNames) => json + ("applications" -> Json.toJson[Seq[Application[NotStored]]](appNames.map(Application.toNotStored)))
+          case None => json
+        }
+      case els => els
+    }).writes(item)
+  }
 
   override val meta = entity("Item object")(
     readOnly("itemid"),
@@ -171,6 +212,7 @@ object Item extends EntityCompanionMetaHelper {
                                 |Default: 365.""".stripMargin),
     value("units")("units")("Value units."),
     value("username")("username")("""Username for authentication. Used by simple check, SSH, Telnet, database monitor and JMX items.
-                                    |Required by SSH and Telnet items.""".stripMargin)
+                                    |Required by SSH and Telnet items.""".stripMargin),
+    array("applicationNames")("applications")("Application names.")
   ) _
 }

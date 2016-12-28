@@ -37,7 +37,8 @@ case class TemplateSettingsConf(
   linkedTemplateNames: Option[Seq[String]],
   items: Option[Seq[Item[NotStored]]],
   graphs: Option[Seq[GraphSetting]],
-  triggers: Option[Seq[TriggerConf]]
+  triggers: Option[Seq[TriggerConf]],
+  applications: Option[Seq[String]]
 ) {
   def toTemplateSettings: TemplateSettings.NotStoredAll =
     TemplateSettings(
@@ -56,6 +57,7 @@ object TemplateSettingsConf extends EntityCompanionMetaHelper {
     array("linkedTemplateNames")("linkedTemplates")("Names of templates to be linked to the template."),
     arrayOf("items")(Item.optional("items")),
     arrayOf("graphs")(GraphSetting.optional("graphs")),
-    arrayOf("triggers")(TriggerConf.optional("triggers"))
+    arrayOf("triggers")(TriggerConf.optional("triggers")),
+    array("applications")("applications")("Names of application.")
   ) _
 }

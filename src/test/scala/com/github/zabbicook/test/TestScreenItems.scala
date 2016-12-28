@@ -5,7 +5,7 @@ import com.github.zabbicook.operation.Ops
 
 trait TestScreenItems extends TestScreens with TestGraphs { self: UnitSpec =>
   val graphResource = ScreenItemResource(Some(testTemplates(0).hostName), testGraphs(testTemplates(0))(0).graph.name)
-  val itemResource = ScreenItemResource(Some(testTemplates(0).hostName), testItems(testTemplates(0).hostName)(0).name)
+  val itemResource = ScreenItemResource(Some(testTemplates(0).hostName), testItems(0).items(0).name)
   val hostgroupResource = ScreenItemResource(None, testHostGroups(0).name)
   val screenResource = ScreenItemResource(None, testScreens(2).name)
   //val hostResource = ScreenItemResource(None, testHosts(0).host.host)

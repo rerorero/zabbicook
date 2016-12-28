@@ -1,11 +1,23 @@
 package com.github.zabbicook.test
 
 import com.github.zabbicook.entity.Entity.NotStored
-import com.github.zabbicook.entity.item.{DataType, Item, ItemType, ValueType}
+import com.github.zabbicook.entity.item._
 import com.github.zabbicook.entity.prop.EnabledEnum
-import com.github.zabbicook.operation.Ops
+import com.github.zabbicook.operation.{ItemOp, Ops, Report}
+
+import scala.concurrent.Future
 
 trait TestItems extends TestTemplates { self: UnitSpec =>
+
+  protected[this] val testApp0 = "zabbicook test app 0"
+  protected[this] val testApp1 = "zabbicook test app 1"
+  protected[this] val testApp2 = "zabbicook test app 2"
+
+  case class TestItemsSetting(
+    template: String,
+    applications: Seq[String],
+    items: Seq[Item[NotStored]]
+  )
 
   protected[this] val item0: Item[NotStored] = Item(
     delay = 300,
@@ -15,7 +27,8 @@ trait TestItems extends TestTemplates { self: UnitSpec =>
     value_type = ValueType.unsigned,
     units = Some("B"),
     history = Some(7),
-    trends = Some(10)
+    trends = Some(10),
+    applicationNames = Some(Seq(testApp0, testApp1))
   )
 
   protected[this] val item1: Item[NotStored] = Item(
@@ -30,7 +43,8 @@ trait TestItems extends TestTemplates { self: UnitSpec =>
     multiplier = Some(EnabledEnum.`true`),
     snmp_community = Some("mycommunity"),
     snmp_oid = Some("SNMPv2-MIB::sysUpTime.0"),
-    port = Some(8161)
+    port = Some(8161),
+    applicationNames = Some(Seq(testApp0))
   )
 
   protected[this] val item2: Item[NotStored] = Item(
@@ -41,18 +55,33 @@ trait TestItems extends TestTemplates { self: UnitSpec =>
     value_type = ValueType.character
   )
 
-  protected[this] val testItems: Map[String, Seq[Item[NotStored]]] = Map(
-    testTemplates(0).template.host -> Seq(item0, item1),
-    testTemplates(1).template.host -> Seq(item2)
+  protected[this] val testItems: Seq[TestItemsSetting] = Seq(
+    TestItemsSetting(
+      testTemplates(0).template.host,
+      Seq(testApp0, testApp1),
+      Seq(item0, item1)
+    ),
+    TestItemsSetting(
+      testTemplates(1).template.host,
+      Seq(testApp2),
+      Seq(item2)
+    )
   )
+
+  def presentItems(op: ItemOp, settings: Seq[TestItemsSetting]): Report = {
+    await(Future.traverse(settings)(s => op.presentWithTemplate(s.template, s.applications, s.items))
+      .map(Report.flatten))
+  }
 
   def presentTestItems(ops: Ops): Unit = {
     presentTestTemplates(ops)
-    await(ops.item.presentWithTemplate(testItems))
+    presentItems(ops.item, testItems)
   }
 
   def cleanTestItems(ops: Ops): Unit = {
-    await(ops.item.absentWithTemplate(testItems.mapValues(_.map(_.name))))
+    await(ops.item.absentWithTemplate(
+      testItems.map(i => (i.template, i.items.map(_.name))).toMap
+    ))
     cleanTestTemplates(ops)
   }
 }
