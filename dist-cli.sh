@@ -2,14 +2,10 @@
 
 set -eu
 
-VERSION=$1
-if [ "$#" -ne 1 ]; then
-  echo "No versions specified."
-  exit 1
-fi
+VERSION=$(sbt showVersion | grep 'zabbicook-version' | awk '{ print $2;}')
 
 echo ----------------
-echo build package
+echo build package $VERSION
 echo ----------------
 NAME=zabbicook
 WORK=./.dist-work

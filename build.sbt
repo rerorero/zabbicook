@@ -49,3 +49,8 @@ lazy val root = (project in file(".")).
 
 ghpages.settings
 git.remoteRepo := "git@github.com:rerorero/zabbicook.git"
+
+lazy val showVersion = taskKey[Unit]("Show version")
+showVersion := {
+  println("zabbicook-version " + version.value)
+}
